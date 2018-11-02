@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[nopar]{lipsum}
+\begin{document}
+\section{Paragraphs}
+\lipsum\newpage
+
+\lipsum[1]\newpage
+
+\lipsum[123-134]\newpage
+
+\lipsum*\newpage
+
+\lipsum*[8]\newpage
+
+\lipsum*[111-119]\newpage
+
+\SetLipsumDefault{111}
+\lipsum \newpage
+\lipsum* \newpage
+
+\SetLipsumDefault{134-136}
+\lipsum \newpage
+\lipsum* \newpage
+
+\SetLipsumDefault{1-7}
+\SetLipsumTerminator{¶ }
+\SetLipsumStarTerminator{\ *\ }
+\lipsum \newpage
+\lipsum* \newpage
+
+\def\foo{ *** foo ***\ }
+\SetLipsumTerminator{\foo }
+\SetLipsumStarTerminator{ + \foo\ +}
+\lipsum\newpage
+\lipsum*\newpage
+
+\section{Sentences}
+\lipsum[1-3][4-9]
+
+\lipsum[1][1]
+
+\lipsum[1-52][1-300]
+
++\lipsum[1][300-400]+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

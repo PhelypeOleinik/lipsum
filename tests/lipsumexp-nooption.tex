@@ -1,0 +1,136 @@
+\documentclass{article}
+\usepackage{lipsum,xcolor}
+\begin{document}
+\section{Paragraphs}
+\unpacklipsum
+\lipsumexp
+\typeout{Result of \string\unpacklipsum}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+
+\unpacklipsum[1]
+\lipsumexp
+\typeout{Result of \string\unpacklipsum[1]}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\unpacklipsum[8-12]
+\lipsumexp
+\typeout{Result of \string\unpacklipsum[8-12]}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\unpacklipsum*
+\lipsumexp
+\typeout{Result of \string\unpacklipsum*}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\unpacklipsum*[1]
+\lipsumexp
+\typeout{Result of \string\unpacklipsum*[1]}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\unpacklipsum*[90-93]
+\lipsumexp
+\typeout{Result of \string\unpacklipsum*[90-93]}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\SetLipsumDefault{111-112}
+\unpacklipsum
+\lipsumexp
+\typeout{Result of \string\unpacklipsum after setting defaults to 111-112}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+
+\unpacklipsum*
+\lipsumexp
+\typeout{Result of \string\unpacklipsum* after setting defaults to 111-112}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+
+\newpage
+\SetLipsumTerminator{¶ }
+\unpacklipsum
+\lipsumexp
+\typeout{Result of \string\unpacklipsum after setting defaults to 111-112}
+\typeout{and setting lipsum terminator to ¶\space.}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\SetLipsumTerminator{¶ }
+\unpacklipsum*
+\lipsumexp
+\typeout{Result of \string\unpacklipsum* after setting defaults to 111-112}
+\typeout{and setting lipsum terminator to ¶\space.}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\SetLipsumStarTerminator{* }
+\unpacklipsum*
+\lipsumexp
+\typeout{Result of \string\unpacklipsum* after setting defaults to 111-112}
+\typeout{and setting lipsum star terminator to *\space.}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\section{Sentences}
+\unpacklipsum[1][1]
+\lipsumexp
+\typeout{Result of \string\unpacklipsum[1][1].}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\unpacklipsum[1-3][4-5]
+\lipsumexp
+\typeout{Result of \string\unpacklipsum[1-3][4-5].}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\unpacklipsum*[1-52][100-110]
+\lipsumexp
+\typeout{Result of \string\unpacklipsum*[1-52][100-110].}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\newpage
+\section{UnpackLipsum}
+\UnpackLipsum[1-10]
+\typeout{Result of \string\UnpackLipsum[1-10].}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+\lipsumexp
+
+\newpage
+\UnpackLipsum*[1-10]
+\lipsumexp
+\typeout{Result of \string\UnpackLipsum*[1-10].}
+\typeout{* Result start *******************************************************}
+\show\lipsumexp
+\typeout{* Result end *********************************************************}
+
+
+
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
