@@ -5,7 +5,8 @@
 In most cases it is not requried to install this package manually, it is
 included in the major tex-distributions. If, for some reason, you want install
 it manually, run lipsum.ins through (pdf)latex to generate the style file. To
-generate the documentation, run lispum.dtx through latex.
+generate the documentation, run lispum.dtx through a latex program that
+understands utf8 input (XeLaTeX or lualatex).
 
 ## Usage
 
