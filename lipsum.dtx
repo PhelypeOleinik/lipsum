@@ -58,7 +58,7 @@
 % \changes{v1.3}{2014/07/19}{Introduced some improvements and provided some
 % new macros (thanks to tex.stackexchange user egreg).}
 % \changes{v1.3a}{2017/08/10}{Fixed a type in the documentation (thanks to
-% Vincent Belaïche). This version never made its way on CTAN due to some 
+% Vincent BelaÃ¯che). This version never made its way on CTAN due to some 
 % version naming conflicts. Since the change here was only in the
 % documentation, I frist didn't want it to be 1.3a and later had no time to
 % update it properly.}
@@ -223,8 +223,8 @@
 %
 % Valid inputs for \oarg{sentence range} are, again, a single number, as in
 % |\lipsum[1][1]|, which will output the first sentence of the first paragraph
-% (the famous »Lorem ipsum dolor sit amet, consectetuer adipiscing
-% elit.«). |\lipsum*[3-7][7-8]|  will output the seventh and eighth sentence
+% (the famous Â»Lorem ipsum dolor sit amet, consectetuer adipiscing
+% elit.Â«). |\lipsum*[3-7][7-8]|  will output the seventh and eighth sentence
 % of the paragraphs three to seven.
 %
 % There are some limitations and remarks on selecting sentences as described
@@ -729,8 +729,29 @@
 }
 %    \end{macrocode}
 % \end{macro}
+% \begin{macro}{\lipsumexp}
+% The following macros store their results in the macro \cs{lipsumexp}. I
+% create it first using \pkg{xparss} before it is overwritten. Don't know if
+% this makes sense.
 %    \begin{macrocode}
 \NewDocumentCommand\lipsumexp{}{}
+%    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{\unpacklipsum, \unpacklipsum*}
+% These two commands do the same as \cs{lipsum} and \cs{lipsum*}, but instead
+% of typesetting the paragraphs or sentences, they store the expanded content
+% in the macro \cs{lipsumexp}. If, for example by using the package option
+% \opt{space} or by using \cs{SetLipsumTerminator} or
+% \cs{SetLipsumStartTerminator}, the corresponding terminator is expandable,
+% it is expanded. If it is not expandable, it is---of course---not.
+%   \begin{syntax}
+%     \cs{unpacklipsum}\oarg{paragraph range}\oarg{sentence range}\\
+%     \cs{unpacklipsum*}\oarg{paragraph range}\oarg{sentence range}\\
+%     ...
+%     \cs{lipsumexp}
+%   \end{syntax}
+%    \begin{macrocode}
 \NewDocumentCommand\unpacklipsum{sO{\g__lipsum_default_range_tl}o}{
   \group_begin:
     \IfBooleanTF {#1}
@@ -739,16 +760,64 @@
     \IfNoValueTF{#3}
       {
         \lipsum_range_to_tokenlist:n{#2}
-        \global\edef\lipsumexp{\tl_use:N\l__lipsum_pars_tl}
+%    \end{macrocode}
+% In the following, I use \cs{tex_global:D} and \cs{tex_edef:D} since I do not
+% know (yet) how to do this using \pkg{expl3}. The following attempt throws an
+% error (kernel/missing-colon). 
+%    \begin{macrocode}
+%        \cs_gset:Nx\lipsumexp{\tl_use:N\l__lipsum_pars_tl}
+%    \end{macrocode}
+% Thus, I use the deprecated low-level \TeX-commands:
+%    \begin{macrocode}
+        \tex_global:D\tex_edef:D\lipsumexp{\tl_use:N\l__lipsum_pars_tl}
       }
-      {\lipsum_sentences_to_tokenlist:nn{#2}{#3}}
+      {
+        \lipsum_sentences_to_tokenlist:nn{#2}{#3}
+        \tex_global:D\tex_edef:D\lipsumexp{\tl_use:N\l__lipsum_sentences_tl}
+      }
   \group_end: 
 }
 %    \end{macrocode}
-% 
+% \end{macro} 
+% \begin{macro}{\UnpackLipsum, \UnpackLipsum*}
+% These two commands are considered deprecated in \pkg{lipsum}2.0 and are only
+% available for backwards compatibility.
+% \begin{syntax}
+%   \cs{UnpackLipsum}\oarg{paragraph range}\\
+%   \cs{UnpackLipsum*}\oarg{paragraph range}\\
+%   ...
+%   \cs{lipsumexp}
+% \end{syntax}
+% Since they are deprecated, they do not have a second optional argument to
+% operate on sentences. \cs{UnpackLipsum} works as \cs{unpacklipsum}, but
+% inserts a \cs{space} at the end of every paragraph. The recommended way to
+% achieve this is to use the package option \opt{space} or to use
+% |\SetLipsumTerminator{\space}|. \cs{UnpackLipsum*} also works as
+% \cs{unpacklipsum}, but inserts the protected and thus not expanded command
+% \cs{lips@par} after every paragraph. The recommended way to achieve this to
+% define your own \cs{protected} command, for example \cs{foo}, and use
+% |\SetLipsumTerminator{\foo}|. 
 %    \begin{macrocode}
-%</package> 
+\text_protected:D\tex_def:D\lips@par{}%
+\NewDocumentCommand\UnpackLipsum{sO{\g__lipsum_default_range_tl}}{%
+  \group_begin:
+  \IfBooleanTF{#1}
+  {
+    \SetLipsumTerminator{\lips@par}
+    \unpacklipsum[#2]
+  }
+  {
+    \SetLipsumTerminator{\space}
+    \unpacklipsum[#2]
+  }
+  \group_end:
+}
 %    \end{macrocode}
+% \end{macro}
+%    \begin{macrocode}
+%</package>
+%    \end{macrocode}
+% 
 % \end{implementation}
 %    \begin{macrocode}
 \SetLipsumTerminator{\par}
