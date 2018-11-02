@@ -20,13 +20,11 @@
 % Alternatively, use github:
 %    https://github.com/patta42/lipsum
 %
-%<*driver|class>
-\RequirePackage{expl3,xparse}
-%</driver|class>
 %<*driver>
 \ProvidesFile{lipsum.dtx}[2018/10/29 v2.0 Access to 150 of Lorem Ipsum dummy text]
 \documentclass{l3doc}
-\usepackage{tabularx, booktabs}%,lipsum}
+\usepackage{tabularx, booktabs,lipsum}
+\usepackage[utf8x]{inputenc}
 \newcommand\opt[1]{\textsf{#1}} % l3doc does not have some markup for package options...
 \newcommand\lips{\emph{Lorem ipsum\ldots}}
 \begin{document}
@@ -72,7 +70,7 @@
 %
 % \begin{documentation}
 %
-% \section*{Quick usage overview}
+% \section{Quick usage overview}
 % To load the package specify 
 % \begin{verbatim}
 %     \usepackage{lipsum}
@@ -84,21 +82,13 @@
 % of the  paragraphs. For example, \verb|\lipsum[4-57]| typesets the paragraphs 4 to
 % 57 and accordingly, \verb|\lipsum[23]| typesets the 23\textsuperscript{rd}
 % paragraph. Using \cs{lipsum} without its optional argument typesets
-% the paragraphs specified by \DescribeMacro{\setlipsumdefault} 
-% \cmd{\setlipsumdefault}. This is the second macro this package
-% provides. By default it is set to |1-7|, which results in a bit more
-% than one page when used with \opt{a4paper} and the standard or the
-% \cls{KOMAScript} classes with default font settings. To change the
-% default range use |\setlipsumdefault{131-133}| or similar. Of course,
-% the numbers 
-% |131| and |133| are only examples that represent the first and the last
-% paragraph selected to be typeset by default.
+% the paragraphs 1--7 of \lips.
 %
 % As of version 2.0, \cs{lipsum} has a second optional argument which allows
 % selecting a range of sentences from the paragraphs. To get the sentences
 % four to eight from paragraphs three to nine, use |\lipsum[3-9][4-8]|.
 %
-% \section*{Foreword to Version 2.0}
+% \section{Foreword to Version 2.0}
 % Version 2.0 of \pkg{lipsum} is a complete (well, nearly complete)  rewrite
 % of the code in \pkg{expl3} 
 % syntax. I have never used \pkg{expl3} before and thus the code might be too
@@ -112,7 +102,7 @@
 % \begin{itemize}
 % \item The internal macros \cs{lips@i}, \cs{lips@ii}, \cs{lips@iii} \ldots are no longer
 % available.
-% \item All other internal macros are no longer available, too.
+% \item All other internal macros (with one exception)  are no longer available, too.
 % \item When in the previous version a \cs{relax} was used, now a
 %   \cs{prog_do_nothing:} is used.
 % \end{itemize}
@@ -120,7 +110,7 @@
 %
 % 
 % 
-% \section*{Usage}
+% \section{Usage}
 % \pkg{lipsum} was intended to quickly provide a way to fill a page or two to
 % analyze the page
 % layout%
@@ -129,7 +119,7 @@
 % provides some more advanced features, it still is only intended to quickly
 % provide text. If you want more features, look at the
 % \pkg{blindtext}-package.   
-% \subsection*{Package options}
+% \subsection{Package options}
 % \pkg{lipsum} outputs a range of paragraphs taken from the \lips\ dummy
 % text. The package options control how a single paragraph
 % of \lips\ is terminated. The default is to terminate a paragaraph with
@@ -147,7 +137,7 @@
 % with a space (\cs{space}), which leads to ``normal'' output.
 % \end{description}
 % 
-% \subsubsection*{Using both options together}
+% \subsubsection{Using both options together}
 % To understand what happens if one specifies |nopar,space| or |space,nopar|
 % as loading options to \pkg{lipsum}, one has to know the two main commands in the
 % package, \cs{lipsum} and the starred version, \cs{lipsum*} (a detailed
@@ -184,13 +174,12 @@
 %   \end{tabularx}
 % \end{table}
 % 
-% \subsection*{User commands}
-% \begin{macro}{\lipsum,\lipsum*}
-%   \begin{syntax}
-%     |\lipsum| \oarg{paragraph range} \oarg{sentence range} \\
-%     |\lipsum*| \oarg{paragraph range} \oarg{sentence range} 
-%   \end{syntax}
-% \end{macro}
+% \subsection{User commands}
+% \DescribeMacro{\lipsum}\DescribeMacro{\lipsum*}
+% \begin{quote}
+%   \cs{lipsum}\oarg{paragraph range}\oarg{sentence range}\\
+%   \cs{lipsum*}\oarg{paragraph range}\oarg{sentence range}
+% \end{quote}
 % \cs{lipsum} (and \cs{lipsum*}) uses a \meta{range} as input. A \meta{range}
 % consists either of a single \meta{number} or two numbers separated by a dash
 % (|-|) hyphen, as in
@@ -211,7 +200,7 @@
 % 23\textsuperscript{rd} paragraph), or a two numbers separated by a dash, as
 % in |\lipsum*[9-12]|, which will output the paragraphs nine to twelve.
 % 
-% \subsection*{Outputting sentences instead of paragraphs}
+% \subsection{Outputting sentences instead of paragraphs}
 % Starting with \pkg{lipsum} v2.0, \cs{lipsum} and \cs{lipsum*} allow to
 % output sentences of the \lips\ dummy text instead of paragraphs. To retrieve
 % sentences instead of paragraphs, specify \oarg{sentence range}, the second
@@ -223,8 +212,7 @@
 %
 % Valid inputs for \oarg{sentence range} are, again, a single number, as in
 % |\lipsum[1][1]|, which will output the first sentence of the first paragraph
-% (the famous »Lorem ipsum dolor sit amet, consectetuer adipiscing
-% elit.«). |\lipsum*[3-7][7-8]|  will output the seventh and eighth sentence
+% (the famous {\itshape»\lipsum[1][1]«}). |\lipsum*[3-7][7-8]|  will output the seventh and eighth sentence
 % of the paragraphs three to seven.
 %
 % There are some limitations and remarks on selecting sentences as described
@@ -250,35 +238,47 @@
 % \item If you need a lot of sentences, consider the \opt{space} option and
 % |\lipsum[1-150]|.
 % \end{itemize}
-% \section*{Advanced or developer macros}
+% \section{Advanced or developer macros}
 % To distinguish between macros for users and macros for, for example, package
 % developers, it has been discussed to use different naming schemes. One
 % option is that user level macros are all lowercase, while developer-level
 % commands are CamelCase. Until version 2.0, \pkg{lipsum} has not yet followed
 % this convention. Thus, the old lowercase commands are still available, but
-% considered deprecated.     
-% \begin{macro}{\SetLipsumDefault, \setlipsumdefault}
-%   \begin{syntax}
-%     |\setlipsumdefault| \Arg{range}
-%   \end{syntax}
-% \end{macro}
-% \begin{macro}{\lipsum*}
-%   \begin{syntax}
-%     |\lipsum*| \oarg{paragraph range} \oarg{sentence range} 
-%   \end{syntax}
-% \end{macro}
-% \begin{macro}{\LipsumPar}
-%   \begin{syntax}
-%     |\LipsumPar| \Arg{number}
-%   \end{syntax}
-% \cs{LipsumPar} retrieves the \Arg{number}\textsuperscript{th} paragraph from
-% the dummy code, terminated by the 
-% \end{macro}
-% \begin{macro}{\lipsum*}
-%   \begin{syntax}
-%     |\lipsum*| \oarg{paragraph range} \oarg{sentence range} 
-%   \end{syntax}
-% \end{macro}
+% considered deprecated. They are not described in this section, but in the
+% corresponding section in the documented code (section
+% \nameref{sec:code:commands}).
+%
+% \DescribeMacro{\SetLipsumDefault} In order to change the default range of
+% paragraphs that is used by \cs{lipsum} and friends, specify
+% |\SetLipsumDefault{8}| or |\SetLipsumDefault{123-145}|.  
+%
+% \DescribeMacro{\LipsumPar} To get a single paragraph of the \lips\ dummy
+% text, use |\LispumPar{8}| (for the eighth paragraph). This is similar to
+% using |\lips@viii| directly in versions prior to \pkg{lipsum}2.0. the
+% difference between |\LipsumPar{8}| and |\lipsum[8]| that the first directly
+% accesses the internal macro that stores the corresponding paragraph, while
+% the latter runs the loop that selects the \lips\ paragraphs.
+%
+% \DescribeMacro{\SetLipsumTerminator}\DescribeMacro{\SetLipsumStarTerminator}
+% These two macros require one mandatory argument: The tokens to be inserted
+% after a paragraph of the \lips\ text. \cs{SetLipsumTerminator} specifies the
+% terminator to be inserted when \cs{lipsum} is used,
+% \cs{SetLipsumStarTerminator} specifies the terminator for \cs{lipsum*}. For
+% example, to insert a pilcrow between the paragraphs typeset by \cs{lipsum},
+% specify |\SetLipsumTerminator{¶}| (and use a latex engine that supports
+% UTF-8). 
+%
+% \DescribeMacro{\unpacklipsum} \DescribeMacro{\unpacklipsum*}
+% \DescribeMacro{\lipsumexp} The commands \cs{unpacklipsum} and
+% \cs{unpacklipsum*} work as \cs{lipsum} and  \cs{lipsum*} and have the same
+% two optional arguments, but instead of typesetting the \lips\ paragraphs,
+% the commands store them in the macro \cs{lipsumexp} using \tn{edef}, thus,
+% everything which can be expanded is expanded. The terminators inserted at
+% the end of each paragraph are either as defined by the package options or as
+% specified by \cs{SetLipsumTerminator} and \cs{SetLipsumStarTerminator}.
+%
+% 
+
 % \end{documentation}
 % \begin{implementation}
 % \section{\pkg{lipsum} implementation}
@@ -607,7 +607,7 @@
 %    \end{macrocode}
 % \end{function}
 % 
-% \subsection{User- and developer-level commands}
+% \subsection{User- and developer-level commands}\label{sec:code:commands}
 % \begin{macro}{\NewLipsumPar}
 %  Developer-Level macro to add a paragraph to the \lips\
 %  paragraphs. Currently, this macro is not really thought to be used anywhere
@@ -798,7 +798,7 @@
 % define your own \cs{protected} command, for example \cs{foo}, and use
 % |\SetLipsumTerminator{\foo}|. 
 %    \begin{macrocode}
-\text_protected:D\tex_def:D\lips@par{}%
+\tex_protected:D\tex_def:D\lips@par{}%
 \NewDocumentCommand\UnpackLipsum{sO{\g__lipsum_default_range_tl}}{%
   \group_begin:
   \IfBooleanTF{#1}
@@ -814,13 +814,9 @@
 }
 %    \end{macrocode}
 % \end{macro}
+% \subsection{Package options, defaults and the \lips\ dummy text}
 %    \begin{macrocode}
-%</package>
-%    \end{macrocode}
-% 
-% \end{implementation}
-%    \begin{macrocode}
-\SetLipsumTerminator{\par}
+\SetLipsumTerminator{\tex_par:D}
 \SetLipsumStarTerminator{\prg_do_nothing:}
 
 \DeclareOption{space}{%
@@ -829,8 +825,8 @@
 
 \DeclareOption{nopar}{%
   % This is not very l3-ish
-  \expandafter\SetLipsumTerminator\expandafter{\lipsum_star_terminator:}
-  \SetLipsumStarTerminator{\par}
+  \tex_expandafter:D\SetLipsumTerminator\tex_expandafter:D{\lipsum_star_terminator:}
+  \SetLipsumStarTerminator{\tex_par:D}
 }
 \ProcessOptions
 \ExplSyntaxOff
@@ -2505,6 +2501,7 @@
   magna iaculis pharetra. Duis sagittis massa in tellus. Aenean vel
   velit vel felis consectetuer pharetra.}
 %    \end{macrocode}
+% \end{implementation}
 % \endinput
 % \fi
 % Local Variables:
