@@ -42,23 +42,23 @@
 % </package>
 %   \fi
 %
-% \title{\pkg{lipsum}\\ Access to 150 paragraphs of Lorem Ipsum dummy
+% \title{\pkg{lipsum} --\\ Access to 150 paragraphs of Lorem Ipsum dummy
 % text\thanks{Version: 2.0} \thanks{You can find
-% \pkg{lipsum} on github: https://github.com/patta42/lipsum}}
+% \pkg{lipsum} on github: \url{https://github.com/patta42/lipsum}}}
 % \author{Patrick Happel\thanks{patrick.happel@rub.de}}
 % \date{2018/10/29}
 % \RecordChanges
 % \changes{v1.0}{2004/05/15}{First release}
 % \changes{v1.1}{2011/02/08}{Added support for typesetting dummy text without
 % paragraphs in between.}
-% \changes{v1.2}{2011/04/14}{Bug fix (thanks to Florent Chervet and Ulrike
+% \changes{v1.2}{2011/04/14}{Bug fix (thanks to  Florent Chervet and Ulrike
 % Fischer for reporting).}
 % \changes{v1.3}{2014/07/19}{Introduced some improvements and provided some
 % new macros (thanks to tex.stackexchange user egreg).}
 % \changes{v1.3a}{2017/08/10}{Fixed a type in the documentation (thanks to
 % Vincent Belaïche). This version never made its way on CTAN due to some 
 % version naming conflicts. Since the change here was only in the
-% documentation, I frist didn't want it to be 1.3a and later had no time to
+% documentation, I first didn't want it to be 1.3a and later had no time to
 % update it properly.}
 % \changes{v2.0}{2018/10/29}{Added option \opt{space}.}
 % \changes{v2.0}{2018/10/29}{Added the possibility to fetch a number of sentences from the
@@ -67,7 +67,14 @@
 %
 %
 % \maketitle
-%
+% \begin{abstract}\pkg{lipsum} is a \LaTeX{} package that produces dummy text
+% to be used in test documents or examples. The paragraphs are taken with
+% permission from \url{https://www.lipsum.com/}, thanks to James Wilson for
+% this work. Furthermore, the following people contributed to \pkg{lipsum} by
+% suggesting improvements, correcting bugs or finding typos in the
+% documentation: Florent Chervet, Ulrike Fischer, Vincent Belaïche, Enrico
+% Gregorio, Frank Mittelbach.
+% \end{abstract}
 % \begin{documentation}
 %
 % \section{Quick usage overview}
@@ -253,7 +260,7 @@
 % |\SetLipsumDefault{8}| or |\SetLipsumDefault{123-145}|.  
 %
 % \DescribeMacro{\LipsumPar} To get a single paragraph of the \lips\ dummy
-% text, use |\LispumPar{8}| (for the eighth paragraph). This is similar to
+% text, use |\LipsumPar{8}| (for the eighth paragraph). This is similar to
 % using |\lips@viii| directly in versions prior to \pkg{lipsum}2.0. the
 % difference between |\LipsumPar{8}| and |\lipsum[8]| that the first directly
 % accesses the internal macro that stores the corresponding paragraph, while
@@ -801,6 +808,13 @@
 \tex_protected:D\tex_def:D\lips@par{}%
 \NewDocumentCommand\UnpackLipsum{sO{\g__lipsum_default_range_tl}}{%
   \group_begin:
+  \msg_set:nnnn {lipsum} {DeprecatedCommand} {
+    \string##1\msg_line_context:\\\string##1~is~deprecated.~See~the~
+    documentation~for~further~explanations.
+  }{}
+  
+  \msg_warning:nnnn{lipsum}{DeprecatedCommand}{\UnpackLipsum}{}
+  
   \IfBooleanTF{#1}
   {
     \SetLipsumTerminator{\lips@par}
