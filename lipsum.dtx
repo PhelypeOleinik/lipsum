@@ -60,7 +60,6 @@
 % version naming conflicts. Since the change here was only in the
 % documentation, I first didn't want it to be 1.3a and later had no time to
 % update it properly.}
-% \changes{v2.0}{2018/10/29}{Added option \opt{space}.}
 % \changes{v2.0}{2018/10/29}{Added the possibility to fetch a number of sentences from the
 % lipsum paragraphs (thanks to Frank Mittelbach).}
 % \changes{v2.0}{2018/10/29}{Rewritten code in \pkg{expl3} syntax.}
@@ -130,56 +129,12 @@
 % \pkg{lipsum} outputs a range of paragraphs taken from the \lips\ dummy
 % text. The package options control how a single paragraph
 % of \lips\ is terminated. The default is to terminate a paragaraph with
-% \cs{par}. Two options are available to change the default behaviour:
+% \cs{par}. One option is available to change the default behaviour:
 % \begin{description}
-% \item[\opt{nopar}] Instead of \cs{par}, \cs{prg_do_nothing:} is used to
-% terminate every paragraph. Note: This leads to no spaces between the end of
-% the current paragraph and the following one, leading to output as in:
-% \begin{quote}
-% \ldots orci sit amet orci dignissim \textcolor{red}{rutrum.Nam} dui ligula, \ldots
-% \end{quote}
-% While this seems strange (and has been filed as a bug), this is the
-% documented behaviour.
-% \item[\opt{space}] This option is new in v2.0. It terminates every paragraph
-% with a space (\cs{space}), which leads to ``normal'' output.
+% \item[\opt{nopar}] Instead of \cs{par}, \cs{space} is used to
+% terminate every paragraph. 
 % \end{description}
 % 
-% \subsubsection{Using both options together}
-% To understand what happens if one specifies |nopar,space| or |space,nopar|
-% as loading options to \pkg{lipsum}, one has to know the two main commands in the
-% package, \cs{lipsum} and the starred version, \cs{lipsum*} (a detailed
-% description is provided later). The two versions
-% were designed to provide a command which terminates every paragraph with
-% \cs{par} and one which does not insert anything that leads to visible
-% output. In the latter, historically, \cs{relax} (in v2.0
-% \cs{prg_do_nothing:} is used) was used to terminate every
-% paragraph. \pkg{lipsum} now defines a \emph{terminator}, that is, the
-% tokens that terminate a paragraph, for the starred and the non-starred
-% version of \cs{lipsum}. The options do a mixture of changing and re-setting
-% the corresponding terminators as shown in the following. First, let us
-% denote the two terminators as $T$ and $T*$ with the starting values
-% $T=\cs{par}$ and $T*=\cs{prg_do_nothing:}$. The option \opt{space} sets
-% $T*=\cs{space}$ and leaves $T$ unchanged. The option \opt{nopar} sets $T =
-% T*$ and $T*=\cs{par}$. The resulting terminations of the paragraphs thus
-% depend on the order of the options and are provided in
-% Table~\ref{tab:options}.
-% \begin{table}\centering
-%   \caption{Resulting terminators depending on the package options.}
-%   \label{tab:options}
-%   \begin{tabularx}{\linewidth}{Xll}
-%     \toprule
-%       \textbf{Package Option(s)} &
-%       \textbf{Terminator for \cs{lipsum}} &
-%       \textbf{Terminator for \cs{lipsum*}} \\
-%     \midrule
-%     \meta{no option} & \cs{par} & \cs{prg_do_nothing:} \\
-%     |nopar| & \cs{prg_do_nothing:} & \cs{par} \\
-%     |space| & \cs{par} & \cs{space} \\
-%     |space,nopar| & \cs{space} & \cs{par} \\
-%     |nopar,space| & \cs{prg_do_nothing:} & \cs{space} \\
-%     \bottomrule
-%   \end{tabularx}
-% \end{table}
 % 
 % \subsection{User commands}
 % \DescribeMacro{\lipsum}\DescribeMacro{\lipsum*}
@@ -189,7 +144,7 @@
 % \end{quote}
 % \cs{lipsum} (and \cs{lipsum*}) uses a \meta{range} as input. A \meta{range}
 % consists either of a single \meta{number} or two numbers separated by a dash
-% (|-|) hyphen, as in
+% (|-|), as in
 % \meta{number_1}-\meta{number_2}. While syntactically correct, 
 % \cs{lipsum} (and related commands) might fail if $\meta{number_2} <=
 % \meta{number_1}$.
@@ -417,7 +372,7 @@
 %  future.
 %    \begin{macrocode}
 \cs_new:Nn \lipsum_nostar_terminator: { \par }
-\cs_new:Nn \lipsum_star_terminator: { \prg_do_nothing: }     
+\cs_new:Nn \lipsum_star_terminator: { \space }     
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\lipsum_get_non_terminated_par:n,
@@ -478,13 +433,13 @@
 %   a new group, hence, to keep things local, it should be called from within
 %   a group. 
 %    \begin{macrocode}
-\cs_new:Npn \lipsum_range_to_tokenlist:n #1 {
+\cs_new:Npn \lipsum_range_to_tokenlist:VV #1#2 {
     \tl_clear:N \l__lipsum_pars_tl
     \lipsum_parse_range:x{#1}
     \int_step_function:nnnN
-      { \g__lipsum_ugly_parse_range_start_int }
+      { #1 }
       { \c_one_int } % Just in case I would allow running backwards one day
-      { \g__lipsum_ugly_parse_range_end_int }
+      { #2 }
       \lipsum_add_to_tokenlist:n
 }
 %      
@@ -837,15 +792,12 @@
 % \subsection{Package options, defaults and the \lips\ dummy text}
 %    \begin{macrocode}
 \SetLipsumTerminator{\tex_par:D}
-\SetLipsumStarTerminator{\prg_do_nothing:}
+\SetLipsumStarTerminator{\space}
 
-\DeclareOption{space}{%
-  \SetLipsumStarTerminator{\space}
-}
+
 
 \DeclareOption{nopar}{%
-  % This is not very l3-ish
-  \tex_expandafter:D\SetLipsumTerminator\tex_expandafter:D{\lipsum_star_terminator:}
+  \SetLipsumTerminator{\space}
   \SetLipsumStarTerminator{\tex_par:D}
 }
 \ProcessOptions
