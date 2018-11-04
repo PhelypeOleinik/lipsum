@@ -328,7 +328,7 @@
 % In this sequence, the the results of the regexp which is used to split up
 % paragraphs in sentences is stored.  
 %    \begin{macrocode}
-\seq_new:N \l_lipsum_sentences_seq
+\seq_new:N \l__lipsum_sentences_seq
 %    \end{macrocode}
 % \end{variable}
 % \begin{function}{\lipsum_prg_do_nothing:, \lipsum_par:, \lipsum_space:}
@@ -355,7 +355,32 @@
 \cs_new:Nn \lipsum_star_terminator: { \space }     
 %    \end{macrocode}
 % \end{function}
-% \subsection{Internals}
+% \subsection{Developer interface}
+% \begin{function}{\lipsum_store_as_temp_ints:nn}
+%   \begin{syntax}
+%     \cs{lipsum_store_as_temp_ints:nn}\Arg{number_1}{number_2}
+%   \end{syntax}
+%   \begin{arguments}
+%   \item[\meta{number_1}] A number.
+%   \item[\meta{number_1}] A number or |-NoValue-| as produced by the argument
+%   processing of \pkg{xparse}.
+%   \end{arguments}
+%   Stores \meta{number_1} in \cs{l_tmpa_int}. If \meta{number_2} is
+%   |-NoValue-|, stores \meta{number_1} in \cs{l_tmpb_int}, otherwise stores \meta{number_2} in
+% \cs{l_tmpb_int}.  
+%    \begin{macrocode}
+\cs_new:Npn \lipsum_store_as_temp_ints:nn #1#2{
+  \int_set:Nn\l_tmpa_int{#1}
+  \IfNoValueTF{#2}
+  {
+    \int_set:Nn\l_tmpb_int{#1}
+  }
+  {
+    \int_set:Nn\l_tmpb_int{#2}
+  }
+}
+%    \end{macrocode}
+% \end{function}
 % \begin{function}{\lipsum_get_non_terminated_par:n,
 %   \lipsum_get_terminated_par:n}
 % These two commands are used to retrieve paragraph \meta{number} from the
@@ -463,13 +488,13 @@
 
 %    \end{macrocode}
 % Next, a regexp is used to split the paragraphs into sentences. The result is
-% stored in \cs{l_lipsum_sentences_seq}.
+% stored in \cs{l__lipsum_sentences_seq}.
 %    \begin{macrocode}
 
       \regex_split:nxN
         { \. }
         {\tl_use:N\l__lipsum_pars_tl}
-        \l_lipsum_sentences_seq       
+        \l__lipsum_sentences_seq       
 
 %    \end{macrocode}
 % Now, we only need to put the sentences within \meta{sentence range} into
@@ -485,10 +510,10 @@
 % is at least more readable, I think.
 %    \begin{macrocode}
 
-  \int_set:Nn\l_tmpa_int{ \seq_count:N\l_lipsum_sentences_seq }
+  \int_set:Nn\l_tmpa_int{ \seq_count:N\l__lipsum_sentences_seq }
 
 %    \end{macrocode}
-% The last element of \cs{l_lipsum_sentences_seq} is empty since the last
+% The last element of \cs{l__lipsum_sentences_seq} is empty since the last
 % sentence ends with a |.|. Thus, I decrease \cs{l_tmpa_int} by one.
 %    \begin{macrocode}
 
@@ -507,7 +532,7 @@
       % something to typeset.
       % Use \l_tmpb_int as loop counter
       \int_zero:N \l_tmpb_int
-      \seq_map_inline:Nn \l_lipsum_sentences_seq
+      \seq_map_inline:Nn \l__lipsum_sentences_seq
       {
         \int_incr:N \l_tmpb_int
         \int_compare:nTF
@@ -659,8 +684,8 @@
 \NewDocumentCommand
   \lipsum{
     s
-    >{\__lipsum_split_argument_expanded{1}{-}}O{\g__lipsum_default_range_tl}
-    >{\__lipsum_split_argument_expanded{1}{-}}o
+    >{\__lipsum_split_argument_expanded:nne{1}{-}}O{\g__lipsum_default_range_tl}
+    >{\__lipsum_split_argument_expanded:nne{1}{-}}o
   }
   {
   \group_begin:
@@ -670,7 +695,8 @@
     \IfNoValueTF{#3}
       {
         \group_begin:
-          \lipsum_range_to_tokenlist:VV #2 % pars are stored in \l__lipsum_pars_tl
+          \lipsum_store_as_temp_ints:nn #2 
+          \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
           \tl_use:N \l__lipsum_pars_tl
         \group_end:
       }
