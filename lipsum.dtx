@@ -739,6 +739,7 @@
 %     \cs{lipsumexp}
 %   \end{syntax}
 %    \begin{macrocode}
+\cs_new:Nn \__lipsum_expanded: {}
 \NewDocumentCommand\unpacklipsum{
   s
   >{\__lipsum_split_argument_expanded:nne{1}{-}}O{\g__lipsum_default_range_tl}
@@ -762,11 +763,16 @@
 %    \end{macrocode}
 % Thus, I use the deprecated low-level \TeX-commands:
 %    \begin{macrocode}
-        \tex_global:D\tex_edef:D\lipsumexp{\tl_use:N\l__lipsum_pars_tl}
-      }
+     %   \tex_global:D\tex_edef:D\lipsumexp{\tl_use:N\l__lipsum_pars_tl}
+     \cs_gset:Nx \__lipsum_expanded: {\tl_use:N\l__lipsum_pars_tl}
+     \cs_new_eq:NN \lipsumexp \__lipsum_expanded:
+     }
       {
         \lipsum_sentences_to_tokenlist:VV{#2}{#3}
-        \tex_global:D\tex_edef:D\lipsumexp{\tl_use:N\l__lipsum_sentences_tl}
+        \cs_gset:Nx \__lipsum_expanded: {\tl_use:N\l__lipsum_pars_tl}
+        \cs_new_eq:NN \lipsumexp \__lipsum_expanded:
+
+        
       }
   \group_end: 
 }
