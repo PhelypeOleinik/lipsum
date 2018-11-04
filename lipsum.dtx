@@ -418,10 +418,10 @@
   %FMi
   % using "x" expansion  in expl3 (and on general input it is like using \edef in 2e)
   % needs a different approach but ... for now ... this lets the test file pass at least :-)
-   \let\@@protect\protect
-   \let\protect\@unexpandable@protect
+ %  \let\@@protect\protect
+ %  \let\protect\@unexpandable@protect
    \tl_put_right:Nx \l__lipsum_pars_tl {\lipsum_get_terminated_par:n{#1}}
-   \restore@protect
+ %  \restore@protect
 }
 %    \end{macrocode}
 % \end{function}
@@ -435,7 +435,7 @@
 %   does not open a new group, hence, to keep things local, it should be
 %   called from within a group.
 %    \begin{macrocode}
-\cs_new:Npn \lipsum_range_to_tokenlist:VV #1#2 {
+\cs_new:Npn \lipsum_range_to_tokenlist:nn #1#2 {
     \tl_clear:N \l__lipsum_pars_tl
     \int_step_function:nnnN
       { #1 }
@@ -443,6 +443,7 @@
       { #2 }
       \lipsum_add_to_tokenlist:n
 }
+\cs_generate_variant:Nn \lipsum_range_to_tokenlist:nn {VV}     
 %      
 %    \end{macrocode}
 % \end{function}
@@ -461,10 +462,9 @@
 }
 %    \end{macrocode}
 % \end{function}
-% \begin{function}{\lipsum_sentences_to_tokenlist:nn}
+% \begin{function}{\lipsum_sentences_to_tokenlist:VV}
 %   \begin{syntax}
-%     \cs{lipsum_sentences_to_tokenlist:nn}\Arg{paragraph range}\Arg{sentence
-%     range}
+%     \cs{lipsum_sentences_to_tokenlist:VV}\Arg{number_1}\Arg{number_2}
 %   \end{syntax}
 % Puts the sentences specified by \meta{sentence range} from the paragraphs
 % specified by \meta{paragraph range} on the token list
@@ -475,23 +475,10 @@
 %
 \cs_new:Npn \lipsum_sentences_to_tokenlist:nn #1#2{
 %    \end{macrocode}
-% First, set the terminator
-%    \begin{macrocode}
-  \cs_set:Nx\lipsum_terminator:{\space}
-
-%      
-%    \end{macrocode}
-% and get the paragraphs by calling \cs{lipsum_range_to_tokenlist:n}
-%    \begin{macrocode}
-
-  \lipsum_range_to_tokenlist:n {#1}
-
-%    \end{macrocode}
 % Next, a regexp is used to split the paragraphs into sentences. The result is
 % stored in \cs{l__lipsum_sentences_seq}.
 %    \begin{macrocode}
-
-      \regex_split:nxN
+   \regex_split:nxN
         { \. }
         {\tl_use:N\l__lipsum_pars_tl}
         \l__lipsum_sentences_seq       
@@ -502,7 +489,6 @@
 % the token list.
 %    \begin{macrocode}
 
-  \lipsum_parse_range:x{#2}
   \tl_clear:N \l__lipsum_sentences_tl
   
 %    \end{macrocode}
@@ -511,7 +497,6 @@
 %    \begin{macrocode}
 
   \int_set:Nn\l_tmpa_int{ \seq_count:N\l__lipsum_sentences_seq }
-
 %    \end{macrocode}
 % The last element of \cs{l__lipsum_sentences_seq} is empty since the last
 % sentence ends with a |.|. Thus, I decrease \cs{l_tmpa_int} by one.
@@ -527,7 +512,7 @@
 %    \begin{macrocode}
 
   \int_compare:nT
-    { \g__lipsum_ugly_parse_range_start_int <= \l_tmpa_int }
+  { #1 <= \l_tmpa_int }
     { % Start is smaller or equal than number of sentences, we have
       % something to typeset.
       % Use \l_tmpb_int as loop counter
@@ -536,14 +521,13 @@
       {
         \int_incr:N \l_tmpb_int
         \int_compare:nTF
-          { \l_tmpb_int > \g__lipsum_ugly_parse_range_end_int }
+          { \l_tmpb_int > #2 }
           { % get out of here
             \seq_map_break:
           }
-          
           {
             \int_compare:nT
-              { \l_tmpb_int >= \g__lipsum_ugly_parse_range_start_int }
+              { \l_tmpb_int >= #1 }
               {
                 \int_compare:nT
                   { \l_tmpb_int <= \l_tmpa_int }
@@ -556,23 +540,23 @@
       }
     }
 }
-
+\cs_generate_variant:Nn\lipsum_sentences_to_tokenlist:nn{VV}
 %    \end{macrocode}
 % \end{function}
-% \begin{function}{lipsum_output_sentences:nn}
-%   Function to output a range of sentences. Calls
-%   \cs{lipsum_sentences_to_tokenlist:nn} in a group and subsequently outputs
-%   \cs{l__lipsum_sentences_tl}.
+% \begin{function}{lipsum_output_sentences:VV}
+%   Function to output a range of sentences between \meta{number_1} and
+%   \meta{number_2}. 
 %   \begin{syntax}
-%   \cs{lipsum_output_sentences:nn}\Arg{paragraph range}\Arg{sentence range}
+%   \cs{lipsum_output_sentences:VV}\Arg{number_1}\Arg{number_2}
 %   \end{syntax}
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_output_sentences:nn #1#2{
   \group_begin:
-    \lipsum_sentences_to_tokenlist:nn {#1} {#2}
+    \lipsum_sentences_to_tokenlist:VV {#1} {#2}
     \tl_use:N \l__lipsum_sentences_tl  
   \group_end:
 }
+\cs_generate_variant:Nn \lipsum_output_sentences:nn {VV}
 %    \end{macrocode}
 % \end{function}
 % 
@@ -692,15 +676,19 @@
     \IfBooleanTF {#1}
       { \cs_set:Nn \lipsum_terminator: \lipsum_star_terminator: }%
       { \cs_set:Nn \lipsum_terminator: \lipsum_nostar_terminator: }%
+      
+    \lipsum_store_as_temp_ints:nn #2
+    \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
+
     \IfNoValueTF{#3}
-      {
-        \group_begin:
-          \lipsum_store_as_temp_ints:nn #2 
-          \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
-          \tl_use:N \l__lipsum_pars_tl
-        \group_end:
-      }
-      {\lipsum_output_sentences:nn{#2}{#3}}
+    {
+      \tl_use:N \l__lipsum_pars_tl
+    }
+    { 
+      \lipsum_store_as_temp_ints:nn #3
+      \lipsum_sentences_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
+      \tl_use:N \l__lipsum_sentences_tl
+    }
   \group_end:
 }
 %    \end{macrocode}
@@ -748,7 +736,7 @@
         \tex_global:D\tex_edef:D\lipsumexp{\tl_use:N\l__lipsum_pars_tl}
       }
       {
-        \lipsum_sentences_to_tokenlist:nn{#2}{#3}
+        \lipsum_sentences_to_tokenlist:VV{#2}{#3}
         \tex_global:D\tex_edef:D\lipsumexp{\tl_use:N\l__lipsum_sentences_tl}
       }
   \group_end: 
