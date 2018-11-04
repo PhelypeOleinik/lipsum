@@ -397,7 +397,8 @@
 % paragraphs were stored in \cs{lipsum@i}, \cs{lipsum@ii}, \ldots.
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_non_terminated_par:n #1{
-  \tl_use:c{c_lipsum_par_ #1  _tl}
+  % \tl_use:c{c_lipsum_par_ #1  _tl}
+  \seq:item:Nn \lipsum_paragraphs_seq{#1}
 }
 
 \cs_new:Npn \lipsum_get_terminated_par:n #1 {
@@ -420,8 +421,9 @@
   % needs a different approach but ... for now ... this lets the test file pass at least :-)
  %  \let\@@protect\protect
  %  \let\protect\@unexpandable@protect
-   \tl_put_right:Nx \l__lipsum_pars_tl {\lipsum_get_terminated_par:n{#1}}
- %  \restore@protect
+   %\tl_put_right:Nx \l__lipsum_pars_tl {\lipsum_get_terminated_par:n{#1}}
+   \tl_put_right:Nn \l__lipsum_pars_tl  {\lipsum_get_terminated_par:n{#1}}
+   % \restore@protect
 }
 %    \end{macrocode}
 % \end{function}
@@ -578,8 +580,10 @@
 % \end{arguments}
 % Implemented as follows:
 %    \begin{macrocode}
+\seq_new:N\lipsum_paragraph_seq
 \NewDocumentCommand\NewLipsumPar{mm}{
   \tl_const:cn{c_lipsum_par_ #1 _tl}{#2}
+  \seq_gput_right:Nn{\lipsum_paragraph_seq}{#2}
 }
 %    \end{macrocode}
 % \end{macro}
