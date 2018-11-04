@@ -442,14 +442,7 @@
 %  \end{syntax}
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_add_to_tokenlist:n #1 {
-  %FMi
-  % using "x" expansion  in expl3 (and on general input it is like using \edef in 2e)
-  % needs a different approach but ... for now ... this lets the test file pass at least :-)
- %  \let\@@protect\protect
- %  \let\protect\@unexpandable@protect
-   %\tl_put_right:Nx \l__lipsum_pars_tl {\lipsum_get_terminated_par:n{#1}}
    \tl_put_right:Nn \l__lipsum_pars_tl  {\lipsum_get_terminated_par:n{#1}}
-   % \restore@protect
 }
 %    \end{macrocode}
 % \end{function}
@@ -560,7 +553,7 @@
                 \int_compare:nT
                   { \l_tmpb_int <= \l_tmpa_int }
                   { % put item (#1) on token list
-                  \tl_put_right:Nx \l__lipsum_sentences_tl
+                  \tl_put_right:Nn \l__lipsum_sentences_tl
                     {##1.}
                   }
               }
