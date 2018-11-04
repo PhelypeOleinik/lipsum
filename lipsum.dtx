@@ -23,7 +23,7 @@
 %<*driver>
 \ProvidesFile{lipsum.dtx}[2018/10/29 v2.0 Access to 150 of Lorem Ipsum dummy text]
 \documentclass{l3doc}
-\usepackage{tabularx, booktabs,lipsum}
+\usepackage{lipsum}
 \usepackage[utf8x]{inputenc}
 \newcommand\opt[1]{\textsf{#1}} % l3doc does not have some markup for package options...
 \newcommand\lips{\emph{Lorem ipsum\ldots}}
@@ -46,7 +46,7 @@
 % text\thanks{Version: 2.0} \thanks{You can find
 % \pkg{lipsum} on github: \url{https://github.com/patta42/lipsum}}}
 % \author{Patrick Happel\thanks{patrick.happel@rub.de}}
-% \date{2018/10/29}
+% \date{\today}
 % \RecordChanges
 % \changes{v1.0}{2004/05/15}{First release}
 % \changes{v1.1}{2011/02/08}{Added support for typesetting dummy text without
@@ -106,6 +106,32 @@
 % documents with true, important, content, I think potentially breaking up old
 % documents is not a big issue here. The changes are:
 % \begin{itemize}
+% \item The package option \opt{nopar} now uses a \cs{space} as terminator,
+% instead of \cs{relax}. 
+% \item The commands \cs{UnpackLipsum} and \cs{UnpackLipsum*} are no longer
+% available. The effect of \cs{UnpackLipsum} now is default for
+% \cs{unpacklipsum} (or \cs{unpacklipsum*}, depending on the package
+% option). The effect of \cs{UnpackLipsum*} can be mimicked by using
+% \cs{noexpand}, as in the following example:
+% \begin{verbatim}
+% \documentclass{article}
+% \usepackage{lipsum,xcolor}
+% \newcommand\foo{}
+% \SetLipsumTerminator{\noexpand\foo}
+% \unpacklipsum
+%
+% \begin{document}
+%
+% \renewcommand\foo{\color{.!75!red}}
+% { \lipsumexp }
+%
+% \newcounter{mycnt}\setcounter{mycnt}{1}
+% \renewcommand\foo{(\themycnt) \stepcounter{mycnt}}
+% \lipsumexp
+%
+% \end{document}
+%
+% \end{verbatim}
 % \item The internal macros \cs{lips@i}, \cs{lips@ii}, \cs{lips@iii} \ldots are no longer
 % available.
 % \item All other internal macros (with one exception)  are no longer available, too.
@@ -398,7 +424,7 @@
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_non_terminated_par:n #1{
   % \tl_use:c{c_lipsum_par_ #1  _tl}
-  \seq:item:Nn \lipsum_paragraphs_seq{#1}
+  \seq_item:Nn \lipsum_paragraph_seq{#1}
 }
 
 \cs_new:Npn \lipsum_get_terminated_par:n #1 {
@@ -720,14 +746,20 @@
 %     \cs{lipsumexp}
 %   \end{syntax}
 %    \begin{macrocode}
-\NewDocumentCommand\unpacklipsum{sO{\g__lipsum_default_range_tl}o}{
+\NewDocumentCommand\unpacklipsum{
+  s
+  >{\__lipsum_split_argument_expanded:nne{1}{-}}O{\g__lipsum_default_range_tl}
+  >{\__lipsum_split_argument_expanded:nne{1}{-}}o
+}
+{
   \group_begin:
     \IfBooleanTF {#1}
       { \cs_set:Nn \lipsum_terminator: \lipsum_star_terminator: }%
       { \cs_set:Nn \lipsum_terminator: \lipsum_nostar_terminator: }%
+    \lipsum_store_as_temp_ints:nn #2
     \IfNoValueTF{#3}
       {
-        \lipsum_range_to_tokenlist:n{#2}
+        \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
 %    \end{macrocode}
 % In the following, I use \cs{tex_global:D} and \cs{tex_edef:D} since I do not
 % know (yet) how to do this using \pkg{expl3}. The following attempt throws an
@@ -747,48 +779,6 @@
 }
 %    \end{macrocode}
 % \end{macro} 
-% \begin{macro}{\UnpackLipsum, \UnpackLipsum*}
-% These two commands are considered deprecated in \pkg{lipsum}2.0 and are only
-% available for backwards compatibility.
-% \begin{syntax}
-%   \cs{UnpackLipsum}\oarg{paragraph range}\\
-%   \cs{UnpackLipsum*}\oarg{paragraph range}\\
-%   ...
-%   \cs{lipsumexp}
-% \end{syntax}
-% Since they are deprecated, they do not have a second optional argument to
-% operate on sentences. \cs{UnpackLipsum} works as \cs{unpacklipsum}, but
-% inserts a \cs{space} at the end of every paragraph. The recommended way to
-% achieve this is to use the package option \opt{space} or to use
-% |\SetLipsumTerminator{\space}|. \cs{UnpackLipsum*} also works as
-% \cs{unpacklipsum}, but inserts the protected and thus not expanded command
-% \cs{lips@par} after every paragraph. The recommended way to achieve this to
-% define your own \cs{protected} command, for example \cs{foo}, and use
-% |\SetLipsumTerminator{\foo}|. 
-%    \begin{macrocode}
-\tex_protected:D\tex_def:D\lips@par{}%
-\NewDocumentCommand\UnpackLipsum{sO{\g__lipsum_default_range_tl}}{%
-  \group_begin:
-  \msg_set:nnnn {lipsum} {DeprecatedCommand} {
-    \string##1\msg_line_context:\\\string##1~is~deprecated.~See~the~
-    documentation~for~further~explanations.
-  }{}
-  
-  \msg_warning:nnnn{lipsum}{DeprecatedCommand}{\UnpackLipsum}{}
-  
-  \IfBooleanTF{#1}
-  {
-    \SetLipsumTerminator{\lips@par}
-    \unpacklipsum[#2]
-  }
-  {
-    \SetLipsumTerminator{\space}
-    \unpacklipsum[#2]
-  }
-  \group_end:
-}
-%    \end{macrocode}
-% \end{macro}
 % \subsection{Package options, defaults and the \lips\ dummy text}
 %    \begin{macrocode}
 \SetLipsumTerminator{\tex_par:D}
