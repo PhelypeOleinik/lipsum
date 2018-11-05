@@ -519,7 +519,6 @@
   \tl_put_right:Nn \l__lipsum_pars_tl  {
     \lipsum_get_non_terminated_par:n{#1}
   }
-  %\tl_show:N\l__@@_par_list_itemend_tl
   \tl_put_right:NV \l__lipsum_pars_tl\l__@@_par_list_itemend_tl
 }
 \cs_generate_variant:Nn \lipsum_add_to_tokenlist:n  { V }
@@ -548,12 +547,6 @@
       \lipsum_add_to_tokenlist:V \l_tmpa_int  
       \int_incr:N\l_tmpa_int
     }
- %    \int_step_function:nnnN
- %     { #1 }
- %     { \c_one_int } % Just in case I would allow running backwards one day
- %     { #2 }
- %     \lipsum_add_to_tokenlist:n
-  \tl_show:N\l__@@_par_list_end_tl
   \tl_put_right:NV\l__lipsum_pars_tl\l__@@_par_list_end_tl
 }
 \cs_generate_variant:Nn \lipsum_range_to_tokenlist:nn {VV}     
@@ -604,16 +597,20 @@
 % end has to be indicated. Since empty elements cannot occur, |..| can be used
 % as end element.
 %    \begin{macrocode}
-  \int_compare:nTF {#2 >= #1}
+  \int_compare:nT {#2 >= #1}
   {
-    
       \__lipsum_put_sentence_on_tokenlist:nnnw
       {#1}
       {#2}
       {1}
       #3 .. \q_stop
   }
-
+  \tl_put_left:NV
+    \l__lipsum_sentences_tl
+    \l__@@_sentence_list_start_tl
+  \tl_put_right:NV
+    \l__lipsum_sentences_tl
+    \l__@@_sentence_list_end_tl
 }
 \cs_generate_variant:Nn\lipsum_sentences_to_tokenlist:nnn{VVf}
 %    \end{macrocode}
@@ -640,34 +637,51 @@
 %    \begin{macrocode}
 
 \cs_new:Npn \__lipsum_put_sentence_on_tokenlist:nnnw #1#2#3#4 . {
-  \tl_if_blank:oTF{#4}
-  {  
-    \use_none_delimit_by_q_stop:w
-    
-  }
-  {
-    \tl_show:N \l_tmpa_tl
-    \int_compare:nNnTF{#1} > {#2}
-    { 
+  \int_compare:nNnTF{#1} > {#2}
+    { % start > end: leave loop
       \use_none_delimit_by_q_stop:w
-     
     }
-    {
-      \int_compare:nNnTF{#3} > {#2}
-      {
-        \use_none_delimit_by_q_stop:w
-      }
-      {
-        \int_compare:nNnF{#3} <  {#1}  % The same as ...nNnT #3 >= #1
-        {
-          \int_compare:nNnT{#3}>{#1}\tl_put_right:Nn \l__lipsum_sentences_tl{\space}
-          \tl_put_right:Nn \l__lipsum_sentences_tl {\tl_trim_spaces:n{#4}.}
+    { % start <= end: perform loop
+      \tl_if_blank:oTF{#4}
+        { % Argument #4 blank. Should be from the .. in the calling macro.
+          % End reached. Leave loop.
+          \use_none_delimit_by_q_stop:w
         }
-        \exp_args:Nnnf \__lipsum_put_sentence_on_tokenlist:nnnw {#1}{#2}{ \int_eval:n{#3+1} }
-      }
-    }
-  }
-}
+        { % Not yet list end
+          \int_compare:nNnTF{#3} > {#2} 
+            { % Counter > End: Leave loop 
+              \use_none_delimit_by_q_stop:w
+            }
+            { % Counter <= End: Proceed
+              \int_compare:nT{ #3 >= #1}
+                { % Counter >= Start: Put item on list
+                  \int_compare:nNnT{#3}>{#1}
+                  { % Counter < Start, insert separator
+                    \tl_put_right:NV
+                      \l__lipsum_sentences_tl
+                      \l__@@_sentence_list_itemseparator_tl
+                  } % End Counter < Start true
+                  % Put item on list  
+                  \tl_put_right:NV
+                    \l__lipsum_sentences_tl
+                    \l__@@_sentence_list_itemstart_tl
+                  \tl_put_right:No
+                    \l__lipsum_sentences_tl
+                    {\tl_trim_spaces:n{#4}.}
+                  \tl_put_right:NV
+                    \l__lipsum_sentences_tl
+                    \l__@@_sentence_list_itemend_tl
+                } % End Counter >= Start: Put item on list
+                % Call loop again  
+                \exp_args:Nnnf
+                  \__lipsum_put_sentence_on_tokenlist:nnnw
+                  {#1}
+                  {#2}
+                  { \int_eval:n{#3+1} }
+            } % End Counter > Start: Proceed
+        } % End Not yet list end
+    } % End Start > End: Perform loop
+} % End definition
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{lipsum_output_sentences:VV}
@@ -680,7 +694,7 @@
 \cs_new:Npn \lipsum_output_sentences:nn #1#2{
   \group_begin:
     \lipsum_sentences_to_tokenlist:VV {#1} {#2}
-    \tl_use:N \l__lipsum_sentences_tl  
+    (output~sentences)\tl_use:N \l__lipsum_sentences_tl  
   \group_end:
 }
 \cs_generate_variant:Nn \lipsum_output_sentences:nn {VV}
@@ -1061,6 +1075,75 @@
 % inserted after each paragraph (only if called without the second optional
 % argument).
 %    \begin{macrocode}
+\cs_new:Npn \__@@_set_surrounding_tokens_star:
+  {
+    \tl_set_eq:NN
+      \l__@@_par_list_start_tl
+      \l__@@_par_list_start_star_tl
+    \tl_set_eq:NN
+      \l__@@_par_list_end_tl
+      \l__@@_par_list_end_star_tl
+    \tl_set_eq:NN
+      \l__@@_par_list_itemseparator_tl
+      \l__@@_par_list_itemseparator_star_tl
+    \tl_set_eq:NN
+      \l__@@_par_list_itemstart_tl
+      \l__@@_par_list_itemstart_star_tl
+    \tl_set_eq:NN
+      \l__@@_par_list_itemend_tl
+      \l__@@_par_list_itemend_star_tl
+
+    \tl_set_eq:NN
+      \l__@@_sentence_list_start_tl
+      \l__@@_sentence_list_start_star_tl
+    \tl_set_eq:NN
+      \l__@@_sentence_list_end_tl
+      \l__@@_sentence_list_end_star_tl
+    \tl_set_eq:NN
+      \l__@@_sentence_list_itemseparator_tl
+      \l__@@_sentence_list_itemseparator_star_tl
+    \tl_set_eq:NN
+      \l__@@_sentence_list_itemstart_tl
+      \l__@@_sentence_list_itemstart_star_tl
+    \tl_set_eq:NN
+      \l__@@_sentence_list_itemend_tl
+      \l__@@_sentence_list_itemend_star_tl
+  }
+\cs_new:Npn \__@@_set_surrounding_tokens_nostar:
+  {
+    \tl_set_eq:NN
+      \l__@@_par_list_start_tl
+      \l__@@_par_list_start_nostar_tl
+    \tl_set_eq:NN
+      \l__@@_par_list_end_tl
+      \l__@@_par_list_end_nostar_tl
+    \tl_set_eq:NN
+      \l__@@_par_list_itemseparator_tl
+      \l__@@_par_list_itemseparator_nostar_tl
+    \tl_set_eq:NN
+      \l__@@_par_list_itemstart_tl
+      \l__@@_par_list_itemstart_nostar_tl
+    \tl_set_eq:NN
+      \l__@@_par_list_itemend_tl
+      \l__@@_par_list_itemend_nostar_tl
+
+    \tl_set_eq:NN
+      \l__@@_sentence_list_start_tl
+      \l__@@_sentence_list_start_nostar_tl
+    \tl_set_eq:NN
+      \l__@@_sentence_list_end_tl
+      \l__@@_sentence_list_end_nostar_tl
+    \tl_set_eq:NN
+      \l__@@_sentence_list_itemseparator_tl
+      \l__@@_sentence_list_itemseparator_nostar_tl
+    \tl_set_eq:NN
+      \l__@@_sentence_list_itemstart_tl
+      \l__@@_sentence_list_itemstart_nostar_tl
+    \tl_set_eq:NN
+      \l__@@_sentence_list_itemend_tl
+      \l__@@_sentence_list_itemend_nostar_tl
+
+  }
 
 \NewDocumentCommand
   \lipsum{
@@ -1071,29 +1154,28 @@
   {
     \group_begin:
       \lipsum_store_as_temp_ints:nn #2
+      \IfBooleanTF {#1}
+        {
+          \__@@_set_surrounding_tokens_star:
+        }
+        {
+          \__@@_set_surrounding_tokens_nostar:
+        }
+
       \IfNoValueTF{#3}
       {
-        \IfBooleanTF {#1}
-          { % this could be separated in another function 
-            \tl_set_eq:NN \l__@@_par_list_start_tl \l__@@_par_list_start_star_tl
-            \tl_set_eq:NN \l__@@_par_list_end_tl \l__@@_par_list_end_star_tl
-            \tl_set_eq:NN \l__@@_par_list_itemseparator_tl\l__@@_par_list_itemseparator_star_tl
-            \tl_set_eq:NN \l__@@_par_list_itemstart_tl\l__@@_par_list_itemstart_star_tl
-            \tl_set_eq:NN \l__@@_par_list_itemend_tl\l__@@_par_list_itemend_star_tl
-          }
-          {
-            \tl_set_eq:NN \l__@@_par_list_start_tl \l__@@_par_list_start_nostar_tl
-            \tl_set_eq:NN \l__@@_par_list_end_tl \l__@@_par_list_end_nostar_tl
-            \tl_set_eq:NN \l__@@_par_list_itemseparator_tl\l__@@_par_list_itemseparator_nostar_tl
-            \tl_set_eq:NN \l__@@_par_list_itemstart_tl\l__@@_par_list_itemstart_nostar_tl
-            \tl_set_eq:NN \l__@@_par_list_itemend_tl\l__@@_par_list_itemend_nostar_tl
-          }
-        \tl_show:n\l__@@_par_list_end_tl
         \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
         \tl_use:N \l__lipsum_pars_tl
       }
       {
-        \cs_set:Nn \lipsum_terminator: {\space}
+        % To get a parsable paragraph list, we have to remove all funny
+        % tokens. Just separate paragraphs by \space.
+        \tl_set:No\l__@@_par_list_itemseparator_tl{\space}
+        \tl_set:No\l__@@_par_list_item_start_tl{}
+        \tl_set:No\l__@@_par_list_item_end_tl{}
+        \tl_set:No\l__@@_par_list_start_tl{}
+        \tl_set:No\l__@@_par_list_end_tl{}
+        
         \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
         \lipsum_store_as_temp_ints:nn #3
         \cs_gset_nopar:Nx
@@ -1207,6 +1289,7 @@
   \RestoreParList
   \RestoreSentenceList
 }
+\RestoreAll
 \ExplSyntaxOff
 \SetLipsumDefault{1-7}
  %{1}
