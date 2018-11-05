@@ -515,7 +515,7 @@
   \int_compare:nTF {#2 >= #1}
   {
     
-      \__lipsum_put_sentence_on_tokenlist:nw
+      \__lipsum_put_sentence_on_tokenlist:nnnw
       {#1}
       {#2}
       {1}
@@ -526,7 +526,7 @@
 \cs_generate_variant:Nn\lipsum_sentences_to_tokenlist:nnn{VVf}
 %    \end{macrocode}
 % \end{function}
-% \begin{function}{\__lipsum_put_sentence_on_tokenlist:nw}
+% \begin{function}{\__lipsum_put_sentence_on_tokenlist:nnnw}
 %   \begin{syntax}
 %     \cs{__lipsum_put_sentence_on_tokenlist:nnnw}\Arg{start}\Arg{end}\Arg{current}\Arg{sentences_tl}
 %   \end{syntax}
@@ -547,7 +547,7 @@
 % less. 
 %    \begin{macrocode}
 
-\cs_new:Npn \__lipsum_put_sentence_on_tokenlist:nw #1#2#3#4 . {
+\cs_new:Npn \__lipsum_put_sentence_on_tokenlist:nnnw #1#2#3#4 . {
   \tl_if_blank:oTF{#4}
   {  
     \use_none_delimit_by_q_stop:w
@@ -571,7 +571,7 @@
           \int_compare:nNnT{#3}>{#1}\tl_put_right:Nn \l__lipsum_sentences_tl{\space}
           \tl_put_right:Nn \l__lipsum_sentences_tl {\tl_trim_spaces:n{#4}.}
         }
-        \exp_args:Nnnf \__lipsum_put_sentence_on_tokenlist:nw {#1}{#2}{ \int_eval:n{#3+1} }
+        \exp_args:Nnnf \__lipsum_put_sentence_on_tokenlist:nnnw {#1}{#2}{ \int_eval:n{#3+1} }
       }
     }
   }
