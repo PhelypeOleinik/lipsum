@@ -542,7 +542,7 @@
     {\l_tmpa_int} > {#2}
     {
       \int_compare:nNnT
-        \l_tmpa_int > 1
+        \l_tmpa_int > #1
         { \tl_put_right:NV\l__lipsum_pars_tl\l__@@_par_list_itemseparator_tl }
       \lipsum_add_to_tokenlist:V \l_tmpa_int  
       \int_incr:N\l_tmpa_int
@@ -1145,6 +1145,16 @@
 
   }
 
+\cs_new:Nn \__@@_ensure_parsable_output:
+  {
+    % To get a parsable paragraph list, we have to remove all funny
+    % tokens. Just separate paragraphs by \space.
+    \tl_set:No\l__@@_par_list_itemseparator_tl{\space}
+    \tl_set:No\l__@@_par_list_item_start_tl{}
+    \tl_set:No\l__@@_par_list_item_end_tl{}
+    \tl_set:No\l__@@_par_list_start_tl{}
+    \tl_set:No\l__@@_par_list_end_tl{}
+  }  
 \NewDocumentCommand
   \lipsum{
     s
@@ -1168,14 +1178,7 @@
         \tl_use:N \l__lipsum_pars_tl
       }
       {
-        % To get a parsable paragraph list, we have to remove all funny
-        % tokens. Just separate paragraphs by \space.
-        \tl_set:No\l__@@_par_list_itemseparator_tl{\space}
-        \tl_set:No\l__@@_par_list_item_start_tl{}
-        \tl_set:No\l__@@_par_list_item_end_tl{}
-        \tl_set:No\l__@@_par_list_start_tl{}
-        \tl_set:No\l__@@_par_list_end_tl{}
-        
+        \__@@_ensure_parsable_output:
         \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
         \lipsum_store_as_temp_ints:nn #3
         \cs_gset_nopar:Nx
@@ -1215,30 +1218,46 @@
 %   \end{syntax}
 %    \begin{macrocode}
 \cs_new:Nn \__lipsum_expanded: {}
-\NewDocumentCommand\unpacklipsum{
-  s
-  >{\__lipsum_split_argument_expanded:nne{1}{-}}O{\g_lipsum_default_range_tl}
-  >{\__lipsum_split_argument_expanded:nne{1}{-}}o
-}
-{
-  \group_begin:
-    \IfBooleanTF {#1}
-      { \cs_set:Nn \lipsum_terminator: \lipsum_star_terminator: }%
-      { \cs_set:Nn \lipsum_terminator: \lipsum_nostar_terminator: }%
-    \lipsum_store_as_temp_ints:nn #2
+\NewDocumentCommand
+  \unpacklipsum
+  {
+    s
+    >{\__lipsum_split_argument_expanded:nne{1}{-}}O{\g_lipsum_default_range_tl}
+    >{\__lipsum_split_argument_expanded:nne{1}{-}}o
+  }
+  {
+   
+    \group_begin:
+      \lipsum_store_as_temp_ints:nn #2
+      \IfBooleanTF {#1}
+        {
+          \__@@_set_surrounding_tokens_star:
+        }
+        {
+          \__@@_set_surrounding_tokens_nostar:
+        }
     \IfNoValueTF{#3}
       {
         \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
         \cs_gset:Nx \__lipsum_expanded: {\tl_use:N\l__lipsum_pars_tl}
         \cs_gset_eq:NN \lipsumexp \__lipsum_expanded:
-     }
+      }
       {
-        \lipsum_sentences_to_tokenlist:VV{#2}{#3}
-        \cs_gset:Nx \__lipsum_expanded: {\tl_use:N\l__lipsum_pars_tl}
+        \__@@_ensure_parsable_output:
+        \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
+        \cs_gset_nopar:Nx
+          \__@@_expanded_paragraphs_terminated_with_space:
+          {\tl_use:N\l__lipsum_pars_tl}
+        \lipsum_store_as_temp_ints:nn #3
+        \lipsum_sentences_to_tokenlist:VVf
+          \l_tmpa_int
+          \l_tmpb_int
+          \__@@_expanded_paragraphs_terminated_with_space:
+        \cs_gset:Nx \__lipsum_expanded: {\tl_use:N\l__lipsum_sentences_tl}
         \cs_gset_eq:NN \lipsumexp \__lipsum_expanded:
       }
-  \group_end: 
-}
+    \group_end: 
+  }
 %    \end{macrocode}
 % \end{macro} 
 % \subsection{Package options, defaults and the \lips\ dummy text}
