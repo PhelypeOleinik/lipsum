@@ -23,9 +23,87 @@
 %<*driver>
 \ProvidesFile{lipsum.dtx}[2018/10/29 v2.0 Access to 150 of Lorem Ipsum dummy text]
 \documentclass{l3doc}
-\usepackage{lipsum}
+\usepackage[a4paper,
+  top=2cm, left=8.8cm, right=2cm, bottom=3cm,
+  marginparwidth=6.3cm, marginparsep=.5cm,
+]{geometry}
+\newlength\fullmargin
+\setlength\fullmargin\marginparwidth
+\addtolength\fullmargin\marginparsep
+\usepackage{mdframed}
+\mdfdefinestyle{expl}{%
+  backgroundcolor=black!5!white,
+  linewidth=0pt,
+  middlelinewidth=0pt
+}
+\newmdenv[style=expl]{explbox}
+  
+\newmdenv[%
+  style=expl,
+  subtitlebackgroundcolor=yellow!5!white,
+  frametitlebackgroundcolor=yellow!5!white,
+  frametitle={Code},
+]  {exploutputbox}  
+
+\usepackage{lipsum,multicol}
+\makeatletter
+\newcommand\@subtitle{}
+\newcommand\subtitle[1]{%
+  \renewcommand\@subtitle{#1}}
+  \renewcommand\maketitle[1]{
+  \noindent
+  \hspace{-\fullmargin}%
+  \begin{minipage}{\textwidth+\fullmargin}  
+    \renewcommand\thefootnote{\fnsymbol{footnote}}
+    \let\thanks\footnote
+    {
+      \centering
+      {\LARGE \@title}\\[.8\baselineskip]
+      {\LARGE \@subtitle}\\[2\baselineskip]
+      {\Large \@author}\\[\baselineskip]
+      {\Large \@date}\\[\baselineskip]
+    }
+    \ifx\\#1\\\else
+      \begin{multicols}{2}[%
+        \subsection*{\hfill\abstractname\hfill\null}]
+        \setlength{\columnsep}{.5cm}%
+        #1
+      \end{multicols}
+    \fi
+  \end{minipage}
+}
+\makeatother
+\newenvironment{wide}{
+ \hspace{-.75\fullmargin}
+ \begin{minipage}{\textwidth+.75\fullmargin}
+}{
+  \end{minipage}
+}
+
+\newenvironment{widefigure}
+{
+  \begin{figure}
+    \begin{wide}
+}
+{
+    \end{wide}
+  \end{figure}
+}
+\newlist{macrolist}{itemize}{1}%
+\setlist[macrolist]{%
+  label=$\triangleright$,
+  labelindent=0cm,
+  itemsep=.15\baselineskip,
+  leftmargin=.75\parindent
+}
 \newcommand\opt[1]{\textsf{#1}} % l3doc does not have some markup for package options...
+\makeatletter
 \newcommand\lips{\emph{Lorem ipsum\ldots}}
+\makeatother
+\renewcommand\topfraction{.85}
+\renewcommand\textfraction{.15}
+\renewcommand\floatpagefraction{.85}
+\emergencystretch 2em
 \begin{document}
   \DocInput{lipsum.dtx}
 \end{document}
@@ -41,9 +119,9 @@
 % </package>
 %   \fi
 %
-% \title{\pkg{lipsum} --\\ Access to 150 paragraphs of Lorem Ipsum dummy
-% text\thanks{Version: 2.0} \thanks{You can find
-% \pkg{lipsum} on github: \url{https://github.com/patta42/lipsum}}}
+%   \title{\pkg{lipsum}}
+% \subtitle{Access to 150 paragraphs of Lorem Ipsum dummy
+% text\thanks{Version: 2.0}}
 % \author{Patrick Happel\thanks{patrick.happel@rub.de}}
 % \date{\today}
 % \RecordChanges
@@ -63,16 +141,17 @@
 % lipsum paragraphs (thanks to Frank Mittelbach).}
 % \changes{v2.0}{2018/10/29}{Rewritten code in \pkg{expl3} syntax.}
 %
-%
-% \maketitle
-% \begin{abstract}\pkg{lipsum} is a \LaTeX{} package that produces dummy text
+% \maketitle{\pkg{lipsum} is a \LaTeX{} package that produces dummy text
 % to be used in test documents or examples. The paragraphs are taken with
 % permission from \url{https://www.lipsum.com/}, thanks to James Wilson for
 % this work. Furthermore, the following people contributed to \pkg{lipsum} by
 % suggesting improvements, correcting bugs or finding typos in the
 % documentation: Florent Chervet, Ulrike Fischer, Vincent Belaïche, Enrico
 % Gregorio, Frank Mittelbach.
-% \end{abstract}
+%
+% \hspace{1em} Please, file bug reports, typos in the documentation or
+% feature requests as an issue on
+% \url{https://github.com/patta42/lipsum/issues}.}
 % \begin{documentation}
 %
 % \section{Quick usage overview}
@@ -87,13 +166,13 @@
 % of the  paragraphs. For example, \verb|\lipsum[4-57]| typesets the paragraphs 4 to
 % 57 and accordingly, \verb|\lipsum[23]| typesets the 23\textsuperscript{rd}
 % paragraph. Using \cs{lipsum} without its optional argument typesets
-% the paragraphs 1--7 of \lips.
+% the paragraphs 1--7 of \lips
 %
 % As of version 2.0, \cs{lipsum} has a second optional argument which allows
 % selecting a range of sentences from the paragraphs. To get the sentences
 % four to eight from paragraphs three to nine, use |\lipsum[3-9][4-8]|.
 %
-% \section{Foreword to Version 2.0}
+% \section{Foreword to Version 2.0}\label{sec:foreword2.0}
 % Version 2.0 of \pkg{lipsum} is a complete (well, nearly complete)  rewrite
 % of the code in \pkg{expl3} 
 % syntax. I have never used \pkg{expl3} before and thus the code might be too
@@ -111,31 +190,31 @@
 % available. The effect of \cs{UnpackLipsum} now is default for
 % \cs{unpacklipsum} (or \cs{unpacklipsum*}, depending on the package
 % option). The effect of \cs{UnpackLipsum*} can be mimicked by using
-% \cs{noexpand}, as in the following example:
+% \cs{LipsumProtect}\Arg{command}, as in the following example:
+% \begin{explbox}
 % \begin{verbatim}
 % \documentclass{article}
 % \usepackage{lipsum,xcolor}
 % \newcommand\foo{}
-% \SetLipsumTerminator{\noexpand\foo}
-% \unpacklipsum
+% \SetLipsumParListItemEnd{\LipsumProtect{\foo}}
 %
 % \begin{document}
-%
-% \renewcommand\foo{\color{.!75!red}}
-% { \lipsumexp }
-%
-% \newcounter{mycnt}\setcounter{mycnt}{1}
-% \renewcommand\foo{(\themycnt) \stepcounter{mycnt}}
-% \lipsumexp
+%   \renewcommand\foo{\color{.!75!red}}
+%   { \lipsumexp } 
+% 
+%   \newcounter{mycnt}\setcounter{mycnt}{1}
+%   \renewcommand\foo{%
+%     (\themycnt)\stepcounter{mycnt}}
+%   \lipsumexp
 %
 % \end{document}
 %
 % \end{verbatim}
-% \item The internal macros \cs{lips@i}, \cs{lips@ii}, \cs{lips@iii} \ldots are no longer
-% available.
-% \item All other internal macros (with one exception)  are no longer available, too.
-% \item When in the previous version a \cs{relax} was used, now a
-%   \cs{prog_do_nothing:} is used.
+% \end{explbox}
+% \item The internal macros \cs{lips@i}, \cs{lips@ii}, \cs{lips@iii}, \ldots,
+%   \cs{lips@cl} are no longer available.
+% \item All other internal macros (with one exception) are no longer available,
+%   too.
 % \end{itemize}
 % 
 %
@@ -144,24 +223,22 @@
 % \section{Usage}
 % \pkg{lipsum} was intended to quickly provide a way to fill a page or two to
 % analyze the page
-% layout%
-%\footnote{\url{https://groups.google.com/d/topic/de.comp.text.tex/oPeLOjkrLfk/discussion}}.
-% While it has grown in the meanwhile and now
-% provides some more advanced features, it still is only intended to quickly
-% provide text. If you want more features, look at the
-% \pkg{blindtext}-package.   
-% \subsection{Package options}
+% layout\footnote{\url{https://groups.google.com/d/topic/de.comp.text.tex/oPeLOjkrLfk/discussion}}.
+% While it has grown in the meanwhile and now provides some more advanced
+% features, it still is only intended to quickly provide text. If you want more
+% features, look at the \pkg{blindtext}-package.
+%
+% \subsection{Package Options}
 % \pkg{lipsum} outputs a range of paragraphs taken from the \lips\ dummy
-% text. The package options control how a single paragraph
+% text. The package option control how a single paragraph
 % of \lips\ is terminated. The default is to terminate a paragaraph with
 % \cs{par}. One option is available to change the default behaviour:
 % \begin{description}
-% \item[\opt{nopar}] Instead of \cs{par}, \cs{space} is used to
+% \item[\opt{nopar}:] Instead of \cs{par}, \cs{space} is used to
 % terminate every paragraph. 
 % \end{description}
 % 
-% 
-% \subsection{User commands}
+% \subsection{User Commands}
 % \DescribeMacro{\lipsum}\DescribeMacro{\lipsum*}
 % \begin{quote}
 %   \cs{lipsum}\oarg{paragraph range}\oarg{sentence range}\\
@@ -169,63 +246,61 @@
 % \end{quote}
 % \cs{lipsum} (and \cs{lipsum*}) uses a \meta{range} as input. A \meta{range}
 % consists either of a single \meta{number} or two numbers separated by a dash
-% (|-|), as in
-% \meta{number_1}-\meta{number_2}. While syntactically correct, 
-% \cs{lipsum} (and related commands) might fail if $\meta{number_2} <=
-% \meta{number_1}$.
+% (|-|), as in \meta{number_1}-\meta{number_2}. While syntactically correct,
+% \cs{lipsum} (and related commands) might fail if
+% $\meta{number_2} < \meta{number_1}$.
 %
 % If used without an argument, \cs{lipsum} outputs the paragraphs 1--7 of
 % \lips\ (as long as the default has not been overwritten, see
 % below). \cs{lipsum} terminates every paragraph depending on the package
-% options as listed in Table~\ref{tab:options}. \cs{lipsum*} does the same, but
-% uses a different termination for each paragraph (also specified in
-% Table~\ref{tab:options}). \emph{As a simplified rule of thumb, \cs{lipsum} prints the
+% option (using \cs{par} is the default). \cs{lipsum*} does the same, but
+% uses a different termination (default is to use a blank space) for each
+% paragraph. \emph{As a simplified rule of thumb, \cs{lipsum} prints the 
 % paragraphs as multiple paragraphs, \cs{lipsum*} prints them as a single
 % paragraph}.
-% To change the range of the paragraphs, specify \oarg{paragraph range}, which
+%
+% To change the range of the paragraphs, specify a \meta{paragraph range}, which
 % can either be a single number, as in |\lipsum[23]| (which will output the
-% 23\textsuperscript{rd} paragraph), or a two numbers separated by a dash, as
-% in |\lipsum*[9-12]|, which will output the paragraphs nine to twelve.
+% 23\textsuperscript{rd} paragraph), or two numbers separated by a dash, as in
+% |\lipsum*[9-12]|, which will output the paragraphs nine to
+% twelve. \pkg{lipsum} provides 150 paragraphs of \lips\, thus |150| is the
+% maximum that should be specified.
 % 
-% \subsection{Outputting sentences instead of paragraphs}
+% \subsection{Outputting Sentences instead of Paragraphs}
 % Starting with \pkg{lipsum} v2.0, \cs{lipsum} and \cs{lipsum*} allow to
 % output sentences of the \lips\ dummy text instead of paragraphs. To retrieve
-% sentences instead of paragraphs, specify \oarg{sentence range}, the second
+% sentences instead of paragraphs, specify a \meta{sentence range} as the second
 % optional argument of \cs{lipsum} and \cs{lipsum*}. Note: To be able to
 % specify a second optional argument, the first optional argument has to be
 % provided and is thus not really optional anymore. Furthermore, it must be
 % set to some \meta{range}-value, using an empty first optional argument is
 % not implemented. As a consequence |\lipsum[][1-3]| will fail.
 %
-% Valid inputs for \oarg{sentence range} are, again, a single number, as in
+% Valid inputs for \meta{sentence range} are, again, a single number, as in
 % |\lipsum[1][1]|, which will output the first sentence of the first paragraph
-% (the famous {\itshape»\lipsum[1][1]«}). |\lipsum*[3-7][7-8]|  will output the seventh and eighth sentence
-% of the paragraphs three to seven.
+% (the famous {\SetLipsumSentenceListEnd{}\itshape»\lipsum[1][1]«}). |\lipsum*[3-7][7-8]| will output the
+% seventh and eighth sentence of the paragraphs three to seven.
 %
 % There are some limitations and remarks on selecting sentences as described
 % in the following:
 % \begin{itemize}
-% \item There is no difference between \cs{lipsum} and \cs{lipsum*} when
-% sentences are output. In both cases, and independent from the package
-% options, a \cs{space} is used to terminate the sentences if they originate
-% from different paragraphs.
-% \item Specifying a \oarg{sentence range} which is outside the number of
-% sentences in the specified \oarg{paragraph range} will not lead to an
-% error. Instead, sentences which are not available are ignored and nothing is
-% output. For example, |\lipsum[104][9-20]| will only output two sentences
-% since paragraph \#104 consists only of 10 sentences. For the same reason,
-% |\lipsum[104][11-20]| will output nothing.
-% \item Be cautious when selecting from a large \oarg{paragraph range}. Due to some
-% internal restrictions, the number of characters (not sentences) in the
-% \oarg{paragraph range} is limited to 32768. If paragraph \#1 is included, the
-% limit is |1-52|. It remains to the user to find out other limits.
-% \item Parsing large \oarg{paragraph range}s takes time. The output of
-% |\lipsum[1][1]| and |\lipsum[1-52][1]| is the same, but the latter takes
-% much longer.
+% \item When sentences are output, they are (by default) separated by
+%   \cs{space}. The difference between \cs{lipsum} and \cs{lipsum*} is the
+%   token that terminates the paragraph of sentences: Without a package option
+%   (and changing the defaults), \cs{lipsum} terminates the sequence of
+%   senetences by \cs{par}, \cs{lipsum*} by \cs{space} and vice versa, if
+%   \opt{nopar} is specified as package option.
+% \item Specifying a \meta{sentence range} which is outside the number of
+%   sentences in the specified \meta{paragraph range} will not lead to an
+%   error. Instead, sentences which are not available are ignored and nothing
+%   is output. For example, |\lipsum[104][9-20]| will only output two
+%   sentences since paragraph \#104 consists only of 10 sentences. For the
+%   same reason, |\lipsum[104][11-20]| will output nothing.
 % \item If you need a lot of sentences, consider the \opt{space} option and
-% |\lipsum[1-150]|.
+%   |\lipsum[1-150]|. This should be faster. 
 % \end{itemize}
-% \section{Advanced or developer macros}
+%
+% \section{Advanced or Developer Macros}
 % To distinguish between macros for users and macros for, for example, package
 % developers, it has been discussed to use different naming schemes. One
 % option is that user level macros are all lowercase, while developer-level
@@ -242,48 +317,207 @@
 % \DescribeMacro{\LipsumPar} To get a single paragraph of the \lips\ dummy
 % text, use |\LipsumPar{8}| (for the eighth paragraph). This is similar to
 % using |\lips@viii| directly in versions prior to \pkg{lipsum}2.0. the
-% difference between |\LipsumPar{8}| and |\lipsum[8]| that the first directly
+% difference between |\LipsumPar{8}| and |\lipsum[8]| is that the first directly
 % accesses the internal macro that stores the corresponding paragraph, while
 % the latter runs the loop that selects the \lips\ paragraphs.
-%
-% \DescribeMacro{\SetLipsumTerminator}\DescribeMacro{\SetLipsumStarTerminator}
-% These two macros require one mandatory argument: The tokens to be inserted
-% after a paragraph of the \lips\ text. \cs{SetLipsumTerminator} specifies the
-% terminator to be inserted when \cs{lipsum} is used,
-% \cs{SetLipsumStarTerminator} specifies the terminator for \cs{lipsum*}. For
-% example, to insert a pilcrow between the paragraphs typeset by \cs{lipsum},
-% specify |\SetLipsumTerminator{¶}| (and use a latex engine that supports
-% UTF-8). 
 %
 % \DescribeMacro{\unpacklipsum} \DescribeMacro{\unpacklipsum*}
 % \DescribeMacro{\lipsumexp} The commands \cs{unpacklipsum} and
 % \cs{unpacklipsum*} work as \cs{lipsum} and  \cs{lipsum*} and have the same
 % two optional arguments, but instead of typesetting the \lips\ paragraphs,
 % the commands store them in the macro \cs{lipsumexp} using \tn{edef}, thus,
-% everything which can be expanded is expanded. The terminators inserted at
-% the end of each paragraph are either as defined by the package options or as
-% specified by \cs{SetLipsumTerminator} and \cs{SetLipsumStarTerminator}.
+% everything which can be expanded is expanded.
+%
+% \subsection{Fine-tuning the output}
+% The output of \cs{lipsum}, whether paragraphs or sentences, can be seen as a
+% \meta{list} of \meta{item}s, where an item is either a paragraph or a
+% sentence. As of version 2.0, \pkg{lipsum} allows to fine-tune which tokens
+% are inserted at the beginning of the \meta{list}, at the end of the
+% \meta{list}, at the beginning and end of each \meta{item} as well as between
+% the single \meta{items}. The resulting list of tokens can be seen in
+% Figure~\ref{fig:tokens}.
+% \begin{widefigure}
+% % { \raggedright
+%   \meta{list_s}\dotfill\cs{SetLipsumParListStart}\Arg{tokens}\\
+%   \hspace*{1em}\meta{item_1_,_s-outer}{\color{gray}\dotfill
+%     \cs{SetLipsumParListOuterItemStart}\Arg{item spec}\Arg{tokens}}\\
+%   \hspace*{2em}\meta{item_s}\dotfill\cs{SetLipsumParListItemStart}\Arg{tokens}\\
+%   \hspace*{3em}\meta{item_1_,_s-inner}{\color{gray}\dotfill
+%     \cs{SetLipsumParListInnerItemStart}\Arg{item spec}\Arg{tokens}}\\
+%   \hspace*{4em}\textbf{\meta{item_1}}\\
+%   \hspace*{3em}\meta{item_1_,_e-inner}{\color{gray}\dotfill
+%     \cs{SetLipsumParListInnerItemEnd}\Arg{item spec}\Arg{tokens}}\\
+%   \hspace*{2em}\meta{item_e}\dotfill\cs{SetLipsumParListItemEnd}\Arg{tokens}\\
+%   \hspace*{1em}\meta{item_1_,_e-outer}{\color{gray}\dotfill
+%     \cs{SetLipsumParListOuterItemEnd}\Arg{item spec}\Arg{tokens}}\\
+%   \meta{item-separator}\dotfill\cs{SetLipsumParListItemSeparator}\Arg{tokens}\\[.5\baselineskip]
+%   \hspace{1em}\ldots\hfill\hfill\hfill $\uparrow$ {\small lists of paragraphs}
+%   $\uparrow$ --- $\downarrow$ {\small
+%   lists of sentences} $\downarrow$\\[.5\baselineskip]
+%   \meta{item-separator}\dotfill\cs{SetLipsumSentenceListItemSeparator}\Arg{tokens}\\
+%   \hspace{1em}\meta{item_N_,_s-outer}{\color{gray}\dotfill
+%     \cs{SetLipsumSentenceListOuterItemStart}\Arg{item spec}\Arg{tokens}}\\
+%   \hspace{2em}\meta{item_s}\dotfill\cs{SetLipsumSentenceListItemStart}\Arg{tokens}\\
+%   \hspace{3em}\meta{item_N_,_s-inner}{\color{gray}\dotfill
+%     \cs{SetLipsumSentenceListInnerItemStart}\Arg{item spec}\Arg{tokens}}\\
+%   \hspace*{4em}\textbf{\meta{item_N}}\\
+%   \hspace*{3em}\meta{item_N_,_e-inner}{\color{gray}\dotfill
+%     \cs{SetLipsumSentenceListInnerItemEnd}\Arg{item spec}\Arg{tokens}}\\
+%   \hspace*{2em}\meta{item_e}\dotfill\cs{SetLipsumSentenceListItemEnd}\Arg{tokens}\\
+%   \hspace*{1em}\meta{item_N_,_e-outer}{\color{gray}\dotfill
+%     \cs{SetLipsumSentenceListOuterItemEnd}\Arg{item spec}\Arg{tokens}}\\
+%     \meta{list_e}\dotfill\cs{SetLipsumSentenceListEnd}\Arg{tokens}
+%   }
+%     \begin{multicols}{2}\sffamily\bfseries
+% \caption{Places where additional tokens can be inserted in the output. $N$
+% indicates the last \meta{item}, `\ldots' indicate the same structure as for the
+% first and last \meta{item}. Commands colored gray are not yet implemented. The
+% upper part displays the commands for lists of paragraphs, the lower part for
+% lists of sentences (also indicated by the labelled arrows in the middle). }
+%   \end{multicols}
+% 
+% \label{fig:tokens}
+% \end{widefigure}
+% \DescribeMacro{\SetLipsumParListStart}\DescribeMacro{\SetLipsumParListStart*}
+% \DescribeMacro{\SetLipsumParListEnd}\DescribeMacro{\SetLipsumParListEnd*}
+% \DescribeMacro{\SetLipsumSentenceListStart}\DescribeMacro{\SetLipsumSentenceListStart*}
+% \DescribeMacro{\SetLipsumSentenceListEnd}\DescribeMacro{\SetLipsumSentenceListEnd*}
+% \pkg{lipsum} allows to specify all of the tokens in the list indicated
+% above except for the item-specific inner and outer \meta{items} (shown as
+% \meta{item_N_,_s-outer/inner}, \meta{item_N_,_e-outer/inner} above), which
+% remain to be implemented. 
+%
+% The macros that enable setting these tokens are all available in a normal
+% and in a starred version, they apply to \cs{lipsum} and \cs{unpacklipsum} or 
+% \cs{lipsum*} and \cs{unpacklipsum*}, respectively. 
 %
 % 
+% The macro \cs{SetLipsumParListStart}\Arg{tokens} and its starred variant
+% insert \meta{tokens} at the very beginning of the list of paragraphs
+% (\meta{list_s} in Figure~\ref{fig:tokens}). \cs{SetLipsumSentenceListStart}
+% and \cs{SetLipsumSentenceListStart*} do the same for the list of
+% sentences. The corresponding macros that allow to input \meta{tokens} at the
+% very end of the output (\meta{list_e} in Figure~\ref{fig:tokens}) are
+% \cs{SetLipsumParListEnd} (and its starred variant) and
+% \cs{SetLipsumSentenceListEnd} (and its starred variant).
+%
+% As a shorthand, the commands
+% \begin{macrolist}
+%   \item \cs{SetLipsumParListSurrounders}\Arg{start}\Arg{end}\DescribeMacro{\SetLipsumParListSurrounders}
+%   \item \cs{SetLipsumParListSurrounders*}\Arg{start}\Arg{end}\DescribeMacro{\SetLipsumParListSurrounders*}
+%   \item \cs{SetLipsumSentenceListSurrounders}\Arg{start}\Arg{end}\DescribeMacro{\SetLipsumSentenceListSurrounders}
+%   \item \cs{SetLipsumSentenceListSurrounders*}\Arg{start}\Arg{end}\DescribeMacro{\SetLipsumSentenceListSurrounders*}
+% \end{macrolist}
+% are available to set the \meta{tokens} for the start and end position with a
+% single command.
+%
+% \DescribeMacro{\SetLipsumParListItemStart}
+% \DescribeMacro{\SetLipsumParListItemStart*}
+% \DescribeMacro{\SetLipsumParListItemEnd} \DescribeMacro{\SetLipsumParListItemEnd*}
+% \DescribeMacro{\SetLipsumSentenceListItemStart}
+% \DescribeMacro{\SetLipsumSentenceListItemStart*}
+% \DescribeMacro{\SetLipsumSentenceListItemEnd}
+% \DescribeMacro{\SetLipsumSentenceListItemEnd*}
+% To add \meta{tokens} in front of every \meta{item}, the commands
+% \cs{SetLipsumParListItemStart} (and its starred variant) and
+% \cs{SetLipsumSentenceListItemStart} are available. To add tokens after every
+% \meta{item}, the corresponding commands are \cs{SetLipsumParListItemEnd}
+% (and its starred variant) and \cs{SetLipsumSentenceListItemStart} (and its
+% starred variant).
+%
+% Again, there are
+% commands that allow to set a pair of \meta{tokens} to surround every item:
+% \begin{macrolist}
+% \item \cs{SetLipsumParListItemSurrounders}\Arg{start}\Arg{end}\DescribeMacro{\SetLipsumParListItemSurrounders}
+% \item \cs{SetLipsumParListItemSurrounders*}\Arg{start}\Arg{end}\DescribeMacro{\SetLipsumParListItemSurrounders*} 
+% \item \cs{SetLipsumSentenceListItemSurrounders}\Arg{start}\Arg{end}\DescribeMacro{\SetLipsumSentenceListItemSurrounders}
+% \item \DescribeMacro{\SetLipsumSentenceListItemSurrounders*} \cs{SetLipsumSentenceListItemSurrounders*}\Arg{start}\Arg{end}
+%   
+% \end{macrolist}
+% 
+% \DescribeMacro{\SetLipsumParListItemSeparator}
+% \DescribeMacro{\SetLipsumParListItemSeparator*}
+% \DescribeMacro{\SetLipsumSentenceListItemSeparator}
+% \DescribeMacro{\SetLipsumSentenceListItemSeparator*} To insert \meta{tokens}
+% between the single \meta{item}s, the commands
+% \cs{SetLipsumParListItemSeparator} (with its starred variant) and
+% \cs{SetLipsumSentenceListItemSeparator} (also with its starred variant) are
+% available. As can be seen in Figure~\ref{fig:tokens}, these tokens are
+% inserted after the tokens inserted by |\...ListItemEnd| and before the
+% following |\...ListItemStart|.
+%
+% \DescribeMacro{\LipsumProtect} To insert \meta{tokens} that survive the
+% expansion by \cs{unpacklipsum} and \cs{unpacklipsum*}, \pkg{lipsum} provides
+% \cs{LipsumProtect}\Arg{tokens}. See the example in the
+% \nameref{sec:foreword2.0}.
+%
+% The macros introduced above can be used to turn the output of \cs{lipsum},
+% for example, into a list, as exemplified in Figure~\ref{fig:list-expl}.
+% \begin{widefigure}
+% \begin{exploutputbox}
+%   \begin{verbatim}
+% 
+% \SetLipsumSentenceListSurrounders{\begin{itemize}}{\end{itemize}}
+% \SetLipsumSentenceListItemStart{\item}
+% \lipsum[10][1-2]
+%   \end{verbatim}
+%   \mdfsubtitle{Output}
+% \SetLipsumSentenceListSurrounders{\begin{itemize}}{\end{itemize}}
+% \SetLipsumSentenceListItemStart{\item}
+% \lipsum[10][1-2]
+% \end{exploutputbox}
+%   \sffamily\bfseries
+%   \caption{Turning the output of \cs{lipsum} into a list using inserted tokens.}
+%   \label{fig:list-expl}
+% \end{widefigure}
+% As can be seen from the gray commands in Figure~\ref{fig:tokens}, commands
+% to surround a specific \meta{item} are not yet implemented. One
+% way to access the second \meta{item} in a list is shown in
+% Figure~\ref{fig:seconditem}, but other, maybe more elegant ways are
+% conceivable.
+%
+% To quickly reset the \meta{tokens} inserted by the above commands to their
+% default values, \pkg{lipsum} provides \DescribeMacro{\LipsumRestoreParList}
+% \cs{LipsumRestoreParList} (for lists of paragraphs),
+% \DescribeMacro{\LipsumRestoreSentenceList} \cs{LipsumRestoreSentenceList} (for lists of
+% sentences) and \DescribeMacro{\LipsumRestoreAll} \cs{LipsumRestoreAll} for
+% both lists.   
+% \begin{widefigure}
+% \begin{exploutputbox}
+%   \begin{verbatim}
+% \newcounter{itemcount}
+% \setcounter{itemcount}{0}
+% \SetLipsumParListItemSurrounders{%
+%    \stepcounter{itemcount}
+%    \ifnum\value{itemcount}=2\begingroup\sffamily\fi
+% }{
+%    \ifnum\value{itemcount}=2\endgroup\fi
+% }
+% \lipsum[110-112]
+%   \end{verbatim}
+%   \mdfsubtitle{Output}
+% \newcounter{itemcount}
+% \setcounter{itemcount}{0}
+% \SetLipsumParListItemSurrounders{%
+%    \stepcounter{itemcount}
+%    \ifnum\value{itemcount}=2\begingroup\sffamily\fi
+% }{
+%    \ifnum\value{itemcount}=2\endgroup\fi
+%  }
+% \setlength{\parindent}{1em}\small
+% \lipsum[110-112]
+% \end{exploutputbox}\sffamily\bfseries
+% \caption{Styling the second \meta{item} of a list.}\label{fig:seconditem}
+% \end{widefigure}
 % \end{documentation}
 % \begin{implementation}
-%   \section{\pkg{lipsum} implementation}
+%   \section{\pkg{lipsum} Implementation}
 %    \begin{macrocode}
 %<*package>
 %<@@=lipsum>
 %    \end{macrocode}
 %
-%     \subsection{Command variants}
-%
-% \begin{function}{ \regex_split:nxN }
-% We need a regexp which expands its second input argument. Can be easily
-% generated by |\cs_generate_variant:Nn|
-%    \begin{macrocode}
-\cs_generate_variant:Nn \regex_split:nnN { nxN }
-\cs_generate_variant:Nn \regex_split:nnNTF { nxNTF }
-%    \end{macrocode}
-% \end{function}
-% \begin{function}{\__lipsum_split_argument_expanded:nne ,\__xparse_split_argument:nne}
+% \subsection{Command Variants}
 % To parse \meta{range}-like arguments, that is, arguments consisting either
 % of a single number, as in |8|, or of a range, as in |9-11|, we use the
 % argument processor \cs{SplitArgument} of \pkg{xparse}. However, the argument
@@ -293,40 +527,41 @@
 % 2018-10-17). Thus, we have to touch \pkg{xparse}'s internal and generate
 % such a variant. We copy it to a \pkg{lipsum} internal variant to avoid name
 % clashes with future versions of \pkg{xparse}.
+% \begin{function}{\__lipsum_split_argument_expanded:nne
+%   ,\__xparse_split_argument:nne}
 %   \begin{syntax}
-%   \cs{__lipsum_split_argument_expanded:nne}\Arg{number}\Arg{token}\Arg{argument}
-% \end{syntax}
+%     \cs{__lipsum_split_argument_expanded:nne}\Arg{number}\Arg{token}\Arg{argument}
+%   \end{syntax}
 % \begin{arguments}
-%   \item[\meta{number}] See documentation for \cs{SplitArgument} in
+%   \item See documentation for \cs{SplitArgument} in
 %     \pkg{xparse}
-%   \item[\meta{token}] See documentation for \cs{SplitArgument} in
+%   \item See documentation for \cs{SplitArgument} in
 %     \pkg{xparse}
-%   \item[\meta{argument}] The argument fed to the function, which is expanded
+%   \item The argument fed to the function, which is expanded
 %   in this case 
 % \end{arguments}
 %    \begin{macrocode}
 \cs_generate_variant:Nn \__xparse_split_argument:nnn {nne}
-\cs_new_eq:NN \__lipsum_split_argument_expanded:nne \__xparse_split_argument:nne
+\cs_new_eq:NN
+  \__lipsum_split_argument_expanded:nne
+  \__xparse_split_argument:nne
 %    \end{macrocode}
 % \end{function}
 % 
 % \subsection{Messages}
 % Starting from \pkg{lipsum}2.0, some commands from previous versions are
-% considered deprecated and issue a warning when used. This is a message
-% corresponding message (Does
-% anyone know if \cls{l3doc} has a suitable environment for this?)
+% considered deprecated and issue a warning when used. This is the
+% corresponding message.
 %    \begin{macrocode}
 \msg_new:nnnn{lipsum}{DeprecatedCommand}
-{\string#1\msg_line_context:\\\string#1~should~be~substituted~by~\string#2.}
-{The~command~\string#1~is~deprecated~and~should~be~substituted~by~
-  \string#2.~\string#1~might~not~be~available~in~a~future~version~of~lipsum.sty.}
+{\string#1\msg_line_context:\\
+  \string#1~should~be~substituted~by~\string#2.}
+{ The~command~\string#1~is~deprecated~
+  and~should~be~substituted~by~
+  \string#2.~
+  \string#1~might~not~be~available~in~a~
+  future~version~of~lipsum.sty.}
 %    \end{macrocode}
-% According to a StackExchange
-% posting\footnote{\url{https://tex.stackexchange.com/questions/285551/how-to-let-an-xparse-defined-command}},
-% the \LaTeX3 team does not support any \tn{let} constructs for document level
-% command. Thus, I do not introduce a general macro to generate deprecated
-% commands. Instead, I will define them using \cs{NewDocumentCommand}.
-% 
 % 
 % \subsection{Variables}
 % \begin{variable}{\g_lipsum_paragraph_seq}
@@ -362,111 +597,103 @@
 \seq_new:N \l__lipsum_sentences_seq
 %    \end{macrocode}
 % \end{variable}
-% \begin{variable}{\l__@@_par_list_start_nostar_tl,
-% \l__@@_par_list_end_nostar_tl, \l__@@_sentence_list_start_nostar_tl,
-% \l__@@_sentence_list_end_nostar_tl, \l__@@_par_list_start_star_tl,
-% \l__@@_par_list_end_star_tl, \l__@@_sentence_star_list_start_tl,
-% \l__@@_sentence_star_list_end_tl} 
+% \begin{variable}{\l_@@_par_list_start_nostar_tl,
+% \_l@@_par_list_end_nostar_tl, \l_@@_sentence_list_start_nostar_tl,
+% \l_@@_sentence_list_end_nostar_tl, \l_@@_par_list_start_star_tl,
+% \l_@@_par_list_end_star_tl, \l_@@_sentence_star_list_start_tl,
+% \l_@@_sentence_star_list_end_tl} 
 % Next are the variables used to store the tokens between the list items for
 % lists of paragraph and lists of sentences. 
 % 
 %    \begin{macrocode}
-\tl_new:N \l__@@_par_list_start_nostar_tl
-\tl_new:N \l__@@_par_list_end_nostar_tl
-\tl_new:N \l__@@_sentence_list_start_nostar_tl
-\tl_new:N \l__@@_sentence_list_end_nostar_tl
+\tl_new:N \l_@@_par_list_start_nostar_tl
+\tl_new:N \l_@@_par_list_end_nostar_tl
+\tl_new:N \l_@@_sentence_list_start_nostar_tl
+\tl_new:N \l_@@_sentence_list_end_nostar_tl
 
-\tl_new:N \l__@@_par_list_start_star_tl
-\tl_new:N \l__@@_par_list_end_star_tl
-\tl_new:N \l__@@_sentence_list_start_star_tl
-\tl_new:N \l__@@_sentence_list_end_star_tl
+\tl_new:N \l_@@_par_list_start_star_tl
+\tl_new:N \l_@@_par_list_end_star_tl
+\tl_new:N \l_@@_sentence_list_start_star_tl
+\tl_new:N \l_@@_sentence_list_end_star_tl
 %    \end{macrocode}
 % \end{variable}
-% \begin{variable}{\l__@@_par_list_itemseparator_nostar_tl,
-% \l__@@_sentence_list_itemseparator_nostar_tl,
-% \l__@@_par_list_itemseparator_star_tl,
-% \l__@@_sentence_list_itemseparator_star_tl}
+% \begin{variable}{\l_@@_par_list_itemseparator_nostar_tl,
+% \l_@@_sentence_list_itemseparator_nostar_tl,
+% \l_@@_par_list_itemseparator_star_tl,
+% \l_@@_sentence_list_itemseparator_star_tl}
 % The variables to store the tokens that separate the single items of the
 % paragraph or sentence list.
 %    \begin{macrocode}
-\tl_new:N \l__@@_par_list_itemseparator_nostar_tl
-\tl_new:N \l__@@_sentence_list_itemseparator_nostar_tl
+\tl_new:N \l_@@_par_list_itemseparator_nostar_tl
+\tl_new:N \l_@@_sentence_list_itemseparator_nostar_tl
 
-\tl_new:N \l__@@_par_list_itemseparator_star_tl
-\tl_new:N \l__@@_sentence_list_itemseparator_star_tl
+\tl_new:N \l_@@_par_list_itemseparator_star_tl
+\tl_new:N \l_@@_sentence_list_itemseparator_star_tl
 
 %    \end{macrocode}
 % \end{variable}
-% \begin{variable}{\l__@@_par_list_itemstart_nostar_tl,
-% \l__@@_par_list_itemend_nostar_tl, \l__@@_sentence_list_itemstart_nostar_tl,
-% \l__@@_sentence_list_itemend_nostar_tl, \l__@@_par_list_itemstart_star_tl,
-% \l__@@_par_list_itemend_star_tl, \l__@@_sentence_list_itemstart_star_tl, \l__@@_sentence_list_itemend_star_tl}
+% \begin{variable}{\l_@@_par_list_itemstart_nostar_tl,
+% \l_@@_par_list_itemend_nostar_tl, \l_@@_sentence_list_itemstart_nostar_tl,
+% \l_@@_sentence_list_itemend_nostar_tl, \l_@@_par_list_itemstart_star_tl,
+% \l_@@_par_list_itemend_star_tl, \l_@@_sentence_list_itemstart_star_tl,
+% \l_@@_sentence_list_itemend_star_tl} 
 % The variables that surround each single item of a paragraph or sentence list.
 %    \begin{macrocode}
-\tl_new:N \l__@@_par_list_itemstart_nostar_tl
-\tl_new:N \l__@@_par_list_itemend_nostar_tl
-\tl_new:N \l__@@_sentence_list_itemstart_nostar_tl
-\tl_new:N \l__@@_sentence_list_itemend_nostar_tl
+\tl_new:N \l_@@_par_list_itemstart_nostar_tl
+\tl_new:N \l_@@_par_list_itemend_nostar_tl
+\tl_new:N \l_@@_sentence_list_itemstart_nostar_tl
+\tl_new:N \l_@@_sentence_list_itemend_nostar_tl
 
-\tl_new:N \l__@@_par_list_itemstart_star_tl
-\tl_new:N \l__@@_par_list_itemend_star_tl
-\tl_new:N \l__@@_sentence_list_itemstart_star_tl
-\tl_new:N \l__@@_sentence_list_itemend_star_tl
+\tl_new:N \l_@@_par_list_itemstart_star_tl
+\tl_new:N \l_@@_par_list_itemend_star_tl
+\tl_new:N \l_@@_sentence_list_itemstart_star_tl
+\tl_new:N \l_@@_sentence_list_itemend_star_tl
 
 %    \end{macrocode}
 % \end{variable}
-% \begin{variable}{\l__@@_par_list_start_tl, 
-% \l__@@_par_list_end_tl,
-% \l__@@_sentence_list_start_tl,
-% \l__@@_sentence_list_end_tl,
-% \l__@@_par_list_itemseparator_tl,
-% \l__@@_sentence_list_itemseparator_tl,
-% \l__@@_par_list_itemstart_tl,
-% \l__@@_par_list_itemend_tl,
-% \l__@@_sentence_list_itemstart_tl,
-% \l__@@_sentence_list_itemend_tl}
+% \begin{variable}{\l_@@_par_list_start_tl, 
+% \l_@@_par_list_end_tl,
+% \l_@@_sentence_list_start_tl,
+% \l_@@_sentence_list_end_tl,
+% \l_@@_par_list_itemseparator_tl,
+% \l_@@_sentence_list_itemseparator_tl,
+% \l_@@_par_list_itemstart_tl,
+% \l_@@_par_list_itemend_tl,
+% \l_@@_sentence_list_itemstart_tl,
+% \l_@@_sentence_list_itemend_tl}
 % These variables store a copy of either the \cs{\meta{name}_star_tl} or
 % \cs{\meta{name}_nostar_tl}, depending on whether the calling function was
 % called with or without a star.  The content of these variables is then used
 % by the functions that generate the \lips\meta{list}.
 %    \begin{macrocode}
-\tl_new:N\l__@@_par_list_start_tl
-\tl_new:N\l__@@_par_list_end_tl
-\tl_new:N\l__@@_sentence_list_start_tl
-\tl_new:N\l__@@_sentence_list_end_tl
-\tl_new:N\l__@@_par_list_itemseparator_tl
-\tl_new:N\l__@@_sentence_list_itemseparator_tl
-\tl_new:N\l__@@_par_list_itemstart_tl
-\tl_new:N\l__@@_par_list_itemend_tl
-\tl_new:N\l__@@_sentence_list_itemstart_tl
-\tl_new:N\l__@@_sentence_list_itemend_tl
+\tl_new:N\l_@@_par_list_start_tl
+\tl_new:N\l_@@_par_list_end_tl
+\tl_new:N\l_@@_sentence_list_start_tl
+\tl_new:N\l_@@_sentence_list_end_tl
+\tl_new:N\l_@@_par_list_itemseparator_tl
+\tl_new:N\l_@@_sentence_list_itemseparator_tl
+\tl_new:N\l_@@_par_list_itemstart_tl
+\tl_new:N\l_@@_par_list_itemend_tl
+\tl_new:N\l_@@_sentence_list_itemstart_tl
+\tl_new:N\l_@@_sentence_list_itemend_tl
 %    \end{macrocode}
 % 
 
 % \end{variable}
-% \begin{function}{\lipsum_nostar_terminator:,\lipsum_star_terminator:} 
-%  These two functions are used to store the terminators for the starred and
-%  non-starred version of \cs{lipsum}. Might be changed to a variable in he
-%  future.
-%    \begin{macrocode}
-\cs_new:Nn \lipsum_nostar_terminator: { \par }
-\cs_new:Nn \lipsum_star_terminator: { \space }     
-%    \end{macrocode}
-% \end{function}
 
 % \subsection{Developer interface}
 % \begin{function}{\lipsum_store_as_temp_ints:nn}
 %   \begin{syntax}
-%     \cs{lipsum_store_as_temp_ints:nn}\Arg{number_1}{number_2}
+%     \cs{lipsum_store_as_temp_ints:nn}\Arg{number_1}\Arg{number_2}
 %   \end{syntax}
 %   \begin{arguments}
-%   \item[\meta{number_1}] A number.
-%   \item[\meta{number_1}] A number or |-NoValue-| as produced by the argument
+%   \item A number.
+%   \item A number or |-NoValue-| as produced by the argument
 %   processing of \pkg{xparse}.
 %   \end{arguments}
 %   Stores \meta{number_1} in \cs{l_tmpa_int}. If \meta{number_2} is
-%   |-NoValue-|, stores \meta{number_1} in \cs{l_tmpb_int}, otherwise stores \meta{number_2} in
-% \cs{l_tmpb_int}.  
+%   |-NoValue-|, stores \meta{number_1} in \cs{l_tmpb_int}, otherwise stores
+%   \meta{number_2} in \cs{l_tmpb_int}.
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_store_as_temp_ints:nn #1#2{
   \int_set:Nn\l_tmpa_int{#1}
@@ -484,7 +711,7 @@
 %   \lipsum_get_terminated_par:n}
 % These two commands are used to retrieve paragraph \meta{number} from the
 % \lips\ dummy text. \cs{lipsum_get_terminated_par:n} additionally adds
-% \cs{lipsum_terminator:}. 
+% \cs{tex_par:D}. 
 %
 %   \begin{syntax}
 %     \cs{lipsum_get_non_terminated_par:n} \Arg{number}\\
@@ -496,32 +723,37 @@
 % paragraphs were stored in \cs{lipsum@i}, \cs{lipsum@ii}, \ldots.
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_non_terminated_par:n #1{
-  % \tl_use:c{c_lipsum_par_ #1  _tl}
   \seq_item:Nn \g_lipsum_paragraph_seq{#1}
 }
 
 \cs_new:Npn \lipsum_get_terminated_par:n #1 {
-   \lipsum_get_non_terminated_par:n{#1}\lipsum_terminator:
+   \lipsum_get_non_terminated_par:n{#1}\tex_par:D
 }
      
 %    \end{macrocode}
 % \end{function}
-% Now the work-horses follow.
 % \begin{function}{\lipsum_add_to_tokenlist:n}
-% Adds a terminated \lips\ paragraph, to the token list
-% \cs{l__lipsum_pars_tl}. 
+% Adds a paragraph \meta{item} to the list of paragraphs
+% (\cs{l_@@_pars_tl}) and surrounds it by
+% the user-defined \meta{tokens}
+% . 
 %  \begin{syntax}
 %     \cs{lipsum_add_to_tokenlist:n}\Arg{number}
 %  \end{syntax}
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_add_to_tokenlist:n #1 {
-  \tl_put_right:NV \l__lipsum_pars_tl\l__@@_par_list_itemstart_tl
+  \tl_put_right:NV
+    \l__lipsum_pars_tl 
+    \l_@@_par_list_itemstart_tl 
   \tl_put_right:Nn \l__lipsum_pars_tl  {
     \lipsum_get_non_terminated_par:n{#1}
   }
-  \tl_put_right:NV \l__lipsum_pars_tl\l__@@_par_list_itemend_tl
+  \tl_put_right:NV
+    \l__lipsum_pars_tl
+    \l_@@_par_list_itemend_tl
 }
-\cs_generate_variant:Nn \lipsum_add_to_tokenlist:n  { V }
+\cs_generate_variant:Nn
+  \lipsum_add_to_tokenlist:n { V }
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\lipsum_range_to_tokenlist:VV}
@@ -529,43 +761,42 @@
 %     \cs{lipsum_range_to_tokenlist:VV}\Arg{number_1}\Arg{number_2}
 %   \end{syntax}
 %   Adds the paragraphs specified from by \meta{number_1} to \meta{number_2}
-%   to the token list \cs{l__lipsum_pars_tl}. The loop is done by
-%   \cs{int_step_function:nnnN}. Note that \cs{lipsum_range_to_tokenlist:n}
-%   does not open a new group, hence, to keep things local, it should be
-%   called from within a group.
+%   to the token list \cs{l_@@_pars_tl}. 
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_range_to_tokenlist:nn #1#2 {
-  \tl_clear:N \l__lipsum_pars_tl
-  \tl_put_right:NV\l__lipsum_pars_tl\l__@@_par_list_start_tl
-  \int_set:Nn\l_tmpa_int{#1}
+  \tl_clear:N \l_@@_pars_tl
+  \tl_put_right:NV
+    \l_@@_pars_tl
+    \l_@@_par_list_start_tl
+  \int_set:Nn \l_tmpa_int {#1}
   \int_do_until:nNnn
     {\l_tmpa_int} > {#2}
     {
       \int_compare:nNnT
-        \l_tmpa_int > #1
-        { \tl_put_right:NV\l__lipsum_pars_tl\l__@@_par_list_itemseparator_tl }
-      \lipsum_add_to_tokenlist:V \l_tmpa_int  
+        \l_tmpa_int > {#1}
+        {
+          \tl_put_right:NV
+            \l_@@_pars_tl
+            \l_@@_par_list_itemseparator_tl
+        }
+      \lipsum_add_to_tokenlist:V {\l_tmpa_int}  
       \int_incr:N\l_tmpa_int
     }
-  \tl_put_right:NV\l__lipsum_pars_tl\l__@@_par_list_end_tl
+  \tl_put_right:NV
+    \l_@@_pars_tl
+    \l_@@_par_list_end_tl
 }
-\cs_generate_variant:Nn \lipsum_range_to_tokenlist:nn {VV}     
+\cs_generate_variant:Nn
+  \lipsum_range_to_tokenlist:nn { VV }     
 %      
 %    \end{macrocode}
 % \end{function}
-% \begin{function}{\lipsum_output_range:n}
-%   \begin{syntax}
-%     \cs{lipsum_output_range:n}\Arg{range}
-%   \end{syntax}
-% This is used to output a range of \lips\ paragraphs specified by
-% \meta{range}.  
+% \begin{function}{\@@_expanded_paragraphs_terminated_with_space:}
+% To be able to parse the list of paragraphs into a list of sentences, we need
+% a list with defined tokens in between. This is stored locally in this macro.
 %    \begin{macrocode}
-\cs_new:Npn \lipsum_output_range:nn #1#2 {
-  \group_begin:
-    \lipsum_range_to_tokenlist:VV{#1}{#2}
-    \tl_use:N\l__lipsum_pars_tl
-  \group_end:
-}
+\cs_new_nopar:Nn
+  \@@_expanded_paragraphs_terminated_with_space:{}
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\lipsum_sentences_to_tokenlist:VV}
@@ -574,16 +805,13 @@
 %   \end{syntax}
 % Puts the sentences specified by \meta{sentence range} from the paragraphs
 % specified by \meta{paragraph range} on the token list
-% \cs{l__lipsum_sentences_tl}. Note that the 
-% terminator for the paragraphs is set to \tn{space}, independent from any
-% package option or using \cs{lipsum} or \cs{lipsum*}. 
+% \cs{l_@@_sentences_tl} and surrounds the \meta{tokens} set by the user. 
 %    \begin{macrocode}
-%
-\cs_new_nopar:Nn\__lipsum_expanded_paragraphs_terminated_with_space:{}
+% 
 \cs_new:Npn \lipsum_sentences_to_tokenlist:nnn #1#2#3{
 %    \end{macrocode}
 % Now, we only need to put the sentences within \meta{sentence range} into
-% \cs{l__lipsum_sentences_tl}. First we clear
+% \cs{l_@@_sentences_tl}. First we clear
 % the token list.
 %    \begin{macrocode}
 
@@ -606,101 +834,210 @@
       #3 .. \q_stop
   }
   \tl_put_left:NV
-    \l__lipsum_sentences_tl
-    \l__@@_sentence_list_start_tl
+    \l_@@_sentences_tl
+    \l_@@_sentence_list_start_tl
   \tl_put_right:NV
-    \l__lipsum_sentences_tl
-    \l__@@_sentence_list_end_tl
+    \l_@@_sentences_tl
+    \l_@@_sentence_list_end_tl
 }
-\cs_generate_variant:Nn\lipsum_sentences_to_tokenlist:nnn{VVf}
+\cs_generate_variant:Nn
+  \lipsum_sentences_to_tokenlist:nnn { VVf }
 %    \end{macrocode}
 % \end{function}
-% \begin{function}{\__lipsum_put_sentence_on_tokenlist:nnnw}
+% \begin{function}{\@@_put_sentence_on_tokenlist:nnnw}
 %   \begin{syntax}
-%     \cs{__lipsum_put_sentence_on_tokenlist:nnnw}\Arg{start}\Arg{end}\Arg{current}\Arg{sentences_tl}
+%     \cs{@@_put_sentence_on_tokenlist:nnnw}\Arg{start}\Arg{end}\Arg{current}\Arg{sentences tl}
 %   \end{syntax}
 %   \begin{arguments}
-%     \item[\meta{start}] Start number of the range to be selected.
-%     \item[\meta{end}] End number of the range to be selected.
-%     \item[\meta{current}] the loop counter indicating the current item.
-%     \item[\meta{sentences_tl}] The token list containing the (remaining) sentences.
+%     \item Start number of the range to be selected.
+%     \item End number of the range to be selected.
+%     \item the loop counter indicating the current item.
+%     \item The token list containing the (remaining) sentences.
 %   \end{arguments}
-% The implementation is quite simple: If \#4 is empty, gobble the remaining
+% The implementation is quite simple: If \meta{sentences tl} is empty, gobble the remaining
 % list ans stop. Otherwise, test if $\meta{start} > \meta{end}$,
 % gobble the remaining list and stop. If  $\meta{current} > \meta{end}$,
 % gobble the remaining list and stop, otherwise repeat loop with increased
 % loop counter \meta{current}. Before repeating, test if $\meta{current} >=
 % \meta{start}$ and put the current sentence to the token list.
-% It seems that there is no official test for an empty argument (\#4 needs to
+% It seems that there is no official test for an empty argument
+% (\meta{sentences tl} needs to
 % be tested), but the internals of \cs{tl_if_blank} provide this, more or
-% less. 
+% less.
 %    \begin{macrocode}
 
-\cs_new:Npn \__lipsum_put_sentence_on_tokenlist:nnnw #1#2#3#4 . {
-  \int_compare:nNnTF{#1} > {#2}
-    { % start > end: leave loop
-      \use_none_delimit_by_q_stop:w
-    }
-    { % start <= end: perform loop
-      \tl_if_blank:oTF{#4}
-        { % Argument #4 blank. Should be from the .. in the calling macro.
-          % End reached. Leave loop.
-          \use_none_delimit_by_q_stop:w
-        }
-        { % Not yet list end
-          \int_compare:nNnTF{#3} > {#2} 
-            { % Counter > End: Leave loop 
-              \use_none_delimit_by_q_stop:w
-            }
-            { % Counter <= End: Proceed
-              \int_compare:nT{ #3 >= #1}
-                { % Counter >= Start: Put item on list
-                  \int_compare:nNnT{#3}>{#1}
-                  { % Counter < Start, insert separator
+\cs_new:Npn
+  \@@_put_sentence_on_tokenlist:nnnw
+  #1#2#3#4 .
+  {
+    \int_compare:nNnTF{#1} > {#2}
+      { % start > end: leave loop
+        \use_none_delimit_by_q_stop:w
+      }
+      { % start <= end: perform loop
+        \tl_if_blank:oTF{#4}
+          { % Argument #4 blank.
+            % Should be from the .. in the calling macro.
+            % End reached. Leave loop.
+            \use_none_delimit_by_q_stop:w
+          }
+          { % Not yet list end
+            \int_compare:nNnTF{#3} > {#2} 
+              { % Counter > End: Leave loop 
+                \use_none_delimit_by_q_stop:w
+              }
+              { % Counter <= End: Proceed
+                \int_compare:nT{ #3 >= #1}
+                  { % Counter >= Start: Put item on list
+                    \int_compare:nNnT{#3}>{#1}
+                      { % Counter < Start, insert separator
+                        \tl_put_right:NV
+                          \l_@@_sentences_tl
+                          \l_@@_sentence_list_itemseparator_tl
+                      } % End Counter < Start true
+                    % Put item on list  
                     \tl_put_right:NV
-                      \l__lipsum_sentences_tl
-                      \l__@@_sentence_list_itemseparator_tl
-                  } % End Counter < Start true
-                  % Put item on list  
-                  \tl_put_right:NV
-                    \l__lipsum_sentences_tl
-                    \l__@@_sentence_list_itemstart_tl
-                  \tl_put_right:No
-                    \l__lipsum_sentences_tl
-                    {\tl_trim_spaces:n{#4}.}
-                  \tl_put_right:NV
-                    \l__lipsum_sentences_tl
-                    \l__@@_sentence_list_itemend_tl
-                } % End Counter >= Start: Put item on list
+                      \l_@@_sentences_tl
+                      \l_@@_sentence_list_itemstart_tl
+                    \tl_put_right:No
+                      \l_@@_sentences_tl
+                      { \tl_trim_spaces:n{#4}. }
+                    \tl_put_right:NV
+                      \l_@@_sentences_tl
+                      \l_@@_sentence_list_itemend_tl
+                  } % End Counter >= Start: Put item on list
                 % Call loop again  
                 \exp_args:Nnnf
-                  \__lipsum_put_sentence_on_tokenlist:nnnw
+                  \@@_put_sentence_on_tokenlist:nnnw
                   {#1}
                   {#2}
                   { \int_eval:n{#3+1} }
             } % End Counter > Start: Proceed
-        } % End Not yet list end
-    } % End Start > End: Perform loop
-} % End definition
+          } % End Not yet list end
+      } % End Start > End: Perform loop
+  } % End definition
 %    \end{macrocode}
 % \end{function}
-% \begin{function}{lipsum_output_sentences:VV}
-%   Function to output a range of sentences between \meta{number_1} and
-%   \meta{number_2}. 
-%   \begin{syntax}
-%   \cs{lipsum_output_sentences:VV}\Arg{number_1}\Arg{number_2}
-%   \end{syntax}
+% \begin{function}{\@@_protect:n}
+% Internal command for the user-level \cs{LipsumProtect}. Currently, a single
+% \cs{tex_noexpand:D} is sufficient to prevent expansion, but in future
+% implementations this might change.
 %    \begin{macrocode}
-\cs_new:Npn \lipsum_output_sentences:nn #1#2{
-  \group_begin:
-    \lipsum_sentences_to_tokenlist:VV {#1} {#2}
-    (output~sentences)\tl_use:N \l__lipsum_sentences_tl  
-  \group_end:
-}
-\cs_generate_variant:Nn \lipsum_output_sentences:nn {VV}
+\cs_new:Npn \@@_protect:n #1 {\tex_noexpand:D#1}
 %    \end{macrocode}
 % \end{function}
-% 
+% \begin{function}{\@@_set_surrounding_tokens_star:}
+%   \begin{syntax}
+%     \cs{\@_set_surrounding_tokens_star:}
+%   \end{syntax}
+% These commands copy the user-defined tokens to the token lists used by the
+% commands that compose the list of paragraphs or sentences. Here for calls of
+% the starred versions \cs{lipsum*} and \cs{unpacklipsum*}.
+%    \begin{macrocode}
+\cs_new:Npn \@@_set_surrounding_tokens_star:
+  {
+    \tl_set_eq:NN
+      \l_@@_par_list_start_tl
+      \l_@@_par_list_start_star_tl
+    \tl_set_eq:NN
+      \l_@@_par_list_end_tl
+      \l_@@_par_list_end_star_tl
+    \tl_set_eq:NN
+      \l_@@_par_list_itemseparator_tl
+      \l_@@_par_list_itemseparator_star_tl
+    \tl_set_eq:NN
+      \l_@@_par_list_itemstart_tl
+      \l_@@_par_list_itemstart_star_tl
+    \tl_set_eq:NN
+      \l_@@_par_list_itemend_tl
+      \l_@@_par_list_itemend_star_tl
+
+    \tl_set_eq:NN
+      \l_@@_sentence_list_start_tl
+      \l_@@_sentence_list_start_star_tl
+    \tl_set_eq:NN
+      \l_@@_sentence_list_end_tl
+      \l_@@_sentence_list_end_star_tl
+    \tl_set_eq:NN
+      \l_@@_sentence_list_itemseparator_tl
+      \l_@@_sentence_list_itemseparator_star_tl
+    \tl_set_eq:NN
+      \l_@@_sentence_list_itemstart_tl
+      \l_@@_sentence_list_itemstart_star_tl
+    \tl_set_eq:NN
+      \l_@@_sentence_list_itemend_tl
+      \l_@@_sentence_list_itemend_star_tl
+  }
+%    \end{macrocode}
+% \end{function}
+% \begin{function}{\@@_set_surrounding_tokens_nostar:}
+%   \begin{syntax}
+%      \cs{@@_set_surrounding_tokens_nostar:}
+%    \end{syntax}
+%    
+% As \cs{@@_set_surrounding_tokens_star:}, but for calls of the non-starred
+% version of \cs{lipsum} and \cs{unpacklipsum}.
+%    \begin{macrocode}
+  \cs_new:Npn \@@_set_surrounding_tokens_nostar:
+  {
+    \tl_set_eq:NN
+      \l_@@_par_list_start_tl
+      \l_@@_par_list_start_nostar_tl
+    \tl_set_eq:NN
+      \l_@@_par_list_end_tl
+      \l_@@_par_list_end_nostar_tl
+    \tl_set_eq:NN
+      \l_@@_par_list_itemseparator_tl
+      \l_@@_par_list_itemseparator_nostar_tl
+    \tl_set_eq:NN
+      \l_@@_par_list_itemstart_tl
+      \l_@@_par_list_itemstart_nostar_tl
+    \tl_set_eq:NN
+      \l_@@_par_list_itemend_tl
+      \l_@@_par_list_itemend_nostar_tl
+
+    \tl_set_eq:NN
+      \l_@@_sentence_list_start_tl
+      \l_@@_sentence_list_start_nostar_tl
+    \tl_set_eq:NN
+      \l_@@_sentence_list_end_tl
+      \l_@@_sentence_list_end_nostar_tl
+    \tl_set_eq:NN
+      \l_@@_sentence_list_itemseparator_tl
+      \l_@@_sentence_list_itemseparator_nostar_tl
+    \tl_set_eq:NN
+      \l_@@_sentence_list_itemstart_tl
+      \l_@@_sentence_list_itemstart_nostar_tl
+    \tl_set_eq:NN
+      \l_@@_sentence_list_itemend_tl
+      \l_@@_sentence_list_itemend_nostar_tl
+
+    }
+%    \end{macrocode}
+% \end{function}
+% \begin{function}{\@@_ensure_parsable_output:}
+%   \begin{syntax}
+%     \cs{@@_ensure_parsable_output:}
+%   \end{syntax}
+% To ensure that the list of paragraphs can be parsed into a list of
+% sentences, the tokens between the single \meta{item}s have to macth a
+% pre-defined pattern. This commands sets the tokens accordingly.
+%    \begin{macrocode}
+\cs_new:Nn \@@_ensure_parsable_output:
+  {
+    \tl_set:No
+      \l_@@_par_list_itemseparator_tl{\space}
+    \tl_set:No
+      \l_@@_par_list_item_start_tl{}
+    \tl_set:No
+      \l_@@_par_list_item_end_tl{}
+    \tl_set:No
+      \l_@@_par_list_start_tl{}
+    \tl_set:No
+      \l_@@_par_list_end_tl{}
+  }  
+%    \end{macrocode}
+% \end{function}
 % \subsection{User- and developer-level commands}\label{sec:code:commands}
 % \begin{macro}{\NewLipsumPar}
 %  Developer-Level macro to add a paragraph to the \lips\
@@ -711,7 +1048,7 @@
 %    \cs{NewLipsumPar}\Arg{content}
 %  \end{syntax}
 % \begin{arguments}
-%   \item[\meta{content}]  The content of the paragraph. In contrast to
+%   \item The \meta{content} of the paragraph. In contrast to
 %   previous versions, \pkg{lipsum}2.0 does not store a macro that expands to
 %   a terminator. 
 % \end{arguments}
@@ -724,56 +1061,24 @@
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\LipsumPar}
-% Macro to typeset a single paragraph of \lips. Was not officially available in
+% Macro to typeset a single paragraph of \lips\ Was not officially available in
 % version prior to 2.0.
 % \begin{syntax}
 %  \cs{LipsumPar}\Arg{number}
 % \end{syntax}
 % \begin{arguments}
-%   \item[\meta{number}] Number of the paragraph to typeset.
+%   \item Number of the paragraph to typeset.
 %   \end{arguments}
 % Implemented as follows:
 %    \begin{macrocode}
 \NewDocumentCommand\LipsumPar{m}{
   \group_begin:
-    \cs_set:Nn\lipsum_terminator:{\tex_par:D}
     \lipsum_get_terminated_par:n{#1}
   \group_end:
 }
 %    \end{macrocode}
 % \end{macro}
 % \subsection{Tokens surrounding the \lips\ content}
-% The output of \cs{lipsum}, whether paragraphs or sentences, can be seen as a
-% \meta{list} of \meta{item}s, where an item is either a paragraph or a
-% sentence. As of version 2.0, \pkg{lipsum} allows to fine-tune which tokens
-% are inserted at the beginning of the \meta{list}, at the end of the
-% \meta{list}, at the beginning and end of each \meta{item} as well as between
-% the single \meta{items}. The resulting list of tokens is as follows (where
-% the index $N$ indicates the last item, the \ldots\ indicate the same
-% structure as for the first and last \meta{item}):
-% \begin{quote}\raggedright
-%   \meta{list_s}\\
-%   \hspace*{1em}\meta{item_1_,_s-outer}\\
-%   \hspace*{2em}\meta{item_s} \\
-%   \hspace*{3em}\meta{item_1_,_s-inner}\\
-%   \hspace*{4em}\meta{item_1}\\
-%   \hspace*{3em}\meta{item_1_,_e-inner}\\
-%   \hspace*{2em}\meta{item_e}\\
-%   \hspace*{1em}\meta{item_1_,_e-outer}\\
-%   \meta{item-separator}\\
-%   \hspace{1em}\ldots\\
-%   \meta{item-separator}\\
-%   \hspace{1em}\meta{item_N_,_s-outer}\\
-%   \hspace{2em}\meta{item_s}\\
-%   \hspace{3em}\meta{item_N_,_s-inner}\\
-%   \hspace*{4em}\meta{item_N}\\
-%   \hspace*{3em}\meta{item_N_,_e-inner}\\
-%   \hspace*{2em}\meta{item_e}\\
-%   \hspace*{1em}\meta{item_N_,_e-outer}\\
-%   \meta{list_e}
-% \end{quote}
-% \pkg{lipsum} allows to specify all of the tokens in the list indicated
-% above.
 % \begin{macro}{\SetLipsumParListStart, \SetLipsumParListStart*,
 % \SetLipsumSentenceListStart, \SetLipsumSentenceListStart*}
 % \begin{syntax}
@@ -905,19 +1210,23 @@
 \NewDocumentCommand\SetLipsumParListItemStart{s+m}{
   \IfBooleanTF{#1}
     {
-      \tl_set:No\l__@@_par_list_itemstart_star_tl{#2}
+      \tl_set:No
+        \l_@@_par_list_itemstart_star_tl{#2}
     }
     {
-      \tl_set:No\l__@@_par_list_itemstart_nostar_tl{#2}
+      \tl_set:No
+        \l_@@_par_list_itemstart_nostar_tl{#2}
     }
 }
 \NewDocumentCommand\SetLipsumSentenceListItemStart{s+m}{
   \IfBooleanTF{#1}
     {
-      \tl_set:No\l__@@_sentence_list_itemstart_star_tl {#2}
+      \tl_set:No
+        \l_@@_sentence_list_itemstart_star_tl {#2}
     }
     {
-      \tl_set:No\l__@@_sentence_list_itemstart_nostar_tl{#2}
+      \tl_set:No
+        \l_@@_sentence_list_itemstart_nostar_tl{#2}
     }
 }
 %    \end{macrocode}
@@ -938,19 +1247,23 @@
 \NewDocumentCommand\SetLipsumParListItemEnd{s+m}{
   \IfBooleanTF{#1}
     {
-      \tl_set:No\l__@@_par_list_itemend_star_tl{#2}
+      \tl_set:No
+        \l_@@_par_list_itemend_star_tl{#2}
     }
     {
-      \tl_set:No\l__@@_par_list_itemend_nostar_tl{#2}
+      \tl_set:No
+        \l_@@_par_list_itemend_nostar_tl{#2}
     }
 }
 \NewDocumentCommand\SetLipsumSentenceListItemEnd{s+m}{
   \IfBooleanTF{#1}
     {
-      \tl_set:No\l__@@_sentence_list_itemend_star_tl{#2}
+      \tl_set:No
+        \l_@@_sentence_list_itemend_star_tl{#2}
     }
     {
-      \tl_set:No\l__@@_sentence_list_itemend_nostar_tl{#2}
+      \tl_set:No
+        \l_@@_sentence_list_itemend_nostar_tl{#2}
     }
 }
 %    \end{macrocode} 
@@ -993,7 +1306,7 @@
     \SetLipsumSentenceListItemEnd{#3}
   }
 }
-%     \end{macrocode}
+%    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\SetLipsumParListItemSeparator, \SetLipsumParListItemSeparator*,
 % \SetLipsumSentenceListItemSeparator, \SetLipsumSentenceListItemSeparator*}
@@ -1011,19 +1324,23 @@
 \NewDocumentCommand\SetLipsumParListItemSeparator{s+m}{
   \IfBooleanTF{#1}
     {  
-      \tl_set:No\l__@@_par_list_itemseparator_star_tl{#2}
+      \tl_set:No
+        \l_@@_par_list_itemseparator_star_tl{#2}
     }
     {
-      \tl_set:No\l__@@_par_list_itemseparator_nostar_tl{#2}
+      \tl_set:No
+        \l_@@_par_list_itemseparator_nostar_tl{#2}
     }
 }
 \NewDocumentCommand\SetLipsumSentenceListItemSeparator{s+m}{
   \IfBooleanTF{#1}
     {
-      \tl_set:No\l__@@_sentence_list_itemseparator_star_tl{#2}
+      \tl_set:No
+        \l_@@_sentence_list_itemseparator_star_tl{#2}
     }
     {
-      \tl_set:No\l__@@_sentence_list_itemseparator_nostar_tl{#2}
+      \tl_set:No
+        \l_@@_sentence_list_itemseparator_nostar_tl{#2}
     }
 }
 %    \end{macrocode}
@@ -1049,7 +1366,11 @@
 % Implement \cs{setlipsumdefault} and mark it deprecated.
 %    \begin{macrocode}
 \NewDocumentCommand\setlipsumdefault{m}{%
-  \msg_warning:nnnn{lipsum}{DeprecatedCommand}{\setlipsumdefault}{\SetLipsumDefault}
+  \msg_warning:nnnn
+    {lipsum}
+    {DeprecatedCommand}
+    {\setlipsumdefault}
+    {\SetLipsumDefault}
   \SetLipsumDefault{#1}
 }
 %    \end{macrocode}
@@ -1061,12 +1382,13 @@
 %   \cs{lipsum}\oarg{paragraph range}\oarg{sentence range}
 %   \cs{lipsum*}\oarg{paragraph range}\oarg{sentence range}
 % \end{syntax}
+%
 % \begin{arguments}
-% \item[\meta{paragraph range}] Range-like string that specifies the number of
-% the paragraphs taken from \lips. If omitted, the value set by
+% \item Range-like string that specifies the number of
+% the paragraphs taken from \lips\ If omitted, the value set by
 % \cs{SetLipsumDefault} is used, which defaults to |1-7|. this argument can
 % not be empty if the second optional argument is provided.
-% \item[\meta{sentence range}] Sentences to be typeset from the range selected
+% \item Sentences to be typeset from the range selected
 % by \meta{paragraph range}. If sentences outside the number of sentences in
 % \meta{paragraph range} are specified, only existing sentences
 % are typeset.
@@ -1075,118 +1397,43 @@
 % inserted after each paragraph (only if called without the second optional
 % argument).
 %    \begin{macrocode}
-\cs_new:Npn \__@@_set_surrounding_tokens_star:
-  {
-    \tl_set_eq:NN
-      \l__@@_par_list_start_tl
-      \l__@@_par_list_start_star_tl
-    \tl_set_eq:NN
-      \l__@@_par_list_end_tl
-      \l__@@_par_list_end_star_tl
-    \tl_set_eq:NN
-      \l__@@_par_list_itemseparator_tl
-      \l__@@_par_list_itemseparator_star_tl
-    \tl_set_eq:NN
-      \l__@@_par_list_itemstart_tl
-      \l__@@_par_list_itemstart_star_tl
-    \tl_set_eq:NN
-      \l__@@_par_list_itemend_tl
-      \l__@@_par_list_itemend_star_tl
 
-    \tl_set_eq:NN
-      \l__@@_sentence_list_start_tl
-      \l__@@_sentence_list_start_star_tl
-    \tl_set_eq:NN
-      \l__@@_sentence_list_end_tl
-      \l__@@_sentence_list_end_star_tl
-    \tl_set_eq:NN
-      \l__@@_sentence_list_itemseparator_tl
-      \l__@@_sentence_list_itemseparator_star_tl
-    \tl_set_eq:NN
-      \l__@@_sentence_list_itemstart_tl
-      \l__@@_sentence_list_itemstart_star_tl
-    \tl_set_eq:NN
-      \l__@@_sentence_list_itemend_tl
-      \l__@@_sentence_list_itemend_star_tl
-  }
-\cs_new:Npn \__@@_set_surrounding_tokens_nostar:
-  {
-    \tl_set_eq:NN
-      \l__@@_par_list_start_tl
-      \l__@@_par_list_start_nostar_tl
-    \tl_set_eq:NN
-      \l__@@_par_list_end_tl
-      \l__@@_par_list_end_nostar_tl
-    \tl_set_eq:NN
-      \l__@@_par_list_itemseparator_tl
-      \l__@@_par_list_itemseparator_nostar_tl
-    \tl_set_eq:NN
-      \l__@@_par_list_itemstart_tl
-      \l__@@_par_list_itemstart_nostar_tl
-    \tl_set_eq:NN
-      \l__@@_par_list_itemend_tl
-      \l__@@_par_list_itemend_nostar_tl
-
-    \tl_set_eq:NN
-      \l__@@_sentence_list_start_tl
-      \l__@@_sentence_list_start_nostar_tl
-    \tl_set_eq:NN
-      \l__@@_sentence_list_end_tl
-      \l__@@_sentence_list_end_nostar_tl
-    \tl_set_eq:NN
-      \l__@@_sentence_list_itemseparator_tl
-      \l__@@_sentence_list_itemseparator_nostar_tl
-    \tl_set_eq:NN
-      \l__@@_sentence_list_itemstart_tl
-      \l__@@_sentence_list_itemstart_nostar_tl
-    \tl_set_eq:NN
-      \l__@@_sentence_list_itemend_tl
-      \l__@@_sentence_list_itemend_nostar_tl
-
-  }
-
-\cs_new:Nn \__@@_ensure_parsable_output:
-  {
-    % To get a parsable paragraph list, we have to remove all funny
-    % tokens. Just separate paragraphs by \space.
-    \tl_set:No\l__@@_par_list_itemseparator_tl{\space}
-    \tl_set:No\l__@@_par_list_item_start_tl{}
-    \tl_set:No\l__@@_par_list_item_end_tl{}
-    \tl_set:No\l__@@_par_list_start_tl{}
-    \tl_set:No\l__@@_par_list_end_tl{}
-  }  
 \NewDocumentCommand
   \lipsum{
     s
-    >{\__lipsum_split_argument_expanded:nne{1}{-}}O{\g_lipsum_default_range_tl}
-    >{\__lipsum_split_argument_expanded:nne{1}{-}}o
+    >{\@@_split_argument_expanded:nne{1}{-}}
+     O{\g_lipsum_default_range_tl}
+    >{\@@_split_argument_expanded:nne{1}{-}}
+     o
   }
   {
     \group_begin:
       \lipsum_store_as_temp_ints:nn #2
       \IfBooleanTF {#1}
         {
-          \__@@_set_surrounding_tokens_star:
+          \@@_set_surrounding_tokens_star:
         }
         {
-          \__@@_set_surrounding_tokens_nostar:
+          \@@_set_surrounding_tokens_nostar:
         }
 
       \IfNoValueTF{#3}
       {
-        \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
+        \lipsum_range_to_tokenlist:VV
+          { \l_tmpa_int }{ \l_tmpb_int }
         \tl_use:N \l__lipsum_pars_tl
       }
       {
-        \__@@_ensure_parsable_output:
-        \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
+        \@@_ensure_parsable_output:
+        \lipsum_range_to_tokenlist:VV
+          { \l_tmpa_int }{ \l_tmpb_int }
         \lipsum_store_as_temp_ints:nn #3
         \cs_gset_nopar:Nx
-          \__lipsum_expanded_paragraphs_terminated_with_space:
+          \@@_expanded_paragraphs_terminated_with_space:
           {\tl_use:N\l__lipsum_pars_tl}
         \lipsum_sentences_to_tokenlist:VVf
-          \l_tmpa_int
-          \l_tmpb_int
+          { \l_tmpa_int }
+          { \l_tmpb_int }
           \__lipsum_expanded_paragraphs_terminated_with_space:
         \tl_use:N \l__lipsum_sentences_tl  
       }
@@ -1222,8 +1469,10 @@
   \unpacklipsum
   {
     s
-    >{\__lipsum_split_argument_expanded:nne{1}{-}}O{\g_lipsum_default_range_tl}
-    >{\__lipsum_split_argument_expanded:nne{1}{-}}o
+    >{\__lipsum_split_argument_expanded:nne{1}{-}}
+      O{\g_lipsum_default_range_tl}
+    >{\__lipsum_split_argument_expanded:nne{1}{-}}
+      o
   }
   {
    
@@ -1231,39 +1480,46 @@
       \lipsum_store_as_temp_ints:nn #2
       \IfBooleanTF {#1}
         {
-          \__@@_set_surrounding_tokens_star:
+          \@@_set_surrounding_tokens_star:
         }
         {
-          \__@@_set_surrounding_tokens_nostar:
+          \@@_set_surrounding_tokens_nostar:
         }
     \IfNoValueTF{#3}
       {
-        \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
-        \cs_gset:Nx \__lipsum_expanded: {\tl_use:N\l__lipsum_pars_tl}
-        \cs_gset_eq:NN \lipsumexp \__lipsum_expanded:
+        \lipsum_range_to_tokenlist:VV
+          { \l_tmpa_int } { \l_tmpb_int }
+        \cs_gset:Nx
+          \__lipsum_expanded: {\tl_use:N\l__lipsum_pars_tl}
+        \cs_gset_eq:NN
+          \lipsumexp \__lipsum_expanded:
       }
       {
-        \__@@_ensure_parsable_output:
-        \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
+        \@@_ensure_parsable_output:
+        \lipsum_range_to_tokenlist:VV
+          { \l_tmpa_int } { \l_tmpb_int }
         \cs_gset_nopar:Nx
-          \__@@_expanded_paragraphs_terminated_with_space:
-          {\tl_use:N\l__lipsum_pars_tl}
+          \@@_expanded_paragraphs_terminated_with_space:
+          { \tl_use:N\l__lipsum_pars_tl }
         \lipsum_store_as_temp_ints:nn #3
         \lipsum_sentences_to_tokenlist:VVf
-          \l_tmpa_int
-          \l_tmpb_int
-          \__@@_expanded_paragraphs_terminated_with_space:
-        \cs_gset:Nx \__lipsum_expanded: {\tl_use:N\l__lipsum_sentences_tl}
-        \cs_gset_eq:NN \lipsumexp \__lipsum_expanded:
+          { \l_tmpa_int }
+          { \l_tmpb_int }
+          \@@_expanded_paragraphs_terminated_with_space:
+        \cs_gset:Nx
+          \@@_expanded:
+          { \tl_use:N\l__lipsum_sentences_tl }
+        \cs_gset_eq:NN
+          \lipsumexp \__lipsum_expanded:
       }
     \group_end: 
   }
 %    \end{macrocode}
 % \end{macro} 
-% \subsection{Package options, defaults and the \lips\ dummy text}
+% \subsection{Package options and defaults}
 %    \begin{macrocode}
 
-\cs_new:Nn \__@@_restore_sentence_list: {
+\cs_new:Nn \@@_restore_sentence_list: {
   \SetLipsumSentenceListItemSeparator{\space}
   \SetLipsumSentenceListItemSeparator*{\space}
   \SetLipsumSentenceListEnd{\tex_par:D}
@@ -1271,7 +1527,7 @@
   \SetLipsumSentenceListItemSurrounders*{}{}
   \SetLipsumSentenceListItemSurrounders{}{}
 }
-\cs_new:Nn \__@@_restore_par_list: {
+\cs_new:Nn \@@_restore_par_list: {
   \SetLipsumParListItemSeparator{\tex_par:D}
   \SetLipsumParListItemSeparator*{\space}
   \SetLipsumParListEnd{\tex_par:D}
@@ -1282,7 +1538,7 @@
 
 
 \DeclareOption{nopar}{%
-  \cs_gset:Nn \__@@_restore_sentence_list: {
+  \cs_gset:Nn \@@_restore_sentence_list: {
     \SetLipsumSentenceListItemSeparator{\space}
     \SetLipsumSentenceListItemSeparator*{\space}
     \SetLipsumSentenceListEnd{\space}
@@ -1290,7 +1546,7 @@
     \SetLipsumSentenceListItemSurrounders*{}{}
     \SetLipsumSentenceListItemSurrounders{}{}
   }
-  \cs_gset:Nn \__@@_restore_par_list: {
+  \cs_gset:Nn \@@_restore_par_list: {
     \SetLipsumParListItemSeparator{\space}
     \SetLipsumParListItemSeparator*{\tex_par:D}
     \SetLipsumParListEnd{}
@@ -1300,16 +1556,25 @@
   }
 }
 \ProcessOptions
-\NewDocumentCommand\RestoreParList{}{}
-\cs_gset_eq:NN\RestoreParList\__@@_restore_par_list:
-\NewDocumentCommand\RestoreSentenceList{}{}
-\cs_gset_eq:NN\RestoreSentenceList\__@@_restore_sentence_list:
-\NewDocumentCommand\RestoreAll{}{
-  \RestoreParList
-  \RestoreSentenceList
+\NewDocumentCommand\LipsumRestoreParList{}{}
+\cs_gset_eq:NN
+  \LipsumRestoreParList
+  \@@_restore_par_list:
+\NewDocumentCommand\LipsumRestoreSentenceList{}{}
+\cs_gset_eq:NN
+  \LipsumRestoreSentenceList
+  \@@_restore_sentence_list:
+\NewDocumentCommand\LipsumRestoreAll{}{
+  \LipsumRestoreParList
+  \LipsumRestoreSentenceList
 }
-\RestoreAll
+\LipsumRestoreAll
 \ExplSyntaxOff
+%    \end{macrocode}
+% \newgeometry{a4paper, top=2cm, left=2cm, right=2cm, bottom=3cm, marginparwidth=3cm}
+% \newpage
+% \subsection{The \lips\ dummy text}
+%    \begin{macrocode}
 \SetLipsumDefault{1-7}
  %{1}
 \NewLipsumPar{%
@@ -2982,7 +3247,9 @@
   magna iaculis pharetra. Duis sagittis massa in tellus. Aenean vel
   velit vel felis consectetuer pharetra.}
 %    \end{macrocode}
+% \newpage
 % \end{implementation}
+% 
 % \endinput
 % \fi
 % Local Variables:
