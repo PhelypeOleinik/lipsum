@@ -51,9 +51,9 @@ Patrick Happel (patrick.happel@rub.de)
 
 3. License
 --------------------------
-This material is subject to the LaTeX Project Public License. See 
+This material is subject to the LaTeX Project Public License 1.3. See 
  
- http://www.ctan.org/tex-archive/help/Catalogue/licenses.lppl.html 
+ https://www.latex-project.org/lppl/
 
 for the details of that license. 
 
