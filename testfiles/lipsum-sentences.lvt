@@ -1,0 +1,18 @@
+\input{regression-test.tex}
+\documentclass{article}
+\usepackage{lipsum}
+
+\begin{document}
+\ttfamily % avoid hyphenation
+\START
+\TEST{\lipsum[1][1-2], content, check space between sentences}
+{
+  \showoutput\lipsum[1][1-2]\newpage
+}
+\TEST{\lipsum[104-105][10-11], content, check space between sentences spanning pars }
+{
+  \showoutput\lipsum[104-105][10-11]\newpage
+}
+
+\end{document}
+\END

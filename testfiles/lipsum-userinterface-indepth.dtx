@@ -1,0 +1,93 @@
+\input{regression-test.tex}
+\RequirePackage{lipsum}
+\def\lipsonehundertandfour{%
+  Donec metus metus, condimentum eu, accumsan
+  nec, vulputate non, purus. Vestibulum ullamcorper vehicula sapien.
+  Mauris risus odio, hendrerit ac, congue ac, ullamcorper at, odio.
+  Aenean leo justo, commodo vitae, placerat blandit, malesuada vel,
+  sem. Donec sit amet ante eget mauris adipiscing sollicitudin.
+  Curabitur posuere sem et leo. Nulla ultricies mauris. Vestibulum
+  ante ipsum primis in faucibus orci luctus et ultrices posuere
+  cubilia Curae; Fusce sollicitudin augue vel tellus. Vivamus mauris
+  eros, pharetra vel, lacinia pretium, egestas a, nibh. Morbi a
+  ligula.}
+\def\lipsoneone{%
+  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.}
+\ExplSyntaxOn
+\unpacklipsum*[104]
+\START
+%<*testupl104>
+%<*expectupl104>
+\TESTEXP{\unpacklipsum[104], lipsumexp, content}{
+%</expectupl104>
+\unpacklipsum[104]
+\lipsumexp
+\unpacklipsum*[104]
+\lipsumexp
+%</testupl104>
+%<*expectupl104>
+\lipsonehundertandfour\tex_par:D
+\lipsonehundertandfour
+%<*testupl104>
+}
+%</testupl104>
+%</expectupl104>
+
+
+%<*testlipsumpar>
+%<expectlipsumpar>
+\TESTEXP{\LipsumPar[104], lipsumexp, content}{
+%</expectlipsumpar>
+%</testlipsumpar>
+%<testlipsumpar>\LipsumPar{104}
+%<expectlipsumpar>\lipsonehundretandfour\tex_par:D
+%<*testlipsumpar>
+%<expectlipsumpar>
+}
+%</expectlipsumpar>
+%</testlipsumpar>
+
+%<*testsetlipsumdefault>
+%<*expectsetlipsumdefault>
+\TESTEXP{\SetLipsumDefault{104}, lipsumexp, content}{
+%</expectsetlipsumdefault>
+\SetLipsumDefault{1-12}
+\g_lipsum_default_range_tl
+\SetLipsumDefault{104}
+\unpacklipsum*
+\lipsumexp
+%</testsetlipsumdefault>
+%<*expectsetlipsumdefault>
+1-12
+\lipsonehundretandfour
+%<*testsetlipsumdefault>
+}
+%</testsetlipsumdefault>
+%</expectsetlipsumdefault>
+
+
+%<*testsurrounders1>
+%<*expectsurrounders1>
+\TESTEXP{Surrounders 1, lipsumexp, content}{
+%</testsurrounders1>
+%</expectsurrounders1>
+%<*testsurrounders1>
+\SetLipsumSentenceListItemSeparator{<sep>}
+\SetLipsumSentenceListSurrounders{<list>}{</list>}
+\SetLipsumSentenceListItemSurrounders{<item>}{</item>}
+\unpacklipsum[1][1]
+\lipsumexp
+%</testsurrounders1>
+<list><item>\lipsoneone</item></list>
+%<*expectsurrounders1>
+%<*testsurrounders1>
+}
+%</testsurrounders1>
+%</expectsurrounders1>
+\END
+\ExplSyntaxOff
+% \endinput
+% Local Variables:
+% mode: doctex
+% TeX-master: t
+% End:

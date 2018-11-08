@@ -1,0 +1,40 @@
+\input l3docstrip.tex
+\askforoverwritefalse
+\preamble
+Generating test files for in-depth tests of the user interface.
+\endpreamble
+\postamble
+\endpostamble
+% \usedir{}
+
+\generate{%
+  \file{if-indepth-001.lvt}{%
+    \from{lipsum-userinterface-001.dtx}{test}
+  }
+  \file{if-indepth-001.lve}{%
+    \from{lipsum-userinterface-001.dtx}{expect}
+  }
+  \file{if-indepth-002.lvt}{%
+    \from{lipsum-userinterface-002.dtx}{test}
+  }
+  \file{if-indepth-002.lve}{%
+    \from{lipsum-userinterface-002.dtx}{expect}
+  }
+  \file{if-indepth-003.lvt}{%
+    \from{lipsum-userinterface-003.dtx}{test}
+  }
+  \file{if-indepth-003.lve}{%
+    \from{lipsum-userinterface-003.dtx}{expect}
+  }
+  \file{if-indepth-004.lvt}{%
+    \from{lipsum-userinterface-004.dtx}{test}
+  }
+  \file{if-indepth-004.lve}{%
+    \from{lipsum-userinterface-004.dtx}{expect}
+  }
+}
+\endbatchfile
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

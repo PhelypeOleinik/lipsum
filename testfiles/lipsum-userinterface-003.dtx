@@ -1,0 +1,42 @@
+\input{regression-test.tex}
+\RequirePackage{lipsum}
+\def\lipsonehundertandfour{%
+  Donec metus metus, condimentum eu, accumsan
+  nec, vulputate non, purus. Vestibulum ullamcorper vehicula sapien.
+  Mauris risus odio, hendrerit ac, congue ac, ullamcorper at, odio.
+  Aenean leo justo, commodo vitae, placerat blandit, malesuada vel,
+  sem. Donec sit amet ante eget mauris adipiscing sollicitudin.
+  Curabitur posuere sem et leo. Nulla ultricies mauris. Vestibulum
+  ante ipsum primis in faucibus orci luctus et ultrices posuere
+  cubilia Curae; Fusce sollicitudin augue vel tellus. Vivamus mauris
+  eros, pharetra vel, lacinia pretium, egestas a, nibh. Morbi a
+  ligula.}
+\def\lipsoneone{Lorem ipsum dolor sit amet, consectetuer adipiscing elit.}
+
+\SetLipsumDefault{1-12}
+\START
+\ExplSyntaxOn
+\TESTEXP{\SetLipsumDefault{1-12}, \g_lipsum_default_range_tl}{
+%<*test>
+\g_lipsum_default_range_tl
+%</test>
+%<*expect>
+1-12
+%</expect>
+}
+
+
+\SetLipsumDefault{104}
+\unpacklipsum
+\TESTEXP{\SetLipsumDefault{104}, lipsumexp, content}{
+%<test>\lipsumexp
+%<expect>\lipsonehundertandfour\tex_par:D
+}
+
+\END
+
+% \endinput
+% Local Variables:
+% mode: doctex
+% TeX-master: t
+% End:
