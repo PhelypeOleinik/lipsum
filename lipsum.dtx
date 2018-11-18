@@ -21,7 +21,7 @@
 %    https://github.com/patta42/lipsum
 %
 %<*driver>
-\ProvidesFile{lipsum.dtx}[2018/11/07 v2.0 Access to 150 of Lorem Ipsum dummy text]
+\ProvidesFile{lipsum.dtx}[2018/11/18 v2.1 Access to 150 of Lorem Ipsum dummy text]
 \documentclass{l3doc}
 \usepackage[a4paper,
   top=2cm, left=8.8cm, right=2cm, bottom=3cm,
@@ -114,15 +114,15 @@
 \RequirePackage{xparse}
 \ProvidesExplPackage
   {lipsum}
-  {2018/11/07}
-  {2.0}
+  {2018/11/18}
+  {2.1}
   {150 paragraphs of Lorem Ipsum dummy text}
 % </package>
 %   \fi
 %
 %   \title{\pkg{lipsum}}
 % \subtitle{Access to 150 paragraphs of Lorem Ipsum dummy
-% text\thanks{Version: 2.0}}
+% text\thanks{Version: 2.1}}
 % \author{Patrick Happel\thanks{patrick.happel@rub.de}}
 % \date{\today}
 % \RecordChanges
@@ -141,7 +141,8 @@
 % \changes{v2.0}{2018/11/07}{Added the possibility to fetch a number of sentences from the
 % lipsum paragraphs (thanks to Frank Mittelbach).}
 % \changes{v2.0}{2018/11/07}{Rewritten code in \pkg{expl3} syntax.}
-%
+% \changes{v2.1}{2018/11/18}{Changed defaults, now nothing is typeset at the
+% end of any list.}
 % \maketitle{\pkg{lipsum} is a \LaTeX{} package that produces dummy text
 % to be used in test documents or examples. The paragraphs are taken with
 % permission from \url{https://www.lipsum.com/}, thanks to James Wilson for
@@ -231,12 +232,12 @@
 %
 % \subsection{Package Options}
 % \pkg{lipsum} outputs a range of paragraphs taken from the \lips\ dummy
-% text. The package option control how a single paragraph
-% of \lips\ is terminated. The default is to terminate a paragaraph with
-% \cs{par}. One option is available to change the default behaviour:
+% text. The package option control how the single paragraphs of \lips\ are
+% separated. The default is to separate the paragaraph with \cs{par}. One
+% option is available to change the default behaviour:
 % \begin{description}
 % \item[\opt{nopar}:] Instead of \cs{par}, \cs{space} is used to
-% terminate every paragraph. 
+% separate the paragraphs.
 % \end{description}
 % 
 % \subsection{User Commands}
@@ -1552,16 +1553,16 @@
 \cs_new:Nn \@@_restore_sentence_list: {
   \SetLipsumSentenceListItemSeparator{\space}
   \SetLipsumSentenceListItemSeparator*{\space}
-  \SetLipsumSentenceListSurrounders{}{\tex_par:D}
-  \SetLipsumSentenceListSurrounders*{}{\space}
+  \SetLipsumSentenceListSurrounders{}{}
+  \SetLipsumSentenceListSurrounders*{}{}
   \SetLipsumSentenceListItemSurrounders*{}{}
   \SetLipsumSentenceListItemSurrounders{}{}
 }
 \cs_new:Nn \@@_restore_par_list: {
   \SetLipsumParListItemSeparator{\tex_par:D}
   \SetLipsumParListItemSeparator*{\space}
-  \SetLipsumParListSurrounders{}{\tex_par:D}
-  \SetLipsumParListSurrounders*{}{\space}
+  \SetLipsumParListSurrounders{}{}
+  \SetLipsumParListSurrounders*{}{}
   \SetLipsumParListItemSurrounders*{}{}
   \SetLipsumParListItemSurrounders{}{}
 }
@@ -1571,16 +1572,16 @@
   \cs_gset:Nn \@@_restore_sentence_list: {
     \SetLipsumSentenceListItemSeparator{\space}
     \SetLipsumSentenceListItemSeparator*{\space}
-    \SetLipsumSentenceListEnd{\space}
-    \SetLipsumSentenceListEnd*{\tex_par:D}
+    \SetLipsumSentenceListEnd{}
+    \SetLipsumSentenceListEnd*{}
     \SetLipsumSentenceListItemSurrounders*{}{}
     \SetLipsumSentenceListItemSurrounders{}{}
   }
   \cs_gset:Nn \@@_restore_par_list: {
     \SetLipsumParListItemSeparator{\space}
     \SetLipsumParListItemSeparator*{\tex_par:D}
-    \SetLipsumParListEnd{\space}
-    \SetLipsumParListEnd*{\tex_par:D}
+    \SetLipsumParListEnd{}
+    \SetLipsumParListEnd*{}
     \SetLipsumParListItemSurrounders*{}{}
     \SetLipsumParListItemSurrounders{}{}
   }
