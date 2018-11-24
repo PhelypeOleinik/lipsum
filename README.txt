@@ -14,7 +14,7 @@ Patrick Happel (patrick.happel@rub.de)
    lipsum.dtx
    lipsum.ins 
    lipsum.pdf
-   README.1st (this file)
+   README.txt (this file)
 
 
 
