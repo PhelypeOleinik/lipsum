@@ -74,8 +74,8 @@
 }
 \makeatother
 \newenvironment{wide}{
- \hspace{-.75\fullmargin}
- \begin{minipage}{\textwidth+.75\fullmargin}
+  \hspace{-.75\fullmargin}
+  \begin{minipage}{\textwidth+.75\fullmargin}
 }{
   \end{minipage}
 }
@@ -380,9 +380,10 @@
 % first and last \meta{item}. Commands colored gray are not yet implemented. The
 % upper part displays the commands for lists of paragraphs, the lower part for
 % lists of sentences (also indicated by the labelled arrows in the middle). }
+% \label{fig:tokens}
 %   \end{multicols}
 % 
-% \label{fig:tokens}
+% 
 % \end{widefigure}
 % \DescribeMacro{\SetLipsumParListStart}\DescribeMacro{\SetLipsumParListStart*}
 % \DescribeMacro{\SetLipsumParListEnd}\DescribeMacro{\SetLipsumParListEnd*}
@@ -476,9 +477,9 @@
 %   \caption{Turning the output of \cs{lipsum} into a list using inserted tokens.}
 %   \label{fig:list-expl}
 % \end{widefigure}
-% As can be seen from the gray commands in Figure~\ref{fig:tokens}, commands
-% to surround a specific \meta{item} are not yet implemented. One
-% way to access the second \meta{item} in a list is shown in
+% The gray commands in Figure~\ref{fig:tokens} are thought to allow inserting
+% \meta{tokens} around a specific \meta{item}, but they remain to be implemented. One
+% way to access a specific \meta{item}  in a list is shown in
 % Figure~\ref{fig:seconditem}, but other, maybe more elegant ways are
 % conceivable.
 %
@@ -1071,8 +1072,8 @@
 %  \end{syntax}
 % \begin{arguments}
 %   \item The \meta{content} of the paragraph. In contrast to
-%   previous versions, \pkg{lipsum}2.0 does not store a macro that expands to
-%   a terminator. 
+%   previous versions, \pkg{lipsum}2.0 does not store a macro that is typeset
+%   at the end of the paragraph.
 % \end{arguments}
 % Implemented as follows:
 %    \begin{macrocode}
@@ -1605,12 +1606,14 @@
 }
 \LipsumRestoreAll
 \ExplSyntaxOff
+
+\SetLipsumDefault{1-7}
+
 %    \end{macrocode}
 % \newgeometry{a4paper, top=2cm, left=2cm, right=2cm, bottom=3cm, marginparwidth=3cm}
 % \newpage
 % \subsection{The \lips\ dummy text}
 %    \begin{macrocode}
-\SetLipsumDefault{1-7}
  %{1}
 \NewLipsumPar{%
   Lorem ipsum dolor sit amet, consectetuer
