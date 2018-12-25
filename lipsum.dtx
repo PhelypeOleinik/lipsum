@@ -21,7 +21,7 @@
 %    https://github.com/patta42/lipsum
 %
 %<*driver>
-\ProvidesFile{lipsum.dtx}[2018/11/24 v2.1a Access to 150 of Lorem Ipsum dummy text]
+\ProvidesFile{lipsum.dtx}[2018/12/25 v2.2 Access to 150 of Lorem Ipsum dummy text]
 \documentclass{l3doc}
 \usepackage[a4paper,
   top=2cm, left=8.8cm, right=2cm, bottom=3cm,
@@ -97,9 +97,7 @@
   leftmargin=.75\parindent
 }
 \newcommand\opt[1]{\textsf{#1}} % l3doc does not have some markup for package options...
-\makeatletter
 \newcommand\lips{\emph{Lorem ipsum\ldots}}
-\makeatother
 \renewcommand\topfraction{.85}
 \renewcommand\textfraction{.15}
 \renewcommand\floatpagefraction{.85}
@@ -114,15 +112,15 @@
 \RequirePackage{xparse}
 \ProvidesExplPackage
   {lipsum}
-  {2018/11/24}
-  {2.1a}
+  {2018/12/25}
+  {2.2}
   {150 paragraphs of Lorem Ipsum dummy text}
 % </package>
 %   \fi
 %
 %   \title{\pkg{lipsum}}
 % \subtitle{Access to 150 paragraphs of Lorem Ipsum dummy
-% text\thanks{Version: 2.1a}}
+% text\thanks{Version: 2.2}}
 % \author{Patrick Happel\thanks{patrick.happel@rub.de}}
 % \date{\today}
 % \RecordChanges
@@ -145,13 +143,17 @@
 % end of any list.}
 % \changes{v2.1a}{2018/11/24}{Added forgotten ins-file to CTAN. This requires
 % a new version number.}
+% \changes{v2.2}{2018/12/25}{replaced \cs{tex_par:D} by \cs{par} to avoid
+% incompatibilities with \LaTeX2e's |list|-environment. Thanks to Karl Hagen
+% for reporting. See \url{ttps://github.com/patta42/lipsum/issues/12}.}
+%
 % \maketitle{\pkg{lipsum} is a \LaTeX{} package that produces dummy text
 % to be used in test documents or examples. The paragraphs are taken with
 % permission from \url{https://www.lipsum.com/}, thanks to James Wilson for
 % this work. Furthermore, the following people contributed to \pkg{lipsum} by
 % suggesting improvements, correcting bugs or finding typos in the
 % documentation: Florent Chervet, Ulrike Fischer, Vincent Belaïche, Enrico
-% Gregorio, Frank Mittelbach.
+% Gregorio, Frank Mittelbach, Karl Hagen.
 %
 % \hspace{1em} Please, file bug reports, typos in the documentation or
 % feature requests as an issue on
