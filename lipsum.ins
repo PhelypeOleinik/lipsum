@@ -40,14 +40,18 @@ Alternatively, use github:
 \endpostamble
 
 \generate{\file{lipsum.sty}{\from{lipsum.dtx}{package}}}
+\generate{\file{lipsum.ltd.tex}{\from{lipsum.dtx}{lipsum}}}
 
 \obeyspaces
 \Msg{****************************************************} 
 \Msg{*                                                  *} 
 \Msg{* To finish the installation you have to move the  *} 
-\Msg{* following file into a directory searched by TeX: *} 
+\Msg{* following files into a directory searched        *}
+\Msg{* by TeX:                                           } 
 \Msg{*                                                  *} 
-\Msg{* lipsum.sty                                       *} 
+\Msg{* lipsum.sty                                       *}
+\Msg{* lipsum.ltd.tex                                   *}
+\Msg{* cicero.ltd.tex                                   *} 
 \Msg{*                                                  *} 
 \Msg{* To produce the documentation run the file        *} 
 \Msg{* lipsum.dtx through XeLaTeX or luaLaTeX.          *} 
