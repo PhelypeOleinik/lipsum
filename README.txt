@@ -3,6 +3,7 @@ lipsum
 Access to 150 paragraphs of ``Lorem ipsum'' dummy text.
 
 Patrick Happel (patrick.happel@rub.de)
+https://github.com/patta42/lipsum
 
 ============================================================
 
@@ -23,7 +24,8 @@ Patrick Happel (patrick.happel@rub.de)
 
  - Run lipsum.ins through latex
 
- - Move the resulting .sty file to a place where latex finds it.	
+ - Move the resulting .sty file and the resulting .ltd.tex files
+   to a place where latex finds it.	
    On a TDS compliant system this should be (substitute $TEXMF 
    with your local or home texmf directory):
    
@@ -42,7 +44,7 @@ Patrick Happel (patrick.happel@rub.de)
    source directory of your system.
  
  - Update your filename database. How to achieve this depends 
-   on your system. For teTeX `texhash' will work.
+   on your system. For teTeX and texlive, `texhash' will work.
 
  - If you are using a non TDS compliant system take a look in 
    the documentation how to install new packages.
