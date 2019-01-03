@@ -46,6 +46,7 @@
 ]  {exploutputbox}  
 
 \usepackage{lipsum,multicol}
+\usepackage[latin, english]{babel}
 \makeatletter
 \newcommand\@subtitle{}
 \newcommand\subtitle[1]{%
@@ -558,7 +559,29 @@
 % inspired the \lips-dummy text. In contrast to the default \lips\ text,
 % |cicero| text, which can be selected by |\SetLipsumText{cicero}| is true
 % latin, and thus is properly hyphenated by, for example, the \pkg{babel}
-% package with the language |latin| loaded (and selected).
+% package with the language |latin| loaded (and
+% selected). Figure~\ref{fig:cicero} shows how to load and use the text of
+% Cicero's speech (note that the use of babel is optional).
+%
+% \begin{widefigure}
+% \begin{exploutputbox}
+%   \begin{verbatim}
+% \lipsum[1][1]
+% \SetLipsumText{cicero}
+% \selectlanguage{latin} % optional, requires babel.sty with option latin.
+% \lipsum[1]
+%   \end{verbatim}
+%   \mdfsubtitle{Output}
+% \lipsum[1][1]
+% \MakePercentComment\SetLipsumText{cicero}\MakePercentIgnore
+% \selectlanguage{latin} 
+% \hspace*{1em}\lipsum[1]
+% \end{exploutputbox}
+% \MakePercentComment\SetLipsumText{lipsum}\MakePercentIgnore
+%   \sffamily\bfseries
+%   \caption{Selecting and using the text of Cicero's speech.}
+%   \label{fig:cicero}
+% \end{widefigure}
 % \subsubsection{Limitations of and comments on the interface}
 % \cs{SetLipsumText} more or less just uses an \cs{input} or, to be more
 % precise, the \LaTeX3-variant \cs{file_input:n}, to load the |.ltd.tex|
@@ -1668,7 +1691,7 @@
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\SetLipsumText}
-% Used to select and load the text output by \cs{lipsum} and friends. The the
+% Used to select and load the text output by \cs{lipsum} and friends. See the
 % section on loading and defining new outputs for \cs{lipsum}
 % (section~\ref{sec:other-texts}). It first checks whether the requested text
 % is already loaded, and if not, it clears \cs{g_lipsum_paragraph_seq} and
