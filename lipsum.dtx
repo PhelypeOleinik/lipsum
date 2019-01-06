@@ -1,7 +1,5 @@
 % \iffalse meta-comment
 %
-%% File: lipsum.dtx Copyright (C) 2004-2019 Patrick Happel
-%
 % This file is part of the package lipsum for use with LaTeX2e.
 %
 % Function: Access to 150 paragraphs of the well known Lorem Ipsum dummy text.
@@ -545,7 +543,7 @@
 % languages as names, I chose to introduce the |.ltd.tex| file ending. I did
 % not find a file with this ending in my |texmf|-tree, so I guess it is
 % safe.}) to a location where your \TeX-system will find it. The
-% \meta{paragrpah}-argument is a single paragraph of the new text. Thus, the
+% \meta{paragraph}-argument is a single paragraph of the new text. Thus, the
 % first occurence of \cs{NewLipsumPar} defines the first paragraph, the second
 % occurence the second paragraph and so on.
 %
@@ -557,7 +555,7 @@
 % \lips-dummy text and which is loaded by default, and, thanks to github-user
 % \emph{svenper}, |cicero.ltd.tex|, which contains the speech by Cicero which
 % inspired the \lips-dummy text. In contrast to the default \lips\ text,
-% |cicero| text, which can be selected by |\SetLipsumText{cicero}| is true
+% the |cicero| text, which can be selected by |\SetLipsumText{cicero}|, is true
 % latin, and thus is properly hyphenated by, for example, the \pkg{babel}
 % package with the language |latin| loaded (and
 % selected). Figure~\ref{fig:cicero} shows how to load and use the text of
@@ -591,7 +589,7 @@
 % if your text requires additional packages, the documentation should state
 % that the user has to load the packages. Since \pkg{lipsum} is a package for
 % developers and commonly used for examples, it will not load any packages
-% except the ones rewquired by \pkg{lipsum} itself to be usable for a maximum
+% except the ones required by \pkg{lipsum} itself to be usable for a maximum
 % of developers.
 %
 % Futhermore, the commands used to typeset the new texts are still
@@ -603,7 +601,7 @@
 %
 % Nonetheless, if you want to write a new package instead of just providing a
 % new dummy text, maybe because it requires a certain package to be loaded, or
-% beacause you want to have a different command than \cs{lipsum}, this can be
+% because you want to have a different command than \cs{lipsum}, this can be
 % as easy as this\footnote{The following code has never been tested, it was
 % just written from mind as an example.}:
 % \begin{verbatim}
@@ -703,10 +701,10 @@
 %    \end{macrocode}
 % 
 % \subsection{Variables}
-% \begin{variable}{\g_lipsum_paragraph_seq}
+% \begin{variable}{\g_@@_paragraph_seq}
 % The sequence that stores all the paragraphs.
 %    \begin{macrocode}
-\seq_new:N\g_lipsum_paragraph_seq
+\seq_new:N\g_@@_paragraph_seq
 %    \end{macrocode}
 % \end{variable}
 % \begin{variable}{\g_lipsum_default_range_tl}
@@ -867,7 +865,7 @@
 % paragraphs were stored in \cs{lipsum@i}, \cs{lipsum@ii}, \ldots.
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_non_terminated_par:n #1{
-  \seq_item:Nn \g_lipsum_paragraph_seq{#1}
+  \seq_item:Nn \g_@@_paragraph_seq{#1}
 }
 
 \cs_new:Npn \lipsum_get_terminated_par:n #1 {
@@ -1199,7 +1197,7 @@
 %    \begin{macrocode}
 
 \NewDocumentCommand\NewLipsumPar{m}{
-  \seq_gput_right:Nn{\g_lipsum_paragraph_seq}{#1}
+  \seq_gput_right:Nn{\g_@@_paragraph_seq}{#1}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -1694,14 +1692,14 @@
 % Used to select and load the text output by \cs{lipsum} and friends. See the
 % section on loading and defining new outputs for \cs{lipsum}
 % (section~\ref{sec:other-texts}). It first checks whether the requested text
-% is already loaded, and if not, it clears \cs{g_lipsum_paragraph_seq} and
+% is already loaded, and if not, it clears \cs{g_@@_paragraph_seq} and
 % loads the corresponding lipsum text definition file.
 %    \begin{macrocode}
 \NewDocumentCommand\SetLipsumText{m}{%
   \IfLipsumText{#1}{}{
-    \seq_clear:N\g_lipsum_paragraph_seq
+    \seq_gclear:N\g_@@_paragraph_seq
     \file_input:n{#1.ltd}
-    \str_set:Nn\g_lipsum_text_str{#1}
+    \str_gset:Nn\g_@@_text_str{#1}
   }
 }
 
@@ -1766,11 +1764,16 @@
 \SetLipsumDefault{1-7}
 \SetLipsumText{lipsum}
 %    \end{macrocode}
+%    \begin{macrocode}
 %</package>
+%    \end{macrocode}
 % \newgeometry{a4paper, top=2cm, left=2cm, right=2cm, bottom=3cm, marginparwidth=3cm}
 % \newpage
+% \section{Texts}
 % \subsection{The \lips\ dummy text}
+%    \begin{macrocode}
 %<*lipsum>
+%    \end{macrocode}
 %    \begin{macrocode}
 \NewLipsumPar{%
   Lorem ipsum dolor sit amet, consectetuer
@@ -3442,16 +3445,20 @@
   magna iaculis pharetra. Duis sagittis massa in tellus. Aenean vel
   velit vel felis consectetuer pharetra.}
 %    \end{macrocode}
+%    \begin{macrocode}
 %</lipsum>
+%    \end{macrocode}
 % \newpage
 % \subsection{The text of Cicero's speech}
-%<*cicero>
+%    \begin{macrocode}
+%<*cicero> 
+%    \end{macrocode}
 %    \begin{macrocode}
 
- %
- % This text was provided by github-user
- % svenper. See https://github.com/patta42/lipsum/issues/13
- % 
+%%
+%% This text was provided by github-user
+%% svenper. See https://github.com/patta42/lipsum/issues/13
+%% 
 
 \NewLipsumPar{Non eram nescius, Brute, cum, quae summis ingeniis exquisitaque
   doctrina philosophi Graeco sermone tractavissent, ea Latinis litteris
@@ -5602,7 +5609,9 @@
   dimittamus et suis se finibus tenere iubeamus, ne blanditiis eius
   inlecebrisque impediatur disputandi severitas.}
 %    \end{macrocode}
+%    \begin{macrocode}
 %</cicero>
+%    \end{macrocode}
 % \newpage
 % \end{implementation}
 %
