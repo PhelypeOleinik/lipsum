@@ -7,12 +7,9 @@
 
 module = "lipsum"
 
-typesetfiles  = {"*.tex"}
-
 checkengines  = {"pdftex"}
 
 checkruns     = 1
-
 
 if not release_date then
    kpse.set_program_name("kpsewhich")
