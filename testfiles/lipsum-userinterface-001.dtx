@@ -13,19 +13,19 @@
   ligula.}
 \def\lipsoneone{Lorem ipsum dolor sit amet, consectetuer adipiscing elit.}
 
+\START
+
+\SetLipsumParListEnd{\par}
 
 \unpacklipsum[104]
-\START
-\ExplSyntaxOn
 \TESTEXP{\unpacklipsum[104], lipsumexp, content}{
 %<test>\lipsumexp
-%<expect>\lipsonehundertandfour\tex_par:D
+%<expect>\lipsonehundertandfour\par
 }
-\ExplSyntaxOff
 \unpacklipsum*[104]
-\TESTEXP{\unpacklipsum*[104], lipsumexp, content}{
+\TESTEXP{\unpacklipsum*[104], lipsumexp, content}{%
 %<test>\lipsumexp
-%<expect>\lipsonehundertandfour\space
+%<expect>\lipsonehundertandfour
 }
 \END
 
