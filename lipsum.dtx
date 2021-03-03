@@ -666,10 +666,10 @@
 % case is not available in \pkg{xparse} (at least not in the release
 % 2018-10-17). We copy it to a \pkg{lipsum} internal variant to be able to
 % generate a variant.
-% \begin{function}{\__lipsum_split_argument_expanded:nnn
-%   ,\__lipsum_split_argument_expanded:nne}
+% \begin{function}{\@@_split_argument_expanded:nnn
+%   ,\@@_split_argument_expanded:nne}
 %   \begin{syntax}
-%     \cs{__lipsum_split_argument_expanded:nne}\Arg{number}\Arg{token}\Arg{argument}
+%     \cs{@@_split_argument_expanded:nne}\Arg{number}\Arg{token}\Arg{argument}
 %   \end{syntax}
 % \begin{arguments}
 %   \item See documentation for \cs{SplitArgument} in
@@ -711,24 +711,24 @@
 \tl_new:N \g_lipsum_default_range_tl % 
 %    \end{macrocode}
 % \end{variable}
-% \begin{variable}{\l__lipsum_pars_tl}
+% \begin{variable}{\l_@@_pars_tl}
 % This variables is used to store the token list containing the selected paragraphs.
 %    \begin{macrocode}
-\tl_new:N \l__lipsum_pars_tl
+\tl_new:N \l_@@_pars_tl
 %    \end{macrocode}
 % \end{variable}
-% \begin{variable}{\l__lipsum_sentences_tl}
+% \begin{variable}{\l_@@_sentences_tl}
 % This variables is used to store the token list containing the selected sentences.
 %    \begin{macrocode}
-\tl_new:N \l__lipsum_sentences_tl
+\tl_new:N \l_@@_sentences_tl
 %    \end{macrocode}
 % \end{variable}
-% \begin{variable}{ 
-%   \l__lipsum_sentences_seq
+% \begin{variable}{
+%   \l_@@_sentences_seq
 % }
 % In this sequence, the sentence list is stored.  
 %    \begin{macrocode}
-\seq_new:N \l__lipsum_sentences_seq
+\seq_new:N \l_@@_sentences_seq
 %    \end{macrocode}
 % \end{variable}
 % \begin{variable}{\l_@@_par_list_start_nostar_tl,
@@ -869,27 +869,27 @@
 \cs_new:Npn \lipsum_get_terminated_par:n #1 {
    \lipsum_get_non_terminated_par:n{#1}\par
 }
-     
+
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\lipsum_add_to_tokenlist:n}
 % Adds a paragraph \meta{item} to the list of paragraphs
 % (\cs{l_@@_pars_tl}) and surrounds it by
 % the user-defined \meta{tokens}
-% . 
+% .
 %  \begin{syntax}
 %     \cs{lipsum_add_to_tokenlist:n}\Arg{number}
 %  \end{syntax}
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_add_to_tokenlist:n #1 {
   \tl_put_right:NV
-    \l__lipsum_pars_tl 
-    \l_@@_par_list_itemstart_tl 
-  \tl_put_right:Nn \l__lipsum_pars_tl  {
+    \l_@@_pars_tl
+    \l_@@_par_list_itemstart_tl
+  \tl_put_right:Nn \l_@@_pars_tl  {
     \lipsum_get_non_terminated_par:n{#1}
   }
   \tl_put_right:NV
-    \l__lipsum_pars_tl
+    \l_@@_pars_tl
     \l_@@_par_list_itemend_tl
 }
 \cs_generate_variant:Nn
@@ -955,8 +955,8 @@
 % the token list.
 %    \begin{macrocode}
 
-  \tl_clear:N \l__lipsum_sentences_tl
-   
+  \tl_clear:N \l_@@_sentences_tl
+
 %    \end{macrocode}
 % Using a regexp turned out to be rather slow for large \meta{paragraph
 % range}s. Thus, I use a loop similar to the one used by
@@ -967,7 +967,7 @@
 %    \begin{macrocode}
   \int_compare:nT {#2 >= #1}
   {
-      \__lipsum_put_sentence_on_tokenlist:nnnw
+      \@@_put_sentence_on_tokenlist:nnnw
       {#1}
       {#2}
       {1}
@@ -1573,7 +1573,7 @@
       {
         \lipsum_range_to_tokenlist:VV
           { \l_tmpa_int }{ \l_tmpb_int }
-        \tl_use:N \l__lipsum_pars_tl
+        \tl_use:N \l_@@_pars_tl
       }
       {
         \@@_ensure_parsable_output:
@@ -1582,12 +1582,12 @@
         \lipsum_store_as_temp_ints:nn #3
         \cs_gset_nopar:Nx
           \@@_expanded_paragraphs_terminated_with_space:
-          {\tl_use:N\l__lipsum_pars_tl}
+          {\tl_use:N\l_@@_pars_tl}
         \lipsum_sentences_to_tokenlist:VVf
           { \l_tmpa_int }
           { \l_tmpb_int }
-          \__lipsum_expanded_paragraphs_terminated_with_space:
-        \tl_use:N \l__lipsum_sentences_tl  
+          \@@_expanded_paragraphs_terminated_with_space:
+        \tl_use:N \l_@@_sentences_tl
       }
     \group_end:
   }
@@ -1617,18 +1617,18 @@
 %     \cs{lipsumexp}
 %   \end{syntax}
 %    \begin{macrocode}
-\cs_new:Nn \__lipsum_expanded: {}
+\cs_new:Nn \@@_expanded: {}
 \NewDocumentCommand
   \unpacklipsum
   {
     s
-    >{\__lipsum_split_argument_expanded:nne{1}{-}}
+    >{\@@_split_argument_expanded:nne{1}{-}}
       O{\g_lipsum_default_range_tl}
-    >{\__lipsum_split_argument_expanded:nne{1}{-}}
+    >{\@@_split_argument_expanded:nne{1}{-}}
       o
   }
   {
-   
+
     \group_begin:
       \lipsum_store_as_temp_ints:nn #2
       \IfBooleanTF {#1}
@@ -1643,9 +1643,9 @@
         \lipsum_range_to_tokenlist:VV
           { \l_tmpa_int } { \l_tmpb_int }
         \cs_gset:Nx
-          \__lipsum_expanded: {\tl_use:N\l__lipsum_pars_tl}
+          \@@_expanded: {\tl_use:N\l_@@_pars_tl}
         \cs_gset_eq:NN
-          \lipsumexp \__lipsum_expanded:
+          \lipsumexp \@@_expanded:
       }
       {
         \@@_ensure_parsable_output:
@@ -1653,7 +1653,7 @@
           { \l_tmpa_int } { \l_tmpb_int }
         \cs_gset_nopar:Nx
           \@@_expanded_paragraphs_terminated_with_space:
-          { \tl_use:N\l__lipsum_pars_tl }
+          { \tl_use:N\l_@@_pars_tl }
         \lipsum_store_as_temp_ints:nn #3
         \lipsum_sentences_to_tokenlist:VVf
           { \l_tmpa_int }
@@ -1661,11 +1661,11 @@
           \@@_expanded_paragraphs_terminated_with_space:
         \cs_gset:Nx
           \@@_expanded:
-          { \tl_use:N\l__lipsum_sentences_tl }
+          { \tl_use:N\l_@@_sentences_tl }
         \cs_gset_eq:NN
-          \lipsumexp \__lipsum_expanded:
+          \lipsumexp \@@_expanded:
       }
-    \group_end: 
+    \group_end:
   }
 %    \end{macrocode}
 % \end{macro}
