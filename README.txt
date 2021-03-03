@@ -3,7 +3,9 @@ lipsum
 Access to 150 paragraphs of ``Lorem ipsum'' dummy text.
 
 Patrick Happel (patrick.happel@rub.de)
-https://github.com/patta42/lipsum
+
+Currently maintained by Phelype Oleinik
+https://github.com/PhelypeOleinik/lipsum
 
 ============================================================
 
