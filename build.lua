@@ -9,6 +9,8 @@ module = "lipsum"
 
 typesetfiles  = {"*.tex"}
 
+checkengines  = {"pdftex"}
+
 checkruns     = 1
 
 
