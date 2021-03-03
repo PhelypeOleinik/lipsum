@@ -655,27 +655,22 @@
 % can either be a range as specified above, or a token list containing a
 % range. Thus, the argument has to be expanded before it is analyzed. This use
 % case is not available in \pkg{xparse} (at least not in the release
-% 2018-10-17). Thus, we have to touch \pkg{xparse}'s internal and generate
-% such a variant. We copy it to a \pkg{lipsum} internal variant to avoid name
-% clashes with future versions of \pkg{xparse}.
-% \begin{function}{\__lipsum_split_argument_expanded:nne
-%   ,\__xparse_split_argument:nne}
+% 2018-10-17). We copy it to a \pkg{lipsum} internal variant to be able to
+% generate a variant.
+% \begin{function}{\__lipsum_split_argument_expanded:nnn
+%   ,\__lipsum_split_argument_expanded:nne}
 %   \begin{syntax}
 %     \cs{__lipsum_split_argument_expanded:nne}\Arg{number}\Arg{token}\Arg{argument}
 %   \end{syntax}
 % \begin{arguments}
 %   \item See documentation for \cs{SplitArgument} in
 %     \pkg{xparse}
-%   \item See documentation for \cs{SplitArgument} in
-%     \pkg{xparse}
 %   \item The argument fed to the function, which is expanded
-%   in this case 
+%   in this case.
 % \end{arguments}
 %    \begin{macrocode}
-\cs_generate_variant:Nn \__xparse_split_argument:nnn {nne}
-\cs_new_eq:NN
-  \__lipsum_split_argument_expanded:nne
-  \__xparse_split_argument:nne
+\cs_new_eq:NN \@@_split_argument_expanded:nnn \SplitArgument
+\cs_generate_variant:Nn \@@_split_argument_expanded:nnn { nne }
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{str_if_eq:VnTF}
