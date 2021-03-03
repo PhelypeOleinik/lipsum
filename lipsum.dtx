@@ -15,8 +15,12 @@
 % Please send error reports and suggestions for improvements to
 %    https://github.com/PhelypeOleinik/lipsum
 %
+\def\lipsumversion{2.2}
+\def\lipsumdate{2019/01/02}
 %<*driver>
-\ProvidesFile{lipsum.dtx}[2019/01/02 v2.2 Access to 150 of Lorem Ipsum dummy text]
+\ProvidesFile{lipsum.dtx}%
+  [\lipsumdate\space v\lipsumversion\space
+   Access to 150 of Lorem Ipsum dummy text]
 \documentclass{l3doc}
 \usepackage{xcolor}
 \usepackage[a4paper,
@@ -109,23 +113,27 @@
 \RequirePackage{xparse}
 \ProvidesExplPackage
   {lipsum}
-  {2019/01/02}
-  {2.2}
+  {\lipsumdate}
+  {\lipsumversion}
   {150 paragraphs of Lorem Ipsum dummy text}
 %</package>
 %<*lipsum>
-\ProvidesFile{lipsum.ltd.tex}[2019/01/02 v2.2 The Lorem ipsum dummy text]
+\ProvidesFile{lipsum.ltd.tex}%
+  [\lipsumdate\space v\lipsumversion\space
+   The Lorem ipsum dummy text]
 
 %</lipsum>
 %<*cicero>
-\ProvidesFile{cicero.ltd.tex}[2019/01/02 v2.2 Text of Cicero's speech]
+\ProvidesFile{cicero.ltd.tex}%
+  [\lipsumdate\space v\lipsumversion\space
+   Text of Cicero's speech]
 
 %</cicero> 
 % \fi
 %
 % \title{\pkg{lipsum}}
 % \subtitle{Access to 150 paragraphs of Lorem Ipsum dummy
-% text\thanks{Version: 2.2}^^A
+% text\thanks{Version: \lipsumversion}^^A
 % \thanks{Since March 2021, Phelype Oleinik maintains this package
 %   (\href{mailto:phelype.oleinik@latex-project.org}
 %        {phelype.oleinik\meta{at}latex-project.org}).}}
