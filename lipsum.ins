@@ -37,8 +37,54 @@ Please send error reports and suggestions for improvements to
 \endpostamble
 
 \generate{\file{lipsum.sty}{\from{lipsum.dtx}{package}}}
-\generate{\file{lipsum.ltd.tex}{\from{lipsum.dtx}{lipsum}}}
-\generate{\file{cicero.ltd.tex}{\from{lipsum.dtx}{cicero}}}
+
+\newread\lipsread
+\newread\lipswrite
+\newcount\parno
+\newif\ifinpar
+\def\empty{}%
+\def\line{}%
+\edef\lb{\string{}%
+\edef\rb{\string}}%
+\begingroup\lccode`\?=`\%
+\lowercase{\endgroup\def\pc{?}}%
+\def\wline{\immediate\write\lipswrite}%
+\def\genlipsum#1#2#3{%
+  \openin\lipsread lipsum-#1.txt %
+  \immediate\openout\lipswrite #2.ltd %
+  \begingroup
+    \inparfalse
+    \parno=0
+    \endlinechar=-1
+    \def~{ }%
+    \genlipsumaux\genlipsumaux
+  \endgroup
+  \closein\lipsread
+  \immediate\closeout\lipswrite}
+\def\genlipsumaux#1\genlipsumaux{%
+  \ifeof\lipsread\let\line\empty
+  \else \read\lipsread to \line \fi
+  \toks0{#1}%
+  \ifx\line\empty
+    \ifinpar
+      \wline{\the\toks0 \rb\pc^^J\pc}%
+      \inparfalse
+    \fi
+  \else
+    \ifinpar
+      \wline{\the\toks0 }%
+    \else
+      \inpartrue
+      \advance\parno by 1
+      \wline{\string\NewLipsumPar\lb\pc~{\the\parno}}%
+    \fi
+  \fi
+  \ifeof\lipsread\expandafter\genlipsumend\fi
+  \expandafter\genlipsumaux\line\genlipsumaux}
+\def\genlipsumend#1\genlipsumaux#2\genlipsumaux{}
+
+\genlipsum{la}{lipsum}{latin}
+\genlipsum{cicero}{cicero}{latin}
 
 \obeyspaces
 \Msg{****************************************************}
@@ -48,11 +94,11 @@ Please send error reports and suggestions for improvements to
 \Msg{* by TeX:                                          *}
 \Msg{*                                                  *}
 \Msg{* lipsum.sty                                       *}
-\Msg{* lipsum.ltd.tex                                   *}
-\Msg{* cicero.ltd.tex                                   *}
+\Msg{* lipsum.ltd                                       *}
+\Msg{* cicero.ltd                                       *}
 \Msg{*                                                  *}
 \Msg{* To produce the documentation run the file        *}
-\Msg{* lipsum.dtx through XeLaTeX or luaLaTeX.          *}
+\Msg{* lipsum.dtx through XeLaTeX or LuaLaTeX.          *}
 \Msg{*                                                  *}
 \Msg{* Happy TeXing!                                    *}
 \Msg{*                                                  *}
