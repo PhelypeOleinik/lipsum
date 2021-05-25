@@ -23,6 +23,8 @@
    Access to 150 of Lorem Ipsum dummy text]
 \documentclass{l3doc}
 \usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage[a4paper,
   top=2cm, left=8.8cm, right=2cm, bottom=3cm,
   marginparwidth=6.3cm, marginparsep=.5cm,
@@ -103,6 +105,7 @@
 \renewcommand\textfraction{.15}
 \renewcommand\floatpagefraction{.85}
 \emergencystretch 2em
+\usepackage{hyperref}
 \begin{document}
   \DocInput{lipsum.dtx}
 \end{document}
@@ -117,18 +120,6 @@
   {\lipsumversion}
   {150 paragraphs of Lorem Ipsum dummy text}
 %</package>
-%<*lipsum>
-\ProvidesFile{lipsum.ltd.tex}%
-  [\lipsumdate\space v\lipsumversion\space
-   The Lorem ipsum dummy text]
-
-%</lipsum>
-%<*cicero>
-\ProvidesFile{cicero.ltd.tex}%
-  [\lipsumdate\space v\lipsumversion\space
-   Text of Cicero's speech]
-
-%</cicero>
 % \fi
 %
 % \title{\pkg{lipsum}}
@@ -561,12 +552,32 @@
 %
 % To specify the new text as output for \cs{lipsum} and friends, use
 % \DescribeMacro{\SetLipsumText}\cs{SetLipsumText}\Arg{filename}, where
-% \meta{filename} is the name of the file without the ending |.ltd.tex|.
+% \meta{filename} is the name of the file without the ending |.ltd.tex|, as
+% given in the table below. \pkg{lipsum} ships with three texts:
 %
-% \pkg{lipsum} ships with two texts, |lipsum.ltd.tex| which contains the
-% \lips-dummy text and which is loaded by default, and, thanks to github-user
-% \emph{svenper}, |cicero.ltd.tex|, which contains the speech by Cicero which
-% inspired the \lips-dummy text. In contrast to the default \lips\ text,
+% \begin{table}[ht]
+% \begin{wide}
+% \begin{tabularx}{\textwidth}{llX}
+%   \toprule
+%     File (|.ltd.tex|) & Source & Description \\
+%   \midrule
+%     |lipsum|
+%       & James Wilson
+%         & Contains the standard \lips-dummy text, obtained from
+%           \url{https://www.lipsum.com} (default). \\
+%     |cicero|
+%       & GH user \href{https://github.com/svenper}{svenper}
+%         & Contains the speech by Cicero which inspired the \lips-dummy text. \\
+%     |lipsum-cs|
+%       & Ondřej Macek
+%         & Dummy text in the Czech language, obtained from Petr Staníček's website:
+%           \url{https://www.wellstyled.com/tools/dummy-cz}. \\
+%   \bottomrule
+% \end{tabularx}
+% \end{wide}
+% \end{table}
+%
+% In contrast to the default \lips\ text,
 % the |cicero| text, which can be selected by |\SetLipsumText{cicero}|, is true
 % latin, and thus is properly hyphenated by, for example, the \pkg{babel}
 % package with the language |latin| loaded (and
