@@ -52,7 +52,7 @@ Please send error reports and suggestions for improvements to
 \def\genlipsum#1#2#3{%
   \begingroup
     \def\inFileName{lipsum-#1.txt}%
-    \def\outFileName{#2.ltd}%
+    \def\outFileName{#2.ltd.tex}%
     \openin\lipsread\inFileName\space
     \immediate\openout\lipswrite\outFileName\space
     \inparfalse
@@ -103,8 +103,9 @@ Please send error reports and suggestions for improvements to
 \Msg{* by TeX:                                          *}
 \Msg{*                                                  *}
 \Msg{* lipsum.sty                                       *}
-\Msg{* lipsum.ltd                                       *}
-\Msg{* cicero.ltd                                       *}
+\Msg{* lipsum.ltd.tex                                   *}
+\Msg{* lipsum-cs.ltd.tex                                *}
+\Msg{* cicero.ltd.tex                                   *}
 \Msg{*                                                  *}
 \Msg{* To produce the documentation run the file        *}
 \Msg{* lipsum.dtx through XeLaTeX or LuaLaTeX.          *}
