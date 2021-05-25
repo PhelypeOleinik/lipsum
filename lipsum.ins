@@ -19,7 +19,7 @@
 
 This file is part of the package lipsum for use with LaTeX2e.
 
-Function: Access to 150 paragraphs of the well known Lorem Ipsum dummy text.
+Function: Access to 150 paragraphs of dummy text.
 
 This program may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3
@@ -50,17 +50,25 @@ Please send error reports and suggestions for improvements to
 \lowercase{\endgroup\def\pc{?}}%
 \def\wline{\immediate\write\lipswrite}%
 \def\genlipsum#1#2#3{%
-  \openin\lipsread lipsum-#1.txt %
-  \immediate\openout\lipswrite #2.ltd %
   \begingroup
+    \def\inFileName{lipsum-#1.txt}%
+    \def\outFileName{#2.ltd}%
+    \openin\lipsread\inFileName\space
+    \immediate\openout\lipswrite\outFileName\space
     \inparfalse
     \parno=0
     \endlinechar=-1
     \def~{ }%
+    \def\ReferenceLines{%
+      \MetaPrefix ^^J%
+      \MetaPrefix\space The original source files were:^^J%
+      \MetaPrefix ^^J%
+      \MetaPrefix\space\inFileName^^J}%
+    \immediate\write\lipswrite{\defaultpreamble}%
     \genlipsumaux\genlipsumaux
-  \endgroup
-  \closein\lipsread
-  \immediate\closeout\lipswrite}
+    \closein\lipsread
+    \immediate\closeout\lipswrite
+  \endgroup}
 \def\genlipsumaux#1\genlipsumaux{%
   \ifeof\lipsread\let\line\empty
   \else \read\lipsread to \line \fi
