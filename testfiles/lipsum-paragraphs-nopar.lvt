@@ -6,104 +6,13 @@
 % Always testing 3 paragraphs. Should fit on a single page each.
 
 \START
-\TEST{\lipsum[1-3], content}{\showoutput\lipsum[1-3]\newpage}
-
-\TEST{\lipsum[4-6], content}{\showoutput\lipsum[4-6]\newpage}
-
-\TEST{\lipsum[7-9], content}{\showoutput\lipsum[7-9]\newpage}
-
-\TEST{\lipsum[10-12], content}{\showoutput\lipsum[10-12]\newpage}
-
-\TEST{\lipsum[13-15], content}{\showoutput\lipsum[13-15]\newpage}
-
-\TEST{\lipsum[16-18], content}{\showoutput\lipsum[16-18]\newpage}
-
-\TEST{\lipsum[19-21], content}{\showoutput\lipsum[19-21]\newpage}
-
-\TEST{\lipsum[22-24], content}{\showoutput\lipsum[22-24]\newpage}
-
-\TEST{\lipsum[25-27], content}{\showoutput\lipsum[25-27]\newpage}
-
-\TEST{\lipsum[28-30], content}{\showoutput\lipsum[28-30]\newpage}
-
-\TEST{\lipsum[31-33], content}{\showoutput\lipsum[31-33]\newpage}
-
-\TEST{\lipsum[34-36], content}{\showoutput\lipsum[34-36]\newpage}
-
-\TEST{\lipsum[37-39], content}{\showoutput\lipsum[37-39]\newpage}
-
-\TEST{\lipsum[40-42], content}{\showoutput\lipsum[40-42]\newpage}
-
-\TEST{\lipsum[43-45], content}{\showoutput\lipsum[43-45]\newpage}
-
-\TEST{\lipsum[46-48], content}{\showoutput\lipsum[46-48]\newpage}
-
-\TEST{\lipsum[49-51], content}{\showoutput\lipsum[49-51]\newpage}
-
-\TEST{\lipsum[52-54], content}{\showoutput\lipsum[52-54]\newpage}
-
-\TEST{\lipsum[55-57], content}{\showoutput\lipsum[55-57]\newpage}
-
-\TEST{\lipsum[58-60], content}{\showoutput\lipsum[58-60]\newpage}
-
-\TEST{\lipsum[61-63], content}{\showoutput\lipsum[61-63]\newpage}
-
-\TEST{\lipsum[64-66], content}{\showoutput\lipsum[64-66]\newpage}
-
-\TEST{\lipsum[67-69], content}{\showoutput\lipsum[67-69]\newpage}
-
-\TEST{\lipsum[70-72], content}{\showoutput\lipsum[70-72]\newpage}
-
-\TEST{\lipsum[73-75], content}{\showoutput\lipsum[73-75]\newpage}
-
-\TEST{\lipsum[76-78], content}{\showoutput\lipsum[76-78]\newpage}
-
-\TEST{\lipsum[79-81], content}{\showoutput\lipsum[79-81]\newpage}
-
-\TEST{\lipsum[82-84], content}{\showoutput\lipsum[82-84]\newpage}
-
-\TEST{\lipsum[85-87], content}{\showoutput\lipsum[85-87]\newpage}
-
-\TEST{\lipsum[88-90], content}{\showoutput\lipsum[88-90]\newpage}
-
-\TEST{\lipsum[91-93], content}{\showoutput\lipsum[91-93]\newpage}
-
-\TEST{\lipsum[94-96], content}{\showoutput\lipsum[94-96]\newpage}
-
-\TEST{\lipsum[97-99], content}{\showoutput\lipsum[97-99]\newpage}
-
-\TEST{\lipsum[100-102], content}{\showoutput\lipsum[100-102]\newpage}
-
-\TEST{\lipsum[103-105], content}{\showoutput\lipsum[103-105]\newpage}
-
-\TEST{\lipsum[106-108], content}{\showoutput\lipsum[106-108]\newpage}
-
-\TEST{\lipsum[109-111], content}{\showoutput\lipsum[109-111]\newpage}
-
-\TEST{\lipsum[112-114], content}{\showoutput\lipsum[112-114]\newpage}
-
-\TEST{\lipsum[115-117], content}{\showoutput\lipsum[115-117]\newpage}
-
-\TEST{\lipsum[118-120], content}{\showoutput\lipsum[118-120]\newpage}
-
-\TEST{\lipsum[121-123], content}{\showoutput\lipsum[121-123]\newpage}
-
-\TEST{\lipsum[124-126], content}{\showoutput\lipsum[124-126]\newpage}
-
-\TEST{\lipsum[127-129], content}{\showoutput\lipsum[127-129]\newpage}
-
-\TEST{\lipsum[130-132], content}{\showoutput\lipsum[130-132]\newpage}
-
-\TEST{\lipsum[133-135], content}{\showoutput\lipsum[133-135]\newpage}
-
-\TEST{\lipsum[136-138], content}{\showoutput\lipsum[136-138]\newpage}
-
-\TEST{\lipsum[139-141], content}{\showoutput\lipsum[139-141]\newpage}
-
-\TEST{\lipsum[142-144], content}{\showoutput\lipsum[142-144]\newpage}
-
-\TEST{\lipsum[145-147], content}{\showoutput\lipsum[145-147]\newpage}
-
-\TEST{\lipsum[148-150], content}{\showoutput\lipsum[148-150]\newpage}
-
+\ExplSyntaxOn
+\cs_new_protected:Npn \testaux #1
+  {
+    \TEST
+      { \lipsum[#1],~content }
+      { \showoutput \lipsum[#1] \newpage }
+  }
+\int_step_inline:nnnn { 1 } { 3 } { 150 }
+  { \use:x { \testaux { #1 - \int_eval:n { #1 + 2 } } } }
 \END

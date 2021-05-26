@@ -13375,7 +13375,7 @@ Completed box being shipped out [6]
 ============================================================
 TEST 7: \lipsum [19-21], content
 ============================================================
-Overfull \hbox (3.18568pt too wide) in paragraph at lines 21--21
+Overfull \hbox (3.18568pt too wide) in paragraph at lines 17--17
 []\OT1/cmr/m/n/10 Nulla non mau-ris vi-tae wisi po-suere con-va-l-lis. Sed eu nulla nec eros scelerisque
 \hbox(6.94444+1.94444)x345.0, glue set - 1.0
 .\hbox(0.0+0.0)x15.0
@@ -13477,7 +13477,7 @@ Overfull \hbox (3.18568pt too wide) in paragraph at lines 21--21
 .\OT1/cmr/m/n/10 u
 .\OT1/cmr/m/n/10 e
 .\glue(\rightskip) 0.0
-Overfull \hbox (2.7414pt too wide) in paragraph at lines 21--21
+Overfull \hbox (2.7414pt too wide) in paragraph at lines 17--17
 []\OT1/cmr/m/n/10 Etiam pede massa, dapibus vi-tae, rhon-cus in, plac-erat po-suere, odio. Vestibu-
 \hbox(6.94444+1.94444)x345.0, glue set - 1.0
 .\hbox(0.0+0.0)x15.0
@@ -21979,7 +21979,7 @@ Completed box being shipped out [10]
 ============================================================
 TEST 11: \lipsum [31-33], content
 ============================================================
-Overfull \hbox (5.39873pt too wide) in paragraph at lines 29--29
+Overfull \hbox (5.39873pt too wide) in paragraph at lines 17--17
 \OT1/cmr/m/n/10 pul-v-inar pel-len-tesque mi. Sus-pendisse sed est eu magna mo-lestie eges-tas. Quisque
 \hbox(6.94444+1.94444)x345.0, glue set - 1.0
 .\OT1/cmr/m/n/10 p
