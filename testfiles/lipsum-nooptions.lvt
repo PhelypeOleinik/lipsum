@@ -8,8 +8,6 @@
   ================================^^J%
   \lipsumexp}}
 
-\begin{document}
-
 \START
 
 \unpacklipsum\print
@@ -35,16 +33,16 @@
 
 
 \SetLipsumDefault{1-7}
-\SetLipsumTerminator{¶ }
-\SetLipsumStarTerminator{\ *\ }
+% \SetLipsumTerminator{¶ }
+% \SetLipsumStarTerminator{\ *\ }
 \unpacklipsum \print
 
 \unpacklipsum* \print
 
 
 \def\foo{ *** foo ***\ }
-\SetLipsumTerminator{\foo }
-\SetLipsumStarTerminator{ + \foo\ +}
+% \SetLipsumTerminator{\foo }
+% \SetLipsumStarTerminator{ + \foo\ +}
 \unpacklipsum\print
 \unpacklipsum*\print
 
@@ -56,8 +54,4 @@
 
 \unpacklipsum[1][300-400]\print
 
-\end{document}
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:
+\END
