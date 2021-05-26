@@ -2,15 +2,30 @@
 \documentclass{article}
 \usepackage{lipsum}
 
-\begin{document}
-\raggedright % To avoid hyphenation
 \START
 
 \ExplSyntaxOn
-\int_step_inline:nn { 150 }
+\cs_new_protected:Npn \test #1
   {
-    \TEST{\LipsumPar{#1},~content}
-      { \showoutput \LipsumPar{#1} \newpage }
+    \SetLipsumText{#1}
+    \TYPE
+      {
+        Testing~'#1'~
+        (\seq_count:N \g__lipsum_paragraph_seq \c_space_tl paragraphs):
+      }
+    \int_step_inline:nn { \seq_count:N \g__lipsum_paragraph_seq }
+      {
+        \TEST { \LipsumPar{##1},~content }
+          {
+            \tl_set:Nx \l_tmpa_tl { \lipsum_get_non_terminated_par:n {##1} }
+            \TYPE { \exp_not:V \l_tmpa_tl }
+          }
+      }
   }
+\ExplSyntaxOff
+
+\test{lipsum}
+\test{cicero}
+\test{lipsum-cs}
 
 \END
