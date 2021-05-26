@@ -7,11 +7,13 @@
 
 module = "lipsum"
 
-checkengines  = {"pdftex"}
+checkengines  = { "pdftex" }
+
+installfiles  = { "*.sty", "*.ltd.tex" }
+
+sourcefiles   = { "*.dtx", "*.ins", "*.txt" }
 
 checkruns     = 1
-
-textfiles     = {"*.txt"}
 
 if not release_date then
    kpse.set_program_name("kpsewhich")
