@@ -4,58 +4,57 @@
 
 \usepackage{lipsum}
 
-\showoutput   % do trivial testing
+\def\print{\typeout{%
+  ================================^^J%
+  \lipsumexp}}
 
 \begin{document}
 
 \START
 
-\section{Paragraphs}
-\lipsum\newpage
+\unpacklipsum\print
 
-\lipsum[1]\newpage
+\unpacklipsum[1]\print
 
-\lipsum[123-134]\newpage
+\unpacklipsum[123-134]\print
 
-\lipsum*\newpage
+\unpacklipsum*\print
 
-\lipsum*[8]\newpage
+\unpacklipsum*[8]\print
 
-\lipsum*[111-119]\newpage
+\unpacklipsum*[111-119]\print
 
 \SetLipsumDefault{111}
-\lipsum \newpage
-\lipsum* \newpage
+\unpacklipsum \print
+\unpacklipsum* \print
 
 
 \SetLipsumDefault{134-136}
-\lipsum \newpage
-\lipsum* \newpage
+\unpacklipsum \print
+\unpacklipsum* \print
 
 
 \SetLipsumDefault{1-7}
 \SetLipsumTerminator{¶ }
 \SetLipsumStarTerminator{\ *\ }
-\lipsum \newpage
+\unpacklipsum \print
 
-\lipsum* \newpage
+\unpacklipsum* \print
 
 
 \def\foo{ *** foo ***\ }
 \SetLipsumTerminator{\foo }
 \SetLipsumStarTerminator{ + \foo\ +}
-\lipsum\newpage
-\lipsum*\newpage
+\unpacklipsum\print
+\unpacklipsum*\print
 
+\unpacklipsum[1-3][4-9]\print
 
-\section{Sentences}
-\lipsum[1-3][4-9]
+\unpacklipsum[1][1]\print
 
-\lipsum[1][1]
+\unpacklipsum[1-52][1-300]\print
 
-\lipsum[1-52][1-300]
-
-+\lipsum[1][300-400]+
+\unpacklipsum[1][300-400]\print
 
 \end{document}
 %%% Local Variables:
