@@ -656,21 +656,6 @@
 %<@@=lipsum>
 %    \end{macrocode}
 %
-% A check to make sure that \pkg{expl3} is not too old
-%    \begin{macrocode}
-\@ifpackagelater { expl3 } { 2018/10/31 }
-  { }
-  {
-    \PackageError { lipsum } { Package~expl3~too~old }
-      {
-        You~need~to~update~your~installation~of~the~bundles~
-        'l3kernel'~and~'l3packages'.\MessageBreak
-        Loading~lipsum~will~abort!
-      }
-    \tex_endinput:D
-  }
-%    \end{macrocode}
-%
 % \subsection{Command Variants}
 %
 % To parse \meta{range}-like arguments, that is, arguments consisting either
