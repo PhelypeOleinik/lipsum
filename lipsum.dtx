@@ -112,12 +112,9 @@
 %</driver>
 %<*package>
 \NeedsTeXFormat{LaTeX2e}
-\RequirePackage{expl3}[2018/10/31]
-\RequirePackage{xparse}
-\ProvidesExplPackage
-  {lipsum}
-  {\lipsumdate}
-  {\lipsumversion}
+\@ifundefined{NewDocumentCommand}
+  {\RequirePackage{xparse}}{}
+\ProvidesExplPackage {lipsum} {\lipsumdate} {\lipsumversion}
   {150 paragraphs of Lorem Ipsum dummy text}
 %</package>
 % \fi
