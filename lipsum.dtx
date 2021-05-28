@@ -843,7 +843,7 @@
 %   |-NoValue-|, stores \meta{number_1} in \cs{l_tmpb_int}, otherwise stores
 %   \meta{number_2} in \cs{l_tmpb_int}.
 %    \begin{macrocode}
-\cs_new:Npn \lipsum_store_as_temp_ints:nn #1 #2
+\cs_new_protected:Npn \lipsum_store_as_temp_ints:nn #1 #2
   {
     \int_set:Nn \l_tmpa_int {#1}
     \IfValueTF {#2}
@@ -885,7 +885,7 @@
 %     \cs{lipsum_add_to_tokenlist:n}\Arg{number}
 %  \end{syntax}
 %    \begin{macrocode}
-\cs_new:Npn \lipsum_add_to_tokenlist:n #1
+\cs_new_protected:Npn \lipsum_add_to_tokenlist:n #1
   {
     \tl_put_right:NV \l_@@_pars_tl \l_@@_par_list_itemstart_tl
     \tl_put_right:Nn \l_@@_pars_tl
@@ -903,7 +903,7 @@
 %   Adds the paragraphs specified by \meta{number_1} to \meta{number_2}
 %   to the token list \cs{l_@@_pars_tl}.
 %    \begin{macrocode}
-\cs_new:Npn \lipsum_range_to_tokenlist:nn #1#2
+\cs_new_protected:Npn \lipsum_range_to_tokenlist:nn #1#2
   {
     \tl_clear:N \l_@@_pars_tl
     \tl_put_right:NV \l_@@_pars_tl \l_@@_par_list_start_tl
@@ -941,7 +941,7 @@
 % \cs{l_@@_sentences_tl} and surrounds the \meta{tokens} set by the user.
 %    \begin{macrocode}
 %
-\cs_new:Npn \lipsum_sentences_to_tokenlist:nnn #1#2#3
+\cs_new_protected:Npn \lipsum_sentences_to_tokenlist:nnn #1#2#3
   {
 %    \end{macrocode}
 % Now, we only need to put the sentences within \meta{sentence range} into
@@ -987,7 +987,7 @@
 % be tested), but the internals of \cs{tl_if_blank} provide this, more or
 % less.
 %    \begin{macrocode}
-\cs_new:Npn \@@_put_sentence_on_tokenlist:nnnw #1#2#3#4 .
+\cs_new_protected:Npn \@@_put_sentence_on_tokenlist:nnnw #1#2#3#4 .
   {
     \int_compare:nNnTF{#1} > {#2}
       { % start > end: leave loop
@@ -1048,7 +1048,7 @@
 % commands that compose the list of paragraphs or sentences. Here for calls of
 % the starred versions \cs{lipsum*} and \cs{unpacklipsum*}.
 %    \begin{macrocode}
-\cs_new:Npn \@@_set_surrounding_tokens_star:
+\cs_new_protected:Npn \@@_set_surrounding_tokens_star:
   {
     \tl_set_eq:NN \l_@@_par_list_start_tl
       \l_@@_par_list_start_star_tl
@@ -1082,7 +1082,7 @@
 % As \cs{@@_set_surrounding_tokens_star:}, but for calls of the non-starred
 % version of \cs{lipsum} and \cs{unpacklipsum}.
 %    \begin{macrocode}
-  \cs_new:Npn \@@_set_surrounding_tokens_nostar:
+\cs_new_protected:Npn \@@_set_surrounding_tokens_nostar:
   {
     \tl_set_eq:NN \l_@@_par_list_start_tl
       \l_@@_par_list_start_nostar_tl
@@ -1118,7 +1118,7 @@
 % sentences, the tokens between the single \meta{item}s have to macth a
 % pre-defined pattern. This commands sets the tokens accordingly.
 %    \begin{macrocode}
-\cs_new:Nn \@@_ensure_parsable_output:
+\cs_new_protected:Nn \@@_ensure_parsable_output:
   {
     \tl_set:No \l_@@_par_list_itemseparator_tl { \space }
     \tl_set:No \l_@@_par_list_item_start_tl { }
@@ -1491,7 +1491,7 @@
 % create it first using \pkg{xparse} before it is overwritten. Don't know if
 % this makes sense.
 %    \begin{macrocode}
-\NewDocumentCommand \lipsumexp { } { }
+\cs_new_eq:NN \lipsumexp \prg_do_nothing:
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1584,7 +1584,7 @@
 %
 % \subsection{Package options and defaults}
 %    \begin{macrocode}
-\cs_new:Nn \@@_restore_sentence_list:
+\cs_new_protected:Nn \@@_restore_sentence_list:
   {
     \SetLipsumSentenceListItemSeparator { \space }
     \SetLipsumSentenceListItemSeparator* { \space }
@@ -1593,7 +1593,7 @@
     \SetLipsumSentenceListItemSurrounders* { } { }
     \SetLipsumSentenceListItemSurrounders { } { }
 }
-\cs_new:Nn \@@_restore_par_list:
+\cs_new_protected:Nn \@@_restore_par_list:
   {
     \SetLipsumParListItemSeparator { \par }
     \SetLipsumParListItemSeparator* { \space }
@@ -1604,7 +1604,7 @@
 }
 \DeclareOption {nopar}
   {
-    \cs_gset:Npn \@@_restore_sentence_list:
+    \cs_gset_protected:Npn \@@_restore_sentence_list:
       {
         \SetLipsumSentenceListItemSeparator { \space }
         \SetLipsumSentenceListItemSeparator* { \space }
@@ -1613,7 +1613,7 @@
         \SetLipsumSentenceListItemSurrounders* { } { }
         \SetLipsumSentenceListItemSurrounders { } { }
       }
-    \cs_gset:Npn \@@_restore_par_list:
+    \cs_gset_protected:Npn \@@_restore_par_list:
       {
         \SetLipsumParListItemSeparator { \space }
         \SetLipsumParListItemSeparator* { \par }
