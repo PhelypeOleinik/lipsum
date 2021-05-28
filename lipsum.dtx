@@ -697,21 +697,6 @@
 %    \end{macrocode}
 % \end{function}
 %
-% \subsection{Messages}
-% Starting from \pkg{lipsum}2.0, some commands from previous versions are
-% considered deprecated and issue a warning when used. This is the
-% corresponding message.
-%    \begin{macrocode}
-\msg_new:nnnn{lipsum}{DeprecatedCommand}
-{\string#1\msg_line_context:\\
-  \string#1~should~be~substituted~by~\string#2.}
-{ The~command~\string#1~is~deprecated~
-  and~should~be~substituted~by~
-  \string#2.~
-  \string#1~might~not~be~available~in~a~
-  future~version~of~lipsum.sty.}
-%    \end{macrocode}
-%
 % \subsection{Variables}
 % \begin{variable}{\g_@@_paragraph_seq}
 % The sequence that stores all the paragraphs.
@@ -1511,7 +1496,7 @@
 
 %    \end{macrocode}
 % \end{macro}
-% \begin{macro}{\SetLipsumDefault, \setlipsumdefault}
+% \begin{macro}{\SetLipsumDefault}
 % Command to change the default range used by \cs{lipsum} and friends. Note
 % that the use of \cs{setlipsumdefault} is considered deprecated starting from
 % \pkg{lipsum}2.0.
@@ -1525,17 +1510,6 @@
 %    \begin{macrocode}
 \NewDocumentCommand\SetLipsumDefault{m}{
   \tl_gset:No\g_lipsum_default_range_tl{#1}
-}
-%    \end{macrocode}
-% Implement \cs{setlipsumdefault} and mark it deprecated.
-%    \begin{macrocode}
-\NewDocumentCommand\setlipsumdefault{m}{%
-  \msg_warning:nnnn
-    {lipsum}
-    {DeprecatedCommand}
-    {\setlipsumdefault}
-    {\SetLipsumDefault}
-  \SetLipsumDefault{#1}
 }
 %    \end{macrocode}
 % \end{macro}
