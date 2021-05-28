@@ -1225,9 +1225,7 @@
 % Implemented as follows:
 %    \begin{macrocode}
 \NewDocumentCommand\LipsumPar{m}{
-  \group_begin:
-    \lipsum_get_terminated_par:n{#1}
-  \group_end:
+  \lipsum_get_terminated_par:n{#1}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -1573,7 +1571,6 @@
      o
   }
   {
-    \group_begin:
       \lipsum_store_as_temp_ints:nn #2
       \IfBooleanTF {#1}
         {
@@ -1603,7 +1600,6 @@
           \@@_expanded_paragraphs_terminated_with_space:
         \tl_use:N \l_@@_sentences_tl
       }
-    \group_end:
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1642,8 +1638,6 @@
       o
   }
   {
-
-    \group_begin:
       \lipsum_store_as_temp_ints:nn #2
       \IfBooleanTF {#1}
         {
@@ -1679,7 +1673,6 @@
         \cs_gset_eq:NN
           \lipsumexp \@@_expanded:
       }
-    \group_end:
   }
 %    \end{macrocode}
 % \end{macro}
