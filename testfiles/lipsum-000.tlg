@@ -2,4 +2,6 @@ This is a generated file for the l3build validation system.
 Don't change this file in any respect.
 (lipsum.sty
 Package: lipsum ....-..-.. v... 150 paragraphs of Lorem Ipsum dummy text
+\l__lipsum_tmpa_int=\count...
+\l__lipsum_tmpb_int=\count...
 (lipsum.ltd.tex))
