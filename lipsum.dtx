@@ -789,16 +789,16 @@
 % called with or without a star.  The content of these variables is then used
 % by the functions that generate the \lips\meta{list}.
 %    \begin{macrocode}
-\tl_new:N\l_@@_par_list_start_tl
-\tl_new:N\l_@@_par_list_end_tl
-\tl_new:N\l_@@_sentence_list_start_tl
-\tl_new:N\l_@@_sentence_list_end_tl
-\tl_new:N\l_@@_par_list_itemseparator_tl
-\tl_new:N\l_@@_sentence_list_itemseparator_tl
-\tl_new:N\l_@@_par_list_itemstart_tl
-\tl_new:N\l_@@_par_list_itemend_tl
-\tl_new:N\l_@@_sentence_list_itemstart_tl
-\tl_new:N\l_@@_sentence_list_itemend_tl
+\tl_new:N \l_@@_par_list_start_tl
+\tl_new:N \l_@@_par_list_end_tl
+\tl_new:N \l_@@_sentence_list_start_tl
+\tl_new:N \l_@@_sentence_list_end_tl
+\tl_new:N \l_@@_par_list_itemseparator_tl
+\tl_new:N \l_@@_sentence_list_itemseparator_tl
+\tl_new:N \l_@@_par_list_itemstart_tl
+\tl_new:N \l_@@_par_list_itemend_tl
+\tl_new:N \l_@@_sentence_list_itemstart_tl
+\tl_new:N \l_@@_sentence_list_itemend_tl
 %    \end{macrocode}
 % \end{variable}
 %
@@ -806,7 +806,7 @@
 %   Holds the current text loaded for the output of \cs{lipsum} and
 %   friends. Used to avoid loading the same text definition if it is already used.
 %    \begin{macrocode}
-\str_new:N\g_@@_text_str
+\str_new:N \g_@@_text_str
 %    \end{macrocode}
 % \end{variable}
 %
