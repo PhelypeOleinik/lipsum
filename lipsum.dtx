@@ -810,30 +810,49 @@
 %    \end{macrocode}
 % \end{variable}
 %
+% \begin{variable}{\s_@@}
+%   Scan mark used throughout the package.
+%    \begin{macrocode}
+\scan_new:N \s_@@
+%    \end{macrocode}
+% \end{variable}
+%
 % \subsection{Developer interface}
 %
-% \begin{function}{\lipsum_store_as_temp_ints:nn}
-%   \begin{syntax}
-%     \cs{lipsum_store_as_temp_ints:nn}\Arg{number_1}\Arg{number_2}
-%   \end{syntax}
-%   \begin{arguments}
-%     \item A number.
-%     \item A number or |-NoValue-| as produced by the argument
-%       processing of \pkg{xparse}.
-%   \end{arguments}
-%   Stores \meta{number_1} in \cs{l_tmpa_int}. If \meta{number_2} is
-%   |-NoValue-|, stores \meta{number_1} in \cs{l_tmpb_int}, otherwise stores
-%   \meta{number_2} in \cs{l_tmpb_int}.
+% \begin{macro}{\@@_parse_range_arg:nNN}
+%   Parses an argument that may be a single integer or an integer range
+%   separated by a |-|, and stores them into the integer registers |#2|
+%   and |#3|.  If a number is blank, zero is used.  If only a single
+%   number is given, |#3| is set equal to |#2|.
 %    \begin{macrocode}
-\cs_new_protected:Npn \lipsum_store_as_temp_ints:nn #1 #2
+\cs_new_protected:Npn \@@_parse_range_arg:nNN #1 #2 #3
   {
-    \int_set:Nn \l_tmpa_int {#1}
-    \IfValueTF {#2}
-      { \int_set:Nn \l_tmpb_int {#2} }
-      { \int_set_eq:NN \l_tmpb_int \l_tmpa_int }
+    \exp_last_unbraced:No \@@_parse_range_arg:wNN
+      \tl_to_str:n { #1 - - } \s_@@ #2 #3 {#1}
   }
+\cs_new_protected:Npn \@@_parse_range_arg:wNN #1 - #2 - #3 \s_@@ #4 #5
+  {
+    \str_if_eq:nnTF {#3} { - }
+      {
+        \@@_int_set:Nn #4 {#1}
+        \@@_int_set:Nn #5 {#2}
+        \use_none:n
+      }
+      {
+        \tl_if_empty:nTF {#3}
+          {
+            \@@_int_set:Nn #4 {#1}
+            \int_set_eq:NN #5 #4
+            \use_none:n
+          }
+          { \msg_error:nnn { lipsum } { invalid-range } }
+      }
+  }
+\cs_new_protected:Npn \@@_int_set:Nn #1 #2
+  { \int_set:Nn #1 { \tl_if_blank:nT {#2} { 0 } #2 } }
+\cs_generate_variant:Nn \@@_parse_range_arg:nNN { e }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 %
 % \begin{function}{
 %     \lipsum_get_non_terminated_par:n,
@@ -1433,16 +1452,9 @@
 % inserted after each paragraph (only if called without the second optional
 % argument).
 %    \begin{macrocode}
-\NewDocumentCommand \lipsum
+\NewDocumentCommand \lipsum { s O { \g_lipsum_default_range_tl } o }
   {
-     s
-    >{\@@_split_argument_expanded:nne{1}{-}}
-     O{\g_lipsum_default_range_tl}
-    >{\@@_split_argument_expanded:nne{1}{-}}
-     o
-  }
-  {
-    \lipsum_store_as_temp_ints:nn #2
+    \@@_parse_range_arg:eNN {#2} \l_tmpa_int \l_tmpb_int
     \IfBooleanTF {#1}
       { \@@_set_surrounding_tokens_star: }
       { \@@_set_surrounding_tokens_nostar: }
@@ -1454,7 +1466,7 @@
       {
         \@@_ensure_parsable_output:
         \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
-        \lipsum_store_as_temp_ints:nn #3
+        \@@_parse_range_arg:eNN {#3} \l_tmpa_int \l_tmpb_int
         \cs_gset_nopar:Npx \@@_expanded_paragraphs_terminated_with_space:
           { \tl_use:N \l_@@_pars_tl }
         \lipsum_sentences_to_tokenlist:VVf \l_tmpa_int \l_tmpb_int
@@ -1490,16 +1502,9 @@
 %   \end{syntax}
 %    \begin{macrocode}
 \cs_new:Npn \@@_expanded: { }
-\NewDocumentCommand \unpacklipsum
+\NewDocumentCommand \unpacklipsum { s O { \g_lipsum_default_range_tl } o }
   {
-      s
-    >{\@@_split_argument_expanded:nne{1}{-}}
-      O{\g_lipsum_default_range_tl}
-    >{\@@_split_argument_expanded:nne{1}{-}}
-      o
-  }
-  {
-    \lipsum_store_as_temp_ints:nn #2
+    \@@_parse_range_arg:eNN {#2} \l_tmpa_int \l_tmpb_int
     \IfBooleanTF {#1}
       { \@@_set_surrounding_tokens_star: }
       { \@@_set_surrounding_tokens_nostar: }
@@ -1514,7 +1519,7 @@
         \lipsum_range_to_tokenlist:VV \l_tmpa_int \l_tmpb_int
         \cs_gset_nopar:Npx \@@_expanded_paragraphs_terminated_with_space:
           { \tl_use:N \l_@@_pars_tl }
-        \lipsum_store_as_temp_ints:nn #3
+        \@@_parse_range_arg:eNN {#3} \l_tmpa_int \l_tmpb_int
         \lipsum_sentences_to_tokenlist:VVf \l_tmpa_int \l_tmpb_int
           { \@@_expanded_paragraphs_terminated_with_space: }
         \cs_gset:Npx \@@_expanded: { \tl_use:N \l_@@_sentences_tl }
@@ -1560,7 +1565,15 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \subsection{Messages}
+%
+%    \end{macrocode}
+\msg_new:nnn { lipsum } { invalid-range }
+  { Invalid~number~or~range~'#1'. }
+%    \begin{macrocode}
+%
 % \subsection{Package options and defaults}
+%
 %    \begin{macrocode}
 \cs_new_protected:Nn \@@_restore_sentence_list:
   {
@@ -1612,6 +1625,9 @@
     \LipsumRestoreSentenceList
   }
 \LipsumRestoreAll
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \ExplSyntaxOff
 \SetLipsumDefault{1-7}
 \SetLipsumText{lipsum}
