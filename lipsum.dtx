@@ -656,34 +656,6 @@
 %<@@=lipsum>
 %    \end{macrocode}
 %
-% \subsection{Command Variants}
-%
-% To parse \meta{range}-like arguments, that is, arguments consisting either
-% of a single number, as in |8|, or of a range, as in |9-11|, we use the
-% argument processor \cs{SplitArgument} of \pkg{xparse}. However, the argument
-% can either be a range as specified above, or a token list containing a
-% range. Thus, the argument has to be expanded before it is analyzed. This use
-% case is not available in \pkg{xparse} (at least not in the release
-% 2018-10-17). We copy it to a \pkg{lipsum} internal variant to be able to
-% generate a variant.
-%
-% \begin{function}{\@@_split_argument_expanded:nnn
-%   ,\@@_split_argument_expanded:nne}
-%   \begin{syntax}
-%     \cs{@@_split_argument_expanded:nne}\Arg{number}\Arg{token}\Arg{argument}
-%   \end{syntax}
-% \begin{arguments}
-%   \item See documentation for \cs{SplitArgument} in
-%     \pkg{xparse}
-%   \item The argument fed to the function, which is expanded
-%   in this case.
-% \end{arguments}
-%    \begin{macrocode}
-\cs_new_eq:NN \@@_split_argument_expanded:nnn \SplitArgument
-\cs_generate_variant:Nn \@@_split_argument_expanded:nnn { nne }
-%    \end{macrocode}
-% \end{function}
-%
 % \subsection{Variables}
 %
 % \begin{variable}{\g_@@_paragraph_seq}
