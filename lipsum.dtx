@@ -1029,13 +1029,22 @@
 % \end{function}
 %
 % \begin{function}{\@@_protect:n}
-% Internal command for the user-level \cs{LipsumProtect}. Currently, a single
-% \cs{tex_noexpand:D} is sufficient to prevent expansion, but in future
-% implementations this might change.
+%   Internal command for the user-level \cs{LipsumProtect}.
 %    \begin{macrocode}
-\cs_new:Npn \@@_protect:n #1 { \tex_noexpand:D #1 }
+\cs_new:Npn \@@_protect:n #1 { \exp_not:n {#1} }
 %    \end{macrocode}
 % \end{function}
+%
+% \begin{macro}{\LipsumProtect}
+%   \begin{syntax}
+%     \cs{LipsumProtect}\Arg{tokens}
+%   \end{syntax}
+%   Protects \meta{tokens} from being expanded when processed by
+%   \cs{unpacklipsum}.
+%    \begin{macrocode}
+\cs_new:Npn \LipsumProtect #1 { \@@_protect:n {#1} }
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{function}{\@@_set_surrounding_tokens_star:}
 %   \begin{syntax}
@@ -1317,13 +1326,13 @@
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListItemEnd { s +m }
   {
-    \IfBooleanTF{#1}
+    \IfBooleanTF {#1}
       { \tl_set:No \l_@@_par_list_itemend_star_tl {#2} }
       { \tl_set:No \l_@@_par_list_itemend_nostar_tl {#2} }
   }
 \NewDocumentCommand \SetLipsumSentenceListItemEnd { s +m }
   {
-    \IfBooleanTF{#1}
+    \IfBooleanTF {#1}
       { \tl_set:No \l_@@_sentence_list_itemend_star_tl {#2} }
       { \tl_set:No \l_@@_sentence_list_itemend_nostar_tl {#2} }
   }
@@ -1397,18 +1406,6 @@
       { \tl_set:No \l_@@_sentence_list_itemseparator_star_tl {#2} }
       { \tl_set:No \l_@@_sentence_list_itemseparator_nostar_tl {#2} }
   }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\SetLipsumProtect}
-% \begin{syntax}
-%   \cs{LipsumProtect}\Arg{tokens}
-% \end{syntax}
-% Protects \meta{tokens} from being expanded when processed by
-% \cs{unpacklipsum}.
-%    \begin{macrocode}
-\NewDocumentCommand \LipsumProtect { m } { }
-\cs_gset_eq:NN \LipsumProtect \@@_protect:n
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1535,8 +1532,7 @@
         \lipsum_store_as_temp_ints:nn #3
         \lipsum_sentences_to_tokenlist:VVf \l_tmpa_int \l_tmpb_int
           { \@@_expanded_paragraphs_terminated_with_space: }
-        \cs_gset:Npx \@@_expanded:
-          { \tl_use:N \l_@@_sentences_tl }
+        \cs_gset:Npx \@@_expanded: { \tl_use:N \l_@@_sentences_tl }
         \cs_gset_eq:NN \lipsumexp \@@_expanded:
       }
   }
@@ -1621,11 +1617,11 @@
       }
   }
 \ProcessOptions
-\NewDocumentCommand \LipsumRestoreParList { } { }
-\cs_gset_eq:NN \LipsumRestoreParList \@@_restore_par_list:
-\NewDocumentCommand \LipsumRestoreSentenceList { } { }
-\cs_gset_eq:NN \LipsumRestoreSentenceList \@@_restore_sentence_list:
-\NewDocumentCommand \LipsumRestoreAll { }
+\cs_new_protected:Npn \LipsumRestoreParList
+  { \@@_restore_par_list: }
+\cs_new_protected:Npn \LipsumRestoreSentenceList
+  { \@@_restore_sentence_list: }
+\cs_new_protected:Npn \LipsumRestoreAll
   {
     \LipsumRestoreParList
     \LipsumRestoreSentenceList
