@@ -293,9 +293,9 @@
 % sentences instead of paragraphs, specify a \meta{sentence range} as the second
 % optional argument of \cs{lipsum} and \cs{lipsum*}. Note: To be able to
 % specify a second optional argument, the first optional argument has to be
-% provided and is thus not really optional anymore. Furthermore, it must be
-% set to some \meta{range}-value, using an empty first optional argument is
-% not implemented. As a consequence |\lipsum[][1-3]| will fail.
+% provided.  An empty optional argument is treated as if it was not used
+% (thus |\lipsum[]| is equivalent to |\lipsum|), so that sentences from
+% the default range may be selected using, for example, |\lipsum[][1-3]|.
 %
 % Valid inputs for \meta{sentence range} are, again, a single number, as in
 % |\lipsum[1][1]|, which will output the first sentence of the first paragraph
@@ -807,8 +807,12 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_parse_range_arg:nNN #1 #2 #3
   {
-    \exp_last_unbraced:No \@@_parse_range_arg:wNN
-      \tl_to_str:n { #1 - - } \s_@@ #2 #3 {#1}
+    \tl_if_blank:nTF {#1}
+      { \@@_parse_range_arg:eNN { \g_lipsum_default_range_tl } #2 #3 }
+      {
+        \exp_last_unbraced:No \@@_parse_range_arg:wNN
+          \tl_to_str:n { #1 - - } \s_@@ #2 #3 {#1}
+      }
   }
 \cs_new_protected:Npn \@@_parse_range_arg:wNN #1 - #2 - #3 \s_@@ #4 #5
   {

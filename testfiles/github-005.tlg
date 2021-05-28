@@ -1,5 +1,7 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
+[1
+] [2]
 ! Package lipsum Error: Invalid number or range '1-2-'.
 Type <return> to continue.
  ...                                              
@@ -16,5 +18,3 @@ l. ...\lipsum
 LaTeX does not know anything more about this error, sorry.
 Try typing <return> to proceed.
 If that doesn't work, type X <return> to quit.
-[1
-]
