@@ -974,12 +974,12 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_put_sentence_on_tokenlist:nnnw #1#2#3#4 .
   {
-    \int_compare:nNnTF{#1} > {#2}
+    \int_compare:nNnTF {#1} > {#2}
       { % start > end: leave loop
         \use_none_delimit_by_q_stop:w
       }
       { % start <= end: perform loop
-        \tl_if_blank:oTF{#4}
+        \tl_if_blank:oTF {#4}
           { % Argument #4 blank.
             % Should be from the .. in the calling macro.
             % End reached. Leave loop.
@@ -1398,19 +1398,21 @@
 % \end{macro}
 %
 % \begin{macro}{\SetLipsumDefault}
-% Command to change the default range used by \cs{lipsum} and friends. Note
-% that the use of \cs{setlipsumdefault} is considered deprecated starting from
-% \pkg{lipsum}2.0.
-% \begin{syntax}
-%   \cs{SetLipsumDefault}\Arg{range}
-% \end{syntax}
-% \begin{arguments}
-%   \item[\meta{range}] Range to be used as default.
+%   Command to change the default range used by \cs{lipsum} and friends.
+%   \begin{syntax}
+%     \cs{SetLipsumDefault}\Arg{range}
+%   \end{syntax}
+%   \begin{arguments}
+%     \item[\meta{range}] Range to be used as default.
 %   \end{arguments}
 % Implemented as:
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumDefault { m }
-  { \tl_gset:No \g_lipsum_default_range_tl {#1} }
+  {
+    \@@_parse_range_arg:eNN {#1} \l_@@_tmpa_int \l_@@_tmpb_int
+    \tl_gset:Nx \g_lipsum_default_range_tl
+      { \int_use:N \l_@@_tmpa_int - \int_use:N \l_@@_tmpb_int }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
