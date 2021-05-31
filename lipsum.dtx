@@ -881,9 +881,9 @@
 %    \end{macrocode}
 % \end{function}
 %
-% \begin{function}{\lipsum_range_to_tokenlist:VV}
+% \begin{function}{\lipsum_range_to_tokenlist:nn}
 %   \begin{syntax}
-%     \cs{lipsum_range_to_tokenlist:VV}\Arg{number_1}\Arg{number_2}
+%     \cs{lipsum_range_to_tokenlist:nn}\Arg{number_1}\Arg{number_2}
 %   \end{syntax}
 %   Adds the paragraphs specified by \meta{number_1} to \meta{number_2}
 %   to the token list \cs{l_@@_pars_tl}.
@@ -895,7 +895,7 @@
     \int_set:Nn \l_@@_tmpa_int {#1}
     \int_do_until:nNnn { \l_@@_tmpa_int } > {#2}
       {
-        \int_compare:nNnT \l_@@_tmpa_int > {#1}
+        \int_compare:nNnT { \l_@@_tmpa_int } > {#1}
           {
             \tl_put_right:NV \l_@@_pars_tl
               \l_@@_par_list_itemseparator_tl
@@ -910,16 +910,12 @@
 %    \end{macrocode}
 % \end{function}
 %
-% \begin{function}{\@@_expanded_paragraphs_terminated_with_space:}
-% To be able to parse the list of paragraphs into a list of sentences, we need
-% a list with defined tokens in between. This is stored locally in this macro.
-%    \begin{macrocode}
-\cs_new_nopar:Nn \@@_expanded_paragraphs_terminated_with_space: { }
-%    \end{macrocode}
-% \end{function}
-% \begin{function}{\lipsum_sentences_to_tokenlist:VV}
+% \begin{function}{
+%     \lipsum_sentences_to_tokenlist:nnn,
+%     \lipsum_sentences_to_tokenlist:nnV,
+%   }
 %   \begin{syntax}
-%     \cs{lipsum_sentences_to_tokenlist:VV}\Arg{number_1}\Arg{number_2}
+%     \cs{lipsum_sentences_to_tokenlist:nnn}\Arg{number_1}\Arg{number_2}\Arg{text}
 %   \end{syntax}
 % Puts the sentences specified by \meta{sentence range} from the paragraphs
 % specified by \meta{paragraph range} on the token list
@@ -947,7 +943,7 @@
     \tl_put_left:NV \l_@@_sentences_tl \l_@@_sentence_list_start_tl
     \tl_put_right:NV \l_@@_sentences_tl \l_@@_sentence_list_end_tl
   }
-\cs_generate_variant:Nn \lipsum_sentences_to_tokenlist:nnn { VVf }
+\cs_generate_variant:Nn \lipsum_sentences_to_tokenlist:nnn { nnV }
 %    \end{macrocode}
 % \end{function}
 %
@@ -1492,10 +1488,9 @@
         \@@_ensure_parsable_output:
         \lipsum_range_to_tokenlist:VV \l_@@_tmpa_int \l_@@_tmpb_int
         \@@_parse_range_arg:eNN {#3} \l_@@_tmpa_int \l_@@_tmpb_int
-        \cs_gset_nopar:Npx \@@_expanded_paragraphs_terminated_with_space:
-          { \tl_use:N \l_@@_pars_tl }
-        \lipsum_sentences_to_tokenlist:VVf \l_@@_tmpa_int \l_@@_tmpb_int
-          { \@@_expanded_paragraphs_terminated_with_space: }
+        \tl_set:Nx \l_@@_pars_tl { \tl_use:N \l_@@_pars_tl }
+        \lipsum_sentences_to_tokenlist:nnV
+          { \l_@@_tmpa_int } { \l_@@_tmpb_int } \l_@@_pars_tl
         \@@_do:N \l_@@_sentences_tl
       }
   }
