@@ -1210,13 +1210,13 @@
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListEnd { s +m }
   {
-    \IfBooleanTF{#1}
+    \IfBooleanTF {#1}
       { \tl_set:No \l_@@_par_list_end_star_tl {#2} }
       { \tl_set:No \l_@@_par_list_end_nostar_tl {#2} }
   }
 \NewDocumentCommand \SetLipsumSentenceListEnd { s +m }
   {
-    \IfBooleanTF{#1}
+    \IfBooleanTF {#1}
       { \tl_set:No \l_@@_sentence_list_end_star_tl {#2} }
       { \tl_set:No \l_@@_sentence_list_end_nostar_tl {#2} }
   }
@@ -1384,13 +1384,13 @@
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListItemSeparator { s +m }
   {
-    \IfBooleanTF{#1}
+    \IfBooleanTF {#1}
       { \tl_set:No \l_@@_par_list_itemseparator_star_tl {#2} }
       { \tl_set:No \l_@@_par_list_itemseparator_nostar_tl {#2} }
   }
 \NewDocumentCommand \SetLipsumSentenceListItemSeparator { s +m }
   {
-    \IfBooleanTF{#1}
+    \IfBooleanTF {#1}
       { \tl_set:No \l_@@_sentence_list_itemseparator_star_tl {#2} }
       { \tl_set:No \l_@@_sentence_list_itemseparator_nostar_tl {#2} }
   }
@@ -1414,70 +1414,45 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% The following macros are considered to be user-level commands and thus all
-% lower-case.
-% \begin{macro}{\lipsum, \lipsum*}
-% \begin{syntax}
-%   \cs{lipsum}\oarg{paragraph range}\oarg{sentence range}
-%   \cs{lipsum*}\oarg{paragraph range}\oarg{sentence range}
-% \end{syntax}
+% The following macros are considered to be user-level commands and thus
+% all lower-case.
 %
-% \begin{arguments}
-% \item Range-like string that specifies the number of
-% the paragraphs taken from \lips\ If omitted, the value set by
-% \cs{SetLipsumDefault} is used, which defaults to |1-7|. this argument can
-% not be empty if the second optional argument is provided.
-% \item Sentences to be typeset from the range selected
-% by \meta{paragraph range}. If sentences outside the number of sentences in
-% \meta{paragraph range} are specified, only existing sentences
-% are typeset.
-% \end{arguments}
-% The difference between \cs{lipsum} and \cs{lipsum*} is the token(s) that are
-% inserted after each paragraph (only if called without the second optional
-% argument).
+% \begin{macro}{\lipsum}
+%   \begin{syntax}
+%     \cs{lipsum}\oarg{paragraph range}\oarg{sentence range}
+%     \cs{lipsum*}\oarg{paragraph range}\oarg{sentence range}
+%   \end{syntax}
+%
+%   \begin{arguments}
+%     \item Range-like string that specifies the number of the
+%       paragraphs taken from \lips\ If omitted, the value set by
+%       \cs{SetLipsumDefault} is used, which defaults to |1-7|.
+%     \item Sentences to be typeset from the range selected by
+%       \meta{paragraph range}. If sentences outside the number of
+%       sentences in \meta{paragraph range} are specified, only existing
+%       sentences are typeset.
+%   \end{arguments}
+%   The difference between \cs{lipsum} and \cs{lipsum*} is the token(s)
+%   that are inserted after each paragraph (only if called without the
+%   second optional argument).
+%
+%   \cs{lipsum} and \cs{unpacklipsum} have the same interface and do
+%   almost the same thing, so both are implemented using a common macro
+%   \cs{@@_fetch_do:nnnn} that does the heavy-lifting, and at the end
+%   executes the code in |#4|.
 %    \begin{macrocode}
 \NewDocumentCommand \lipsum { s O { \g_lipsum_default_range_tl } o }
-  {
-    \@@_parse_range_arg:eNN {#2} \l_@@_tmpa_int \l_@@_tmpb_int
-    \IfBooleanTF {#1}
-      { \@@_set_surrounding_tokens_star: }
-      { \@@_set_surrounding_tokens_nostar: }
-    \IfNoValueTF{#3}
-      {
-        \lipsum_range_to_tokenlist:VV \l_@@_tmpa_int \l_@@_tmpb_int
-        \tl_use:N \l_@@_pars_tl
-      }
-      {
-        \@@_ensure_parsable_output:
-        \lipsum_range_to_tokenlist:VV \l_@@_tmpa_int \l_@@_tmpb_int
-        \@@_parse_range_arg:eNN {#3} \l_@@_tmpa_int \l_@@_tmpb_int
-        \cs_gset_nopar:Npx \@@_expanded_paragraphs_terminated_with_space:
-          { \tl_use:N \l_@@_pars_tl }
-        \lipsum_sentences_to_tokenlist:VVf \l_@@_tmpa_int \l_@@_tmpb_int
-          { \@@_expanded_paragraphs_terminated_with_space: }
-        \tl_use:N \l_@@_sentences_tl
-      }
-  }
+  { \@@_fetch_do:nnnn {#1} {#2} {#3} { \tl_use:N ##1 } }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\lipsumexp}
-% The following macros store their results in the macro \cs{lipsumexp}. I
-% create it first using \pkg{xparse} before it is overwritten. Don't know if
-% this makes sense.
-%    \begin{macrocode}
-\cs_new_eq:NN \lipsumexp \prg_do_nothing:
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\unpacklipsum, \unpacklipsum*}
-% These two commands do the same as \cs{lipsum} and \cs{lipsum*}, but instead
-% of typesetting the paragraphs or sentences, they store the expanded content
-% in the macro \cs{lipsumexp}. If, for example by using the package option
-% \opt{space} or by using the \cs{SetLipsum...List} commands, the
-% corresponding \meta{tokens} between the single items of the list are
-% expandable, they are expanded. If they arenot expandable, they are---of
-% course---not.
+% \begin{macro}{\unpacklipsum,\lipsumexp}
+%   This command does the same as \cs{lipsum}, but instead of
+%   typesetting the paragraphs or sentences, it stores the expanded
+%   content in the \cs{lipsumexp} token list. The tokens between items
+%   of the list, set, for example, by using the package option
+%   \opt{space} or by using the \cs{SetLipsum...List} commands, are
+%   |x|-expanded.
 %   \begin{syntax}
 %     \cs{unpacklipsum}\oarg{paragraph range}\oarg{sentence range}\\
 %     \cs{unpacklipsum*}\oarg{paragraph range}\oarg{sentence range}\\
@@ -1485,31 +1460,44 @@
 %     \cs{lipsumexp}
 %   \end{syntax}
 %    \begin{macrocode}
-\cs_new:Npn \@@_expanded: { }
 \NewDocumentCommand \unpacklipsum { s O { \g_lipsum_default_range_tl } o }
   {
+    \@@_fetch_do:nnnn {#1} {#2} {#3}
+      { \cs_gset:Npx \lipsumexp { \tl_use:N ##1 } }
+  }
+\cs_new_eq:NN \lipsumexp \prg_do_nothing:
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_fetch_do:nnnn}
+%   This is the main macro for \cs{lipsum} and \cs{unpacklipsum}.
+%   It parses the paragraph range, sets the sentence/paragraph
+%   separators, then acts accordingly if a sentence range was provided.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_fetch_do:nnnn #1 #2 #3 #4
+  {
+    \cs_set_protected:Npn \@@_do:N ##1 {#4}
     \@@_parse_range_arg:eNN {#2} \l_@@_tmpa_int \l_@@_tmpb_int
     \IfBooleanTF {#1}
       { \@@_set_surrounding_tokens_star: }
       { \@@_set_surrounding_tokens_nostar: }
-    \IfNoValueTF{#3}
+    \IfNoValueTF {#3}
       {
         \lipsum_range_to_tokenlist:VV \l_@@_tmpa_int \l_@@_tmpb_int
-        \cs_gset:Npx \@@_expanded: { \tl_use:N \l_@@_pars_tl }
-        \cs_gset_eq:NN \lipsumexp \@@_expanded:
+        \@@_do:N \l_@@_pars_tl
       }
       {
         \@@_ensure_parsable_output:
         \lipsum_range_to_tokenlist:VV \l_@@_tmpa_int \l_@@_tmpb_int
+        \@@_parse_range_arg:eNN {#3} \l_@@_tmpa_int \l_@@_tmpb_int
         \cs_gset_nopar:Npx \@@_expanded_paragraphs_terminated_with_space:
           { \tl_use:N \l_@@_pars_tl }
-        \@@_parse_range_arg:eNN {#3} \l_@@_tmpa_int \l_@@_tmpb_int
         \lipsum_sentences_to_tokenlist:VVf \l_@@_tmpa_int \l_@@_tmpb_int
           { \@@_expanded_paragraphs_terminated_with_space: }
-        \cs_gset:Npx \@@_expanded: { \tl_use:N \l_@@_sentences_tl }
-        \cs_gset_eq:NN \lipsumexp \@@_expanded:
+        \@@_do:N \l_@@_sentences_tl
       }
   }
+\cs_new_eq:NN \@@_do:N ?
 %    \end{macrocode}
 % \end{macro}
 %
