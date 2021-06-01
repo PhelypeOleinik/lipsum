@@ -16,6 +16,8 @@ this project uses date-based 'snapshot' version identifiers.
 
 ### Removed
 - `\setlipsumdefault` (superseded by `\SetLipsumDefault`).
+- Some undocumented `expl3` interfaces (most of them kind of useless).
+- Undocumented `\IfLipsumText` function.
 
 ### Changed
 - Reorder text sources: sources are plain text and generated text files

@@ -686,13 +686,6 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\l_@@_sentences_seq}
-% In this sequence, the sentence list is stored.
-%    \begin{macrocode}
-\seq_new:N \l_@@_sentences_seq
-%    \end{macrocode}
-% \end{variable}
-%
 % \begin{variable}{
 %     \l_@@_par_list_start_nostar_tl, \l_@@_par_list_end_nostar_tl,
 %     \l_@@_sentence_list_start_nostar_tl, \l_@@_sentence_list_end_nostar_tl,
@@ -776,7 +769,8 @@
 %
 % \begin{variable}{\g_@@_text_str}
 %   Holds the current text loaded for the output of \cs{lipsum} and
-%   friends. Used to avoid loading the same text definition if it is already used.
+%   friends. Used to avoid loading the same text definition if it is
+%   already used.
 %    \begin{macrocode}
 \str_new:N \g_@@_text_str
 %    \end{macrocode}
@@ -853,55 +847,19 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{function}{\lipsum_get_range:nn}
 % \begin{function}{
-%     \lipsum_get_non_terminated_par:n,
-%     \lipsum_get_terminated_par:n,
+%     \@@_build_list:nn,
+%     \@@_build_list_aux:n,
+%     \@@_get_paragraph:ww,
+%     \@@_get_paragraph_end:w,
 %   }
-% These two commands are used to retrieve paragraph \meta{number} from the
-% \lips\ dummy text. \cs{lipsum_get_terminated_par:n} additionally adds
-% \cs{par}.
-%
 %   \begin{syntax}
-%     \cs{lipsum_get_non_terminated_par:n} \Arg{number}\\
-%     \cs{lipsum_get_terminated_par:n} \Arg{number}\\
+%     \cs{lipsum_get_range:nn}\Arg{number_1}\Arg{number_2}
 %   \end{syntax}
-% The single paragraphs are stored as constant token lists. \cs{tl_use:c} is
-% used to construct a command sequence from |c_lipsum_par_|, |_tl| and the
-% \meta{number}. This is different from versions prior to v2.0, where the
-% paragraphs were stored in \cs{lipsum@i}, \cs{lipsum@ii}, \ldots.
-%    \begin{macrocode}
-\cs_new:Npn \lipsum_get_non_terminated_par:n #1
-  { \seq_item:Nn \g_@@_paragraph_seq {#1} }
-\cs_new:Npn \lipsum_get_terminated_par:n #1
-  { \lipsum_get_non_terminated_par:n {#1} \par }
-%    \end{macrocode}
-% \end{function}
-%
-% \begin{function}{\lipsum_add_to_tokenlist:n}
-% Adds a paragraph \meta{item} to the list of paragraphs
-% (\cs{l_@@_pars_tl}) and surrounds it by
-% the user-defined \meta{tokens}.
-%  \begin{syntax}
-%     \cs{lipsum_add_to_tokenlist:n}\Arg{number}
-%  \end{syntax}
-%    \begin{macrocode}
-\cs_new_protected:Npn \lipsum_add_to_tokenlist:n #1
-  {
-    \tl_put_right:NV \l_@@_pars_tl \l_@@_par_list_itemstart_tl
-    \tl_put_right:Nn \l_@@_pars_tl
-      { \lipsum_get_non_terminated_par:n {#1} }
-    \tl_put_right:NV \l_@@_pars_tl \l_@@_par_list_itemend_tl
-  }
-\cs_generate_variant:Nn \lipsum_add_to_tokenlist:n { V }
-%    \end{macrocode}
-% \end{function}
-%
-% \begin{function}{\lipsum_range_to_tokenlist:nn}
-%   \begin{syntax}
-%     \cs{lipsum_range_to_tokenlist:nn}\Arg{number_1}\Arg{number_2}
-%   \end{syntax}
-%   Adds the paragraphs specified by \meta{number_1} to \meta{number_2}
-%   to the token list \cs{l_@@_pars_tl}.
+%   Expands to the paragraphs between \meta{number_1} and
+%   \meta{number_2} with the proper delimiters added.  Text is returned
+%   in \cs{exp_not:n}, so this macro can be safely used in an \cs{edef}.
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_range:nn #1 #2
   {
@@ -932,17 +890,24 @@
     \fi:
     \@@_get_paragraph:ww #2 ;
   }
+\cs_new:Npn \@@_get_paragraph_end:w #1 \q_@@_stop { \fi: \fi: }
+%    \end{macrocode}
+% \end{function}
+%
+% \begin{function}{\lipsum_get_paragraph:n}
+%   \begin{syntax}
+%     \cs{lipsum_get_paragraph:n}\Arg{number}
+%   \end{syntax}
+%   Expands to the paragraph \meta{number} with the proper delimiters
+%   added.  Text is returned in \cs{exp_not:n}, so this macro can be
+%   safely used in an \cs{edef}.
+%    \begin{macrocode}
 \cs_new:Npn \lipsum_get_paragraph:n #1
   {
     \exp_not:V \l_@@_par_list_itemstart_tl
     \seq_item:Nn \g_@@_paragraph_seq {#1}
     \exp_not:V \l_@@_par_list_itemend_tl
   }
-\cs_new:Npn \@@_get_paragraph_end:w #1 \q_@@_stop { \fi: \fi: }
-%
-\cs_new_protected:Npn \lipsum_range_to_tokenlist:nn #1 #2
-  { \tl_set:Nx \l_@@_pars_tl { \lipsum_get_range:nn {#1} {#2} } }
-%
 %    \end{macrocode}
 % \end{function}
 %
@@ -1107,11 +1072,11 @@
 %    \begin{macrocode}
 \cs_new_protected:Nn \@@_ensure_parsable_output:
   {
-    \tl_set:No \l_@@_par_list_itemseparator_tl { \space }
-    \tl_set:No \l_@@_par_list_item_start_tl { }
-    \tl_set:No \l_@@_par_list_item_end_tl { }
-    \tl_set:No \l_@@_par_list_start_tl { }
-    \tl_set:No \l_@@_par_list_end_tl { }
+    \tl_set:Nn \l_@@_par_list_itemseparator_tl { ~ }
+    \tl_set:Nn \l_@@_par_list_item_start_tl { }
+    \tl_set:Nn \l_@@_par_list_item_end_tl { }
+    \tl_set:Nn \l_@@_par_list_start_tl { }
+    \tl_set:Nn \l_@@_par_list_end_tl { }
   }
 %    \end{macrocode}
 % \end{function}
@@ -1138,18 +1103,18 @@
 % \end{macro}
 %
 % \begin{macro}{\LipsumPar}
-% Macro to typeset a single paragraph of \lips\ Was not officially available in
-% version prior to 2.0.
-% \begin{syntax}
-%  \cs{LipsumPar}\Arg{number}
-% \end{syntax}
-% \begin{arguments}
-%   \item Number of the paragraph to typeset.
+%   Macro to typeset a single paragraph of \lips\ Was not officially
+%   available in version prior to 2.0.
+%   \begin{syntax}
+%     \cs{LipsumPar}\Arg{number}
+%   \end{syntax}
+%   \begin{arguments}
+%     \item Number of the paragraph to typeset.
 %   \end{arguments}
 % Implemented as follows:
 %    \begin{macrocode}
 \NewDocumentCommand \LipsumPar { m }
-  { \lipsum_get_terminated_par:n {#1} }
+  { \seq_item:Nn \g_@@_paragraph_seq {#1} \par }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1346,16 +1311,15 @@
       { \@@_set_surrounding_tokens_nostar: }
     \IfNoValueTF {#3}
       {
-        \lipsum_range_to_tokenlist:nn
-          { \l_@@_tmpa_int } { \l_@@_tmpb_int }
+        \tl_set:Nx \l_@@_pars_tl
+          { \lipsum_get_range:nn { \l_@@_tmpa_int } { \l_@@_tmpb_int } }
         \@@_do:N \l_@@_pars_tl
       }
       {
         \@@_ensure_parsable_output:
-        \lipsum_range_to_tokenlist:nn
-          { \l_@@_tmpa_int } { \l_@@_tmpb_int }
+        \tl_set:Nx \l_@@_pars_tl
+          { \lipsum_get_range:nn { \l_@@_tmpa_int } { \l_@@_tmpb_int } }
         \@@_parse_range_arg:eNN {#3} \l_@@_tmpa_int \l_@@_tmpb_int
-        \tl_set:Nx \l_@@_pars_tl { \tl_use:N \l_@@_pars_tl }
         \lipsum_sentences_to_tokenlist:nnV
           { \l_@@_tmpa_int } { \l_@@_tmpb_int } \l_@@_pars_tl
         \@@_do:N \l_@@_sentences_tl
@@ -1365,33 +1329,18 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\IfLipsumText}
-% New conditional to test if a lipsum text definition is currently loaded.
-% \begin{syntax}
-%   \cs{IfLipsumText}\Arg{text}{true-code}{false-code}
-% \end{syntax}
-% \begin{arguments}
-%   \item Name of a lipsum language definition file
-%   \item Code expanded if the current text definition is the one given in
-%   argument \#1
-%   \item Code expanded otherwise.
-%   \end{arguments}
-%    \begin{macrocode}
-\NewDocumentCommand \IfLipsumText { mmm }
-  { \str_if_eq:VnTF \g_@@_text_str {#1} {#2} {#3} }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}{\SetLipsumText}
-% Used to select and load the text output by \cs{lipsum} and friends. See the
-% section on loading and defining new outputs for \cs{lipsum}
-% (section~\ref{sec:other-texts}). It first checks whether the requested text
-% is already loaded, and if not, it clears \cs{g_@@_paragraph_seq} and
-% loads the corresponding lipsum text definition file.
+%   Used to select and load the text output by \cs{lipsum} and friends.
+%   See the section on loading and defining new outputs for \cs{lipsum}
+%   (section~\ref{sec:other-texts}). It first checks whether the
+%   requested text is already loaded, and if not, it clears
+%   \cs{g_@@_paragraph_seq} and loads the corresponding lipsum text
+%   definition
+%   file.
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumText { m }
   {
-    \IfLipsumText {#1} { }
+    \str_if_eq:VnF \g_@@_text_str {#1}
       {
         \seq_gclear:N \g_@@_paragraph_seq
         \file_input:n {#1.ltd}

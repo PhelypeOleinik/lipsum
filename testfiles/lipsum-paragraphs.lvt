@@ -17,7 +17,7 @@
       {
         \TEST { \LipsumPar{##1},~content }
           {
-            \tl_set:Nx \l_tmpa_tl { \lipsum_get_non_terminated_par:n {##1} }
+            \tl_set:Nx \l_tmpa_tl { \seq_item:Nn \g__lipsum_paragraph_seq {##1} }
             \TYPE { \exp_not:V \l_tmpa_tl }
           }
       }
