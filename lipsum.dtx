@@ -789,6 +789,14 @@
 %    \end{macrocode}
 % \end{variable}
 %
+% \begin{variable}{\q_@@_mark,\q_@@_mark}
+%   Quarks used throughout the package.
+%    \begin{macrocode}
+\quark_new:N \q_@@_mark
+\quark_new:N \q_@@_stop
+%    \end{macrocode}
+% \end{variable}
+%
 % \begin{variable}{\l_@@_tmpa_int,\l_@@_tmpb_int}
 %   Scratch variables.
 %    \begin{macrocode}
@@ -895,24 +903,45 @@
 %   Adds the paragraphs specified by \meta{number_1} to \meta{number_2}
 %   to the token list \cs{l_@@_pars_tl}.
 %    \begin{macrocode}
-\cs_new_protected:Npn \lipsum_range_to_tokenlist:nn #1#2
+\cs_new:Npn \lipsum_get_range:nn #1 #2
   {
-    \tl_clear:N \l_@@_pars_tl
-    \tl_put_right:NV \l_@@_pars_tl \l_@@_par_list_start_tl
-    \int_set:Nn \l_@@_tmpa_int {#1}
-    \int_do_until:nNnn { \l_@@_tmpa_int } > {#2}
+    \exp_not:V \l_@@_par_list_start_tl
+    \use:e
       {
-        \int_compare:nNnT { \l_@@_tmpa_int } > {#1}
-          {
-            \tl_put_right:NV \l_@@_pars_tl
-              \l_@@_par_list_itemseparator_tl
-          }
-        \lipsum_add_to_tokenlist:V \l_@@_tmpa_int
-        \int_incr:N \l_@@_tmpa_int
+        \exp_not:N \@@_get_paragraph:ww
+        \@@_build_list:nn {#1} {#2}
+        \exp_not:N \q_@@_mark ;
+        \exp_not:N \q_@@_mark ; \exp_not:N \q_@@_stop
       }
-    \tl_put_right:NV \l_@@_pars_tl \l_@@_par_list_end_tl
+    \exp_not:V \l_@@_par_list_end_tl
   }
-\cs_generate_variant:Nn \lipsum_range_to_tokenlist:nn { VV }
+\cs_new:Npn \@@_build_list:nn #1 #2
+  { \int_step_function:nnN {#1} {#2} \@@_build_list_aux:n }
+\cs_new:Npn \@@_build_list_aux:n #1 { #1 ; }
+\cs_new:Npn \@@_get_paragraph:ww #1 ; #2 ;
+  {
+    \if_meaning:w \q_@@_mark #2
+      \if_meaning:w \q_@@_mark #1
+        \@@_get_paragraph_end:w
+      \else:
+        \lipsum_get_paragraph:n {#1}
+      \fi:
+    \else:
+      \lipsum_get_paragraph:n {#1}
+      \exp_not:V \l_@@_par_list_itemseparator_tl
+    \fi:
+    \@@_get_paragraph:ww #2 ;
+  }
+\cs_new:Npn \lipsum_get_paragraph:n #1
+  {
+    \exp_not:V \l_@@_par_list_itemstart_tl
+    \seq_item:Nn \g_@@_paragraph_seq {#1}
+    \exp_not:V \l_@@_par_list_itemend_tl
+  }
+\cs_new:Npn \@@_get_paragraph_end:w #1 \q_@@_stop { \fi: \fi: }
+%
+\cs_new_protected:Npn \lipsum_range_to_tokenlist:nn #1 #2
+  { \tl_set:Nx \l_@@_pars_tl { \lipsum_get_range:nn {#1} {#2} } }
 %
 %    \end{macrocode}
 % \end{function}
@@ -1317,12 +1346,14 @@
       { \@@_set_surrounding_tokens_nostar: }
     \IfNoValueTF {#3}
       {
-        \lipsum_range_to_tokenlist:VV \l_@@_tmpa_int \l_@@_tmpb_int
+        \lipsum_range_to_tokenlist:nn
+          { \l_@@_tmpa_int } { \l_@@_tmpb_int }
         \@@_do:N \l_@@_pars_tl
       }
       {
         \@@_ensure_parsable_output:
-        \lipsum_range_to_tokenlist:VV \l_@@_tmpa_int \l_@@_tmpb_int
+        \lipsum_range_to_tokenlist:nn
+          { \l_@@_tmpa_int } { \l_@@_tmpb_int }
         \@@_parse_range_arg:eNN {#3} \l_@@_tmpa_int \l_@@_tmpb_int
         \tl_set:Nx \l_@@_pars_tl { \tl_use:N \l_@@_pars_tl }
         \lipsum_sentences_to_tokenlist:nnV
