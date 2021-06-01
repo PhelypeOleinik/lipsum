@@ -680,87 +680,6 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{
-%     \l_@@_par_list_start_nostar_tl, \l_@@_par_list_end_nostar_tl,
-%     \l_@@_sentence_list_start_nostar_tl, \l_@@_sentence_list_end_nostar_tl,
-%     \l_@@_par_list_start_star_tl, \l_@@_par_list_end_star_tl,
-%     \l_@@_sentence_star_list_start_tl, \l_@@_sentence_star_list_end_tl,
-%   }
-% Next are the variables used to store the tokens between the list items for
-% lists of paragraph and lists of sentences.
-%    \begin{macrocode}
-\tl_new:N \l_@@_par_list_start_nostar_tl
-\tl_new:N \l_@@_par_list_end_nostar_tl
-\tl_new:N \l_@@_sentence_list_start_nostar_tl
-\tl_new:N \l_@@_sentence_list_end_nostar_tl
-\tl_new:N \l_@@_par_list_start_star_tl
-\tl_new:N \l_@@_par_list_end_star_tl
-\tl_new:N \l_@@_sentence_list_start_star_tl
-\tl_new:N \l_@@_sentence_list_end_star_tl
-%    \end{macrocode}
-% \end{variable}
-%
-% \begin{variable}{
-%     \l_@@_par_list_itemseparator_nostar_tl,
-%     \l_@@_sentence_list_itemseparator_nostar_tl,
-%     \l_@@_par_list_itemseparator_star_tl,
-%     \l_@@_sentence_list_itemseparator_star_tl,
-%   }
-% The variables to store the tokens that separate the single items of the
-% paragraph or sentence list.
-%    \begin{macrocode}
-\tl_new:N \l_@@_par_list_itemseparator_nostar_tl
-\tl_new:N \l_@@_sentence_list_itemseparator_nostar_tl
-\tl_new:N \l_@@_par_list_itemseparator_star_tl
-\tl_new:N \l_@@_sentence_list_itemseparator_star_tl
-%    \end{macrocode}
-% \end{variable}
-%
-% \begin{variable}{
-%     \l_@@_par_list_itemstart_nostar_tl, \l_@@_par_list_itemend_nostar_tl,
-%     \l_@@_sentence_list_itemstart_nostar_tl, \l_@@_sentence_list_itemend_nostar_tl,
-%     \l_@@_par_list_itemstart_star_tl, \l_@@_par_list_itemend_star_tl,
-%     \l_@@_sentence_list_itemstart_star_tl, \l_@@_sentence_list_itemend_star_tl,
-%   }
-% The variables that surround each single item of a paragraph or sentence list.
-%    \begin{macrocode}
-\tl_new:N \l_@@_par_list_itemstart_nostar_tl
-\tl_new:N \l_@@_par_list_itemend_nostar_tl
-\tl_new:N \l_@@_sentence_list_itemstart_nostar_tl
-\tl_new:N \l_@@_sentence_list_itemend_nostar_tl
-\tl_new:N \l_@@_par_list_itemstart_star_tl
-\tl_new:N \l_@@_par_list_itemend_star_tl
-\tl_new:N \l_@@_sentence_list_itemstart_star_tl
-\tl_new:N \l_@@_sentence_list_itemend_star_tl
-%    \end{macrocode}
-% \end{variable}
-%
-% \begin{variable}{
-%     \l_@@_par_list_start_tl, \l_@@_par_list_end_tl,
-%     \l_@@_sentence_list_start_tl, \l_@@_sentence_list_end_tl,
-%     \l_@@_par_list_itemseparator_tl,
-%     \l_@@_sentence_list_itemseparator_tl,
-%     \l_@@_par_list_itemstart_tl, \l_@@_par_list_itemend_tl,
-%     \l_@@_sentence_list_itemstart_tl, \l_@@_sentence_list_itemend_tl,
-%   }
-% These variables store a copy of either the \cs{\meta{name}_star_tl} or
-% \cs{\meta{name}_nostar_tl}, depending on whether the calling function was
-% called with or without a star.  The content of these variables is then used
-% by the functions that generate the \lips\meta{list}.
-%    \begin{macrocode}
-\tl_new:N \l_@@_par_list_start_tl
-\tl_new:N \l_@@_par_list_end_tl
-\tl_new:N \l_@@_sentence_list_start_tl
-\tl_new:N \l_@@_sentence_list_end_tl
-\tl_new:N \l_@@_par_list_itemseparator_tl
-\tl_new:N \l_@@_sentence_list_itemseparator_tl
-\tl_new:N \l_@@_par_list_itemstart_tl
-\tl_new:N \l_@@_par_list_itemend_tl
-\tl_new:N \l_@@_sentence_list_itemstart_tl
-\tl_new:N \l_@@_sentence_list_itemend_tl
-%    \end{macrocode}
-% \end{variable}
-%
 % \begin{variable}{\g_@@_text_str}
 %   Holds the current text loaded for the output of \cs{lipsum} and
 %   friends. Used to avoid loading the same text definition if it is
@@ -799,6 +718,53 @@
 \cs_new_eq:NN \@@_tmp:w ?
 %    \end{macrocode}
 % \end{macro}
+%
+% \begin{variable}{
+%     \l_@@_par_list_end_nostar_tl,
+%     \l_@@_par_list_end_star_tl,
+%     \l_@@_par_list_end_tl,
+%     \l_@@_par_list_itemend_nostar_tl,
+%     \l_@@_par_list_itemend_star_tl,
+%     \l_@@_par_list_itemend_tl,
+%     \l_@@_par_list_itemseparator_nostar_tl,
+%     \l_@@_par_list_itemseparator_star_tl,
+%     \l_@@_par_list_itemseparator_tl,
+%     \l_@@_par_list_itemstart_nostar_tl,
+%     \l_@@_par_list_itemstart_star_tl,
+%     \l_@@_par_list_itemstart_tl,
+%     \l_@@_par_list_start_nostar_tl,
+%     \l_@@_par_list_start_star_tl,
+%     \l_@@_par_list_start_tl,
+%     \l_@@_sentence_list_end_nostar_tl,
+%     \l_@@_sentence_list_end_star_tl,
+%     \l_@@_sentence_list_end_tl,
+%     \l_@@_sentence_list_itemend_nostar_tl,
+%     \l_@@_sentence_list_itemend_star_tl,
+%     \l_@@_sentence_list_itemend_tl,
+%     \l_@@_sentence_list_itemseparator_nostar_tl,
+%     \l_@@_sentence_list_itemseparator_star_tl,
+%     \l_@@_sentence_list_itemseparator_tl,
+%     \l_@@_sentence_list_itemstart_nostar_tl,
+%     \l_@@_sentence_list_itemstart_star_tl,
+%     \l_@@_sentence_list_itemstart_tl,
+%     \l_@@_sentence_list_start_nostar_tl,
+%     \l_@@_sentence_list_start_star_tl,
+%     \l_@@_sentence_list_start_tl,
+%   }
+%   These variables store the separators and delimiters added around the
+%   paragraphs and sentences, in the starred or nonstarred variants, as
+%   well as the generic version for runtime usage.
+%    \begin{macrocode}
+\clist_map_inline:nn { par,sentence }
+  {
+    \clist_map_inline:nn { start,itemstart,itemseparator,itemend,end }
+      {
+        \clist_map_inline:nn { { },_star,_nostar }
+          { \tl_new:c { l_@@_#1_list_##1####1_tl } }
+      }
+  }
+%    \end{macrocode}
+% \end{variable}
 %
 % \subsection{Developer interface}
 %
