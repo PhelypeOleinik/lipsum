@@ -689,18 +689,11 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\s_@@}
-%   Scan mark used throughout the package.
-%    \begin{macrocode}
-\scan_new:N \s_@@
-%    \end{macrocode}
-% \end{variable}
-%
-% \begin{variable}{\q_@@_mark,\q_@@_mark}
-%   Quarks used throughout the package.
+% \begin{variable}{\q_@@_mark,\s_@@}
+%   Quark and scan mark used throughout the package.
 %    \begin{macrocode}
 \quark_new:N \q_@@_mark
-\quark_new:N \q_@@_stop
+\scan_new:N \s_@@
 %    \end{macrocode}
 % \end{variable}
 %
@@ -828,8 +821,7 @@
       {
         \exp_not:N \@@_get_paragraph:ww
         \@@_build_list:nn {#1} {#2}
-        \exp_not:N \q_@@_mark ;
-        \exp_not:N \q_@@_mark ; \exp_not:N \q_@@_stop
+        \exp_not:N \q_@@_mark ; \exp_not:N \q_@@_mark ; \s_@@
       }
     \exp_not:V \l_@@_par_list_end_tl
   }
@@ -850,7 +842,7 @@
     \fi:
     \@@_get_paragraph:ww #2 ;
   }
-\cs_new:Npn \@@_get_paragraph_end:w #1 \q_@@_stop { \fi: \fi: }
+\cs_new:Npn \@@_get_paragraph_end:w #1 \s_@@ { \fi: \fi: }
 %    \end{macrocode}
 % \end{function}
 %
@@ -901,7 +893,7 @@
 \cs_new:Npn \lipsum_get_sentences:nnn #1 #2 #3
   {
     \exp_not:V \l_@@_sentence_list_start_tl
-    \@@_get_setences:nnnw { 1 } {#1} {#2} #3 ~ \q_@@_mark .~ \q_@@_stop
+    \@@_get_setences:nnnw { 1 } {#1} {#2} #3 ~ \q_@@_mark .~ \s_@@
     \exp_not:V \l_@@_sentence_list_end_tl
   }
 \cs_new:Npn \@@_get_setences:nnnw #1 #2 #3 #4 .~
@@ -922,7 +914,7 @@
     \exp_args:Nf \@@_get_setences:nnnw { \int_eval:n { #1 + 1 } }
       {#2} {#3}
   }
-\cs_new:Npn \@@_get_setences_end:w #1 \q_@@_stop { }
+\cs_new:Npn \@@_get_setences_end:w #1 \s_@@ { }
 \cs_generate_variant:Nn \lipsum_get_sentences:nnn { nnV }
 %    \end{macrocode}
 % \end{function}
