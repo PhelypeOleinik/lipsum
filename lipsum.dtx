@@ -893,14 +893,14 @@
 \cs_new:Npn \lipsum_get_sentences:nnn #1 #2 #3
   {
     \exp_not:V \l_@@_sentence_list_start_tl
-    \@@_get_setences:nnnw { 1 } {#1} {#2} #3 ~ \q_@@_mark .~ \s_@@
+    \@@_get_sentences:nnnw { 1 } {#1} {#2} #3 ~ \q_@@_mark .~ \s_@@
     \exp_not:V \l_@@_sentence_list_end_tl
   }
-\cs_new:Npn \@@_get_setences:nnnw #1 #2 #3 #4 .~
+\cs_new:Npn \@@_get_sentences:nnnw #1 #2 #3 #4 .~
   {
-    \int_compare:nNnT {#1} > {#3} { \@@_get_setences_end:w }
+    \int_compare:nNnT {#1} > {#3} { \@@_get_sentences_end:w }
     \if_meaning:w \q_@@_mark #4
-      \exp_after:wN \@@_get_setences_end:w
+      \exp_after:wN \@@_get_sentences_end:w
     \else:
       \int_compare:nNnF {#1} < {#2}
         {
@@ -911,10 +911,10 @@
           \exp_not:V \l_@@_sentence_list_itemend_tl
         }
     \fi:
-    \exp_args:Nf \@@_get_setences:nnnw { \int_eval:n { #1 + 1 } }
+    \exp_args:Nf \@@_get_sentences:nnnw { \int_eval:n { #1 + 1 } }
       {#2} {#3}
   }
-\cs_new:Npn \@@_get_setences_end:w #1 \s_@@ { }
+\cs_new:Npn \@@_get_sentences_end:w #1 \s_@@ { }
 \cs_generate_variant:Nn \lipsum_get_sentences:nnn { nnV }
 %    \end{macrocode}
 % \end{function}
