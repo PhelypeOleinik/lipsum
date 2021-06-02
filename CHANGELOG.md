@@ -23,7 +23,8 @@ this project uses date-based 'snapshot' version identifiers.
 - Reorder text sources: sources are plain text and generated text files
   are plain-friendly.
 - Various internal changes for `expl3` code style compliance.
-- Added own range parsing to avoid low-level errors on `\lipsum[]`, etc.
+- Added own range parsing to avoid low-level errors on missing range
+  argument, e.g. `\lipsum[]` (gh/5).
 - Empty (optional) range arguments are now equivalent to not using the
   argument at all (that is, `\lipsum[]` is equivalent to `\lipsum`).
 - Use Unicode characters in `lipsum-cicero.txt` instead of text
