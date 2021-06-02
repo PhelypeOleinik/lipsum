@@ -1,5 +1,3 @@
-% Checks whether lipsum.sty uses deprecated commands from expl3
-
 \documentclass{article}
 
 \input{regression-test}
