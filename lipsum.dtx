@@ -812,8 +812,16 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{function}{\lipsum_get_range:nn}
-% \begin{function}{
+% \begin{macro}{\@@_sep_item:nn}
+%   A shorthand to leave an (\cs{undexpanded}) token list.
+%    \begin{macrocode}
+\cs_new:Npn \@@_sep_item:nn #1 #2
+  { \exp_not:v { l_@@_#1_list_#2_ \l_@@_sep_set_str _tl } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\lipsum_get_range:nn}
+% \begin{macro}{
 %     \@@_build_list:nn,
 %     \@@_build_list_aux:n,
 %     \@@_get_paragraph:ww,
@@ -828,14 +836,14 @@
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_range:nn #1 #2
   {
-    \exp_not:v { l_@@_par_list_start_ \l_@@_sep_set_str _tl }
+    \@@_sep_item:nn { par } { start }
     \use:e
       {
         \exp_not:N \@@_get_paragraph:ww
         \@@_build_list:nn {#1} {#2}
         \exp_not:N \q_@@_mark ; \exp_not:N \q_@@_mark ; \s_@@
       }
-    \exp_not:v { l_@@_par_list_end_ \l_@@_sep_set_str _tl }
+    \@@_sep_item:nn { par } { end }
   }
 \cs_new:Npn \@@_build_list:nn #1 #2
   { \int_step_function:nnN {#1} {#2} \@@_build_list_aux:n }
@@ -850,7 +858,7 @@
       \fi:
     \else:
       \lipsum_get_paragraph:n {#1}
-      \exp_not:v { l_@@_par_list_itemsep_ \l_@@_sep_set_str _tl }
+      \@@_sep_item:nn { par } { itemsep }
     \fi:
     \@@_get_paragraph:ww #2 ;
   }
@@ -868,9 +876,9 @@
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_paragraph:n #1
   {
-    \exp_not:v { l_@@_par_list_itemstart_ \l_@@_sep_set_str _tl }
+    \@@_sep_item:nn { par } { itemstart }
     \seq_item:Nn \g_@@_paragraph_seq {#1}
-    \exp_not:v { l_@@_par_list_itemend_ \l_@@_sep_set_str _tl }
+    \@@_sep_item:nn { par } { itemend }
   }
 %    \end{macrocode}
 % \end{function}
@@ -885,9 +893,10 @@
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_sentences:nnn #1 #2 #3
   {
-    \exp_not:v { l_@@_phrase_list_start_ \l_@@_sep_set_str _tl }
-    \@@_get_sentences:nnnw { 1 } {#1} {#2} #3 ~ \q_@@_mark .~ \s_@@
-    \exp_not:v { l_@@_phrase_list_end_ \l_@@_sep_set_str _tl }
+    \@@_sep_item:nn { phrase } { start }
+    \@@_get_sentences:nnnw { 1 } {#1} {#2}
+      #3 ~ \q_@@_mark .~ \s_@@
+    \@@_sep_item:nn { phrase } { end }
   }
 \cs_new:Npn \@@_get_sentences:nnnw #1 #2 #3 #4 .~
   {
@@ -898,13 +907,10 @@
       \int_compare:nNnF {#1} < {#2}
         {
           \int_compare:nNnF {#1} = {#2}
-            {
-              \exp_not:v
-                { l_@@_phrase_list_itemsep_ \l_@@_sep_set_str _tl }
-            }
-          \exp_not:v { l_@@_phrase_list_itemstart_ \l_@@_sep_set_str _tl }
+            { \@@_sep_item:nn { phrase } { itemsep } }
+          \@@_sep_item:nn { phrase } { itemstart }
           \exp_not:n { #4 . }
-          \exp_not:v { l_@@_phrase_list_itemend_ \l_@@_sep_set_str _tl }
+          \@@_sep_item:nn { phrase } { itemend }
         }
     \fi:
     \exp_args:Nf \@@_get_sentences:nnnw { \int_eval:n { #1 + 1 } }
