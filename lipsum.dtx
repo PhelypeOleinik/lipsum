@@ -867,9 +867,9 @@
 %   \begin{syntax}
 %     \cs{@@_ensure_parsable_output:}
 %   \end{syntax}
-% To ensure that the list of paragraphs can be parsed into a list of
-% sentences, the tokens between the single \meta{item}s have to macth a
-% pre-defined pattern. This commands sets the tokens accordingly.
+%   To ensure that the list of paragraphs can be parsed into a list of
+%   sentences, the tokens between the single \meta{item}s have to macth
+%   a pre-defined pattern. This commands sets the tokens accordingly.
 %    \begin{macrocode}
 \cs_new_protected:Nn \@@_ensure_parsable_output:
   {
@@ -956,13 +956,13 @@
 \cs_new_protected:Npx \@@_set_surrounding_tokens_star:
   {
     \tl_map_tokens:nn
-      { { start } { end } { itemseparator } { itemstart } { itemend } }
+      { { start } { itemstart } { itemseparator } { itemend } { end } }
       { \@@_tmp:w { star } }
   }
 \cs_new_protected:Npx \@@_set_surrounding_tokens_nostar:
   {
     \tl_map_tokens:nn
-      { { start } { end } { itemseparator } { itemstart } { itemend } }
+      { { start } { itemstart } { itemseparator } { itemend } { end } }
       { \@@_tmp:w { nostar } }
   }
 %    \end{macrocode}
@@ -1110,6 +1110,32 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_store_surrounding_tokens:,\@@_restore_surrounding_tokens:}
+%   Stores the accessory items added around paragraphs and sentences into
+%   a temporary location for later restoring to avoid the need for grouping.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_store_surrounding_tokens:
+  {
+    \cs_set:Npn \@@_tmp:w ##1 ##2
+      {
+        \tl_set:Nn \exp_not:c { l_@@_ ##1 _list_ ##2 _tl }
+          { \exp_not:v { l_@@_ ##1 _list_ ##2 _tl } }
+      }
+    \cs_set_protected:Npx \@@_restore_surrounding_tokens:
+      {
+        \tl_map_tokens:nn
+          { { start } { itemstart } { itemseparator } { itemend } { end } }
+          { \@@_tmp:w { par } }
+        \tl_map_tokens:nn
+          { { start } { itemstart } { itemseparator } { itemend } { end } }
+          { \@@_tmp:w { sentence } }
+      }
+  }
+\cs_new_protected:Npn \@@_restore_surrounding_tokens:
+  { \prg_do_nothing: }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\SetLipsumDefault}
 %   Command to change the default range used by \cs{lipsum} and friends.
 %   \begin{syntax}
@@ -1193,6 +1219,7 @@
   {
     \cs_set_protected:Npn \@@_do:N ##1 {#4}
     \@@_parse_range_arg:eNN {#2} \l_@@_tmpa_int \l_@@_tmpb_int
+    \@@_store_surrounding_tokens:
     \IfBooleanTF {#1}
       { \@@_set_surrounding_tokens_star: }
       { \@@_set_surrounding_tokens_nostar: }
@@ -1200,6 +1227,7 @@
       {
         \tl_set:Nx \l_@@_output_tl
           { \lipsum_get_range:nn { \l_@@_tmpa_int } { \l_@@_tmpb_int } }
+        \@@_restore_surrounding_tokens:
         \@@_do:N \l_@@_output_tl
       }
       {
@@ -1212,6 +1240,7 @@
             \lipsum_get_sentences:nnV
               { \l_@@_tmpa_int } { \l_@@_tmpb_int } \l_@@_output_tl
           }
+        \@@_restore_surrounding_tokens:
         \@@_do:N \l_@@_output_tl
       }
   }

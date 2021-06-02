@@ -1,0 +1,59 @@
+% Checks whether lipsum.sty uses deprecated commands from expl3
+
+\documentclass{article}
+
+\input{regression-test}
+
+\RequirePackage[enable-debug, check-declarations]{expl3}
+
+\ExplSyntaxOn
+\debug_on:n { deprecation }
+\ExplSyntaxOff
+
+\usepackage{lipsum}
+
+\ExplSyntaxOn
+\cs_new_eq:NN \lipsumrange \lipsum_get_range:nn
+\cs_new_eq:NN \lipsumsentences \lipsum_get_sentences:nnn
+\ExplSyntaxOff
+
+\begin{document}
+\START
+
+\SetLipsumParListItemSeparator  { (A) }
+\SetLipsumParListItemSeparator* { (B) }
+\SetLipsumParListEnd  { (C) }
+\SetLipsumParListEnd* { (D) }
+\SetLipsumParListItemSurrounders  { (E) } { (F) }
+\SetLipsumParListItemSurrounders* { (G) } { (H) }
+
+\SetLipsumSentenceListItemSeparator  { (a) }
+\SetLipsumSentenceListItemSeparator* { (b) }
+\SetLipsumSentenceListEnd  { (c) }
+\SetLipsumSentenceListEnd* { (d) }
+\SetLipsumSentenceListItemSurrounders  { (e) } { (f) }
+\SetLipsumSentenceListItemSurrounders* { (g) } { (h) }
+
+\edef\x{\lipsumrange{1}{2}}
+\show\x
+
+\lipsum[1-2]
+
+\edef\x{\lipsumrange{1}{2}}
+\show\x
+
+%
+
+\edef\x{\expanded{%
+  \noexpand\lipsumsentences{3}{4}%
+    {\lipsumrange{1}{2}}}}
+\show\x
+
+\lipsum[1-2][3-4]
+
+\edef\x{\expanded{%
+  \noexpand\lipsumsentences{3}{4}%
+    {\lipsumrange{1}{2}}}}
+\show\x
+
+\end{document}
