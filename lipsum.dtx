@@ -1009,7 +1009,7 @@
 %   \end{arguments}
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_element_set:nnn #1 #2 #3
-  { \tl_set:co { l_@@_ #1 _ \IfBooleanF {#2} { no } star _tl } {#3} }
+  { \tl_set:cn { l_@@_ #1 _ \IfBooleanF {#2} { no } star _tl } {#3} }
 %    \end{macrocode}
 % \end{macro}
 %
