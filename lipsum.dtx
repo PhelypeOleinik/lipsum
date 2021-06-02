@@ -661,15 +661,15 @@
 %
 % \subsection{Variables}
 %
-% \begin{variable}{\g_@@_paragraph_seq}
-% The sequence that stores all the paragraphs.
+% \begin{variable}{\g_@@_par_count_int}
+%   Stores the number of paragraphs in the current text.
 %    \begin{macrocode}
-\seq_new:N \g_@@_paragraph_seq
+\int_new:N \g_@@_par_count_int
 %    \end{macrocode}
 % \end{variable}
 %
 % \begin{variable}{\g_lipsum_default_range_tl}
-% The default range for lipsum paragraphs.
+%   The default range for lipsum paragraphs.
 %    \begin{macrocode}
 \tl_new:N \g_lipsum_default_range_tl
 %    \end{macrocode}
@@ -881,8 +881,22 @@
 \cs_new:Npn \lipsum_get_paragraph:n #1
   {
     \@@_sep_item:nn { par } { itemstart }
-    \seq_item:Nn \g_@@_paragraph_seq {#1}
+    \@@_unexpanded_par:n {#1}
     \@@_sep_item:nn { par } { itemend }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_unexpanded_par:n}
+%   Expands to the paragraph \meta{number} wrapped in \cs{exp_not:n}.
+%   If \meat{number} is out of range, it expands to nothing.
+%    \begin{macrocode}
+\cs_new:Npn \@@_unexpanded_par:n #1
+  {
+    \bool_lazy_and:nnT
+        { \int_compare_p:nNn { 0 } < {#1} }
+        { \int_compare_p:nNn {#1}  < { \g_@@_par_count_int + 1 } }
+      { \exp_not:v { g_@@_par_#1_tl } }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -970,22 +984,6 @@
 %
 % \subsection{User- and developer-level commands}\label{sec:code:commands}
 %
-% \begin{macro}{\NewLipsumPar}
-%  Developer-Level macro to add a paragraph to the dummy text used by
-%  \cs{lipsum} and related commands. To specify a new dummy text, see
-%  section~\ref{sec:other-texts}.
-% \begin{arguments}
-%   \item The \meta{content} of the paragraph. In contrast to
-%   previous versions, \pkg{lipsum}2.0 does not store a macro that is typeset
-%   at the end of the paragraph.
-% \end{arguments}
-% Implemented as follows:
-%    \begin{macrocode}
-\NewDocumentCommand \NewLipsumPar { m }
-  { \seq_gput_right:Nn \g_@@_paragraph_seq {#1} }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}{\LipsumPar}
 %   Macro to typeset a single paragraph of \lips\ Was not officially
 %   available in version prior to 2.0.
@@ -995,7 +993,7 @@
 % Implemented as follows:
 %    \begin{macrocode}
 \NewDocumentCommand \LipsumPar { m }
-  { \seq_item:Nn \g_@@_paragraph_seq {#1} \par }
+  { \@@_unexpanded_par:n {#1} \par }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1235,21 +1233,38 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\NewLipsumPar}
+%   Developer-Level macro to add a paragraph to the dummy text used by
+%   \cs{lipsum} and related commands. To specify a new dummy text, see
+%   section~\ref{sec:other-texts}.
+%    \begin{macrocode}
+\cs_new_protected:Npn \NewLipsumPar #1
+  {
+    \int_gincr:N \g_@@_par_count_int
+    \tl_gclear_new:c { g_@@_par_ \int_use:N \g_@@_par_count_int _tl }
+    \tl_gset:cn { g_@@_par_ \int_use:N \g_@@_par_count_int _tl } {#1}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\SetLipsumText}
 %   Used to select and load the text output by \cs{lipsum} and friends.
 %   See the section on loading and defining new outputs for \cs{lipsum}
 %   (section~\ref{sec:other-texts}). It first checks whether the
-%   requested text is already loaded, and if not, it clears
-%   \cs{g_@@_paragraph_seq} and loads the corresponding lipsum text
-%   definition
-%   file.
+%   requested text is already loaded, and if not, it loads the
+%   corresponding lipsum text definition file, and clears remaining
+%   paragraphs from the previous text, in case their lengths differ.
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumText { m }
   {
     \str_if_eq:VnF \g_@@_text_str {#1}
       {
-        \seq_gclear:N \g_@@_paragraph_seq
-        \file_input:n {#1.ltd}
+        \int_set_eq:NN \l_@@_tmpa_int \g_@@_par_count_int
+        \int_gzero:N \g_@@_par_count_int
+        \file_input:n { #1.ltd }
+        \int_step_inline:nnn
+          { \g_@@_par_count_int + 1 } { \l_@@_tmpa_int }
+          { \cs_undefine:c { g_@@_par_##1_tl } }
         \str_gset:Nn \g_@@_text_str {#1}
       }
   }
