@@ -11,13 +11,13 @@
     \TYPE
       {
         Testing~'#1'~
-        (\seq_count:N \g__lipsum_paragraph_seq \c_space_tl paragraphs):
+        (\int_use:N \g__lipsum_par_count_int \c_space_tl paragraphs):
       }
-    \int_step_inline:nn { \seq_count:N \g__lipsum_paragraph_seq }
+    \int_step_inline:nn { \g__lipsum_par_count_int }
       {
         \TEST { \LipsumPar{##1},~content }
           {
-            \tl_set:Nx \l_tmpa_tl { \seq_item:Nn \g__lipsum_paragraph_seq {##1} }
+            \tl_set:Nx \l_tmpa_tl { \__lipsum_unexpanded_par:n {##1} }
             \TYPE { \exp_not:V \l_tmpa_tl }
           }
       }
