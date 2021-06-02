@@ -689,6 +689,14 @@
 %    \end{macrocode}
 % \end{variable}
 %
+% \begin{variable}{\l_@@_sep_set_str}
+%   Holds the name of the active separator token set.  By default it is
+%   empty to use the default separator set (empty).
+%    \begin{macrocode}
+\str_new:N \l_@@_sep_set_str
+%    \end{macrocode}
+% \end{variable}
+%
 % \begin{variable}{\q_@@_mark,\s_@@}
 %   Quark and scan mark used throughout the package.
 %    \begin{macrocode}
@@ -697,9 +705,10 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\l_@@_tmpa_int,\l_@@_tmpb_int}
+% \begin{variable}{\l_@@_tmpa_str,\l_@@_tmpa_int,\l_@@_tmpb_int}
 %   Scratch variables.
 %    \begin{macrocode}
+\str_new:N \l_@@_tmpa_str
 \int_new:N \l_@@_tmpa_int
 \int_new:N \l_@@_tmpb_int
 %    \end{macrocode}
@@ -715,47 +724,50 @@
 % \begin{variable}{
 %     \l_@@_par_list_end_nostar_tl,
 %     \l_@@_par_list_end_star_tl,
-%     \l_@@_par_list_end_tl,
+%     \l_@@_par_list_end__tl,
 %     \l_@@_par_list_itemend_nostar_tl,
 %     \l_@@_par_list_itemend_star_tl,
-%     \l_@@_par_list_itemend_tl,
-%     \l_@@_par_list_itemseparator_nostar_tl,
-%     \l_@@_par_list_itemseparator_star_tl,
-%     \l_@@_par_list_itemseparator_tl,
+%     \l_@@_par_list_itemend__tl,
+%     \l_@@_par_list_itemsep_nostar_tl,
+%     \l_@@_par_list_itemsep_star_tl,
+%     \l_@@_par_list_itemsep__tl,
 %     \l_@@_par_list_itemstart_nostar_tl,
 %     \l_@@_par_list_itemstart_star_tl,
-%     \l_@@_par_list_itemstart_tl,
+%     \l_@@_par_list_itemstart__tl,
 %     \l_@@_par_list_start_nostar_tl,
 %     \l_@@_par_list_start_star_tl,
-%     \l_@@_par_list_start_tl,
-%     \l_@@_sentence_list_end_nostar_tl,
-%     \l_@@_sentence_list_end_star_tl,
-%     \l_@@_sentence_list_end_tl,
-%     \l_@@_sentence_list_itemend_nostar_tl,
-%     \l_@@_sentence_list_itemend_star_tl,
-%     \l_@@_sentence_list_itemend_tl,
-%     \l_@@_sentence_list_itemseparator_nostar_tl,
-%     \l_@@_sentence_list_itemseparator_star_tl,
-%     \l_@@_sentence_list_itemseparator_tl,
-%     \l_@@_sentence_list_itemstart_nostar_tl,
-%     \l_@@_sentence_list_itemstart_star_tl,
-%     \l_@@_sentence_list_itemstart_tl,
-%     \l_@@_sentence_list_start_nostar_tl,
-%     \l_@@_sentence_list_start_star_tl,
-%     \l_@@_sentence_list_start_tl,
+%     \l_@@_par_list_start__tl,
+%     \l_@@_phrase_list_end_nostar_tl,
+%     \l_@@_phrase_list_end_star_tl,
+%     \l_@@_phrase_list_end__tl,
+%     \l_@@_phrase_list_itemend_nostar_tl,
+%     \l_@@_phrase_list_itemend_star_tl,
+%     \l_@@_phrase_list_itemend__tl,
+%     \l_@@_phrase_list_itemsep_nostar_tl,
+%     \l_@@_phrase_list_itemsep_star_tl,
+%     \l_@@_phrase_list_itemsep__tl,
+%     \l_@@_phrase_list_itemstart_nostar_tl,
+%     \l_@@_phrase_list_itemstart_star_tl,
+%     \l_@@_phrase_list_itemstart__tl,
+%     \l_@@_phrase_list_start_nostar_tl,
+%     \l_@@_phrase_list_start_star_tl,
+%     \l_@@_phrase_list_start__tl,
 %   }
 %   These variables store the separators and delimiters added around the
 %   paragraphs and sentences, in the starred or nonstarred variants, as
 %   well as the generic version for runtime usage.
 %    \begin{macrocode}
-\clist_map_inline:nn { par,sentence }
+\clist_map_inline:nn { par, phrase }
   {
-    \clist_map_inline:nn { start,itemstart,itemseparator,itemend,end }
+    \clist_map_inline:nn { start, itemstart, itemsep, itemend, end }
       {
-        \clist_map_inline:nn { { },_star,_nostar }
-          { \tl_new:c { l_@@_#1_list_##1####1_tl } }
+        \clist_map_inline:nn { { }, star, nostar }
+          { \tl_new:c { l_@@_#1_list_##1_####1_tl } }
       }
   }
+\clist_map_inline:nn { start, itemstart, itemsep, itemend, end }
+  { \tl_new:c { l_@@_par_list_#1_parsepar_tl } }
+\tl_set:Nn \l_@@_par_list_itemsep_parsepar_tl { ~ }
 %    \end{macrocode}
 % \end{variable}
 %
@@ -816,14 +828,14 @@
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_range:nn #1 #2
   {
-    \exp_not:V \l_@@_par_list_start_tl
+    \exp_not:v { l_@@_par_list_start_ \l_@@_sep_set_str _tl }
     \use:e
       {
         \exp_not:N \@@_get_paragraph:ww
         \@@_build_list:nn {#1} {#2}
         \exp_not:N \q_@@_mark ; \exp_not:N \q_@@_mark ; \s_@@
       }
-    \exp_not:V \l_@@_par_list_end_tl
+    \exp_not:v { l_@@_par_list_end_ \l_@@_sep_set_str _tl }
   }
 \cs_new:Npn \@@_build_list:nn #1 #2
   { \int_step_function:nnN {#1} {#2} \@@_build_list_aux:n }
@@ -838,7 +850,7 @@
       \fi:
     \else:
       \lipsum_get_paragraph:n {#1}
-      \exp_not:V \l_@@_par_list_itemseparator_tl
+      \exp_not:v { l_@@_par_list_itemsep_ \l_@@_sep_set_str _tl }
     \fi:
     \@@_get_paragraph:ww #2 ;
   }
@@ -856,28 +868,9 @@
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_paragraph:n #1
   {
-    \exp_not:V \l_@@_par_list_itemstart_tl
+    \exp_not:v { l_@@_par_list_itemstart_ \l_@@_sep_set_str _tl }
     \seq_item:Nn \g_@@_paragraph_seq {#1}
-    \exp_not:V \l_@@_par_list_itemend_tl
-  }
-%    \end{macrocode}
-% \end{function}
-%
-% \begin{function}{\@@_ensure_parsable_output:}
-%   \begin{syntax}
-%     \cs{@@_ensure_parsable_output:}
-%   \end{syntax}
-%   To ensure that the list of paragraphs can be parsed into a list of
-%   sentences, the tokens between the single \meta{item}s have to macth
-%   a pre-defined pattern. This commands sets the tokens accordingly.
-%    \begin{macrocode}
-\cs_new_protected:Nn \@@_ensure_parsable_output:
-  {
-    \tl_set:Nn \l_@@_par_list_itemseparator_tl { ~ }
-    \tl_clear:N \l_@@_par_list_itemstart_tl
-    \tl_clear:N \l_@@_par_list_itemend_tl
-    \tl_clear:N \l_@@_par_list_start_tl
-    \tl_clear:N \l_@@_par_list_end_tl
+    \exp_not:v { l_@@_par_list_itemend_ \l_@@_sep_set_str _tl }
   }
 %    \end{macrocode}
 % \end{function}
@@ -892,9 +885,9 @@
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_sentences:nnn #1 #2 #3
   {
-    \exp_not:V \l_@@_sentence_list_start_tl
+    \exp_not:v { l_@@_phrase_list_start_ \l_@@_sep_set_str _tl }
     \@@_get_sentences:nnnw { 1 } {#1} {#2} #3 ~ \q_@@_mark .~ \s_@@
-    \exp_not:V \l_@@_sentence_list_end_tl
+    \exp_not:v { l_@@_phrase_list_end_ \l_@@_sep_set_str _tl }
   }
 \cs_new:Npn \@@_get_sentences:nnnw #1 #2 #3 #4 .~
   {
@@ -905,10 +898,13 @@
       \int_compare:nNnF {#1} < {#2}
         {
           \int_compare:nNnF {#1} = {#2}
-            { \exp_not:V \l_@@_sentence_list_itemseparator_tl }
-          \exp_not:V \l_@@_sentence_list_itemstart_tl
+            {
+              \exp_not:v
+                { l_@@_phrase_list_itemsep_ \l_@@_sep_set_str _tl }
+            }
+          \exp_not:v { l_@@_phrase_list_itemstart_ \l_@@_sep_set_str _tl }
           \exp_not:n { #4 . }
-          \exp_not:V \l_@@_sentence_list_itemend_tl
+          \exp_not:v { l_@@_phrase_list_itemend_ \l_@@_sep_set_str _tl }
         }
     \fi:
     \exp_args:Nf \@@_get_sentences:nnnw { \int_eval:n { #1 + 1 } }
@@ -950,19 +946,19 @@
       \exp_not:c { l_@@_par_list_#2_tl }
       \exp_not:c { l_@@_par_list_#2_#1_tl }
     \tl_set_eq:NN
-      \exp_not:c { l_@@_sentence_list_#2_tl }
-      \exp_not:c { l_@@_sentence_list_#2_#1_tl }
+      \exp_not:c { l_@@_phrase_list_#2_tl }
+      \exp_not:c { l_@@_phrase_list_#2_#1_tl }
   }
 \cs_new_protected:Npx \@@_set_surrounding_tokens_star:
   {
     \tl_map_tokens:nn
-      { { start } { itemstart } { itemseparator } { itemend } { end } }
+      { { start } { itemstart } { itemsep } { itemend } { end } }
       { \@@_tmp:w { star } }
   }
 \cs_new_protected:Npx \@@_set_surrounding_tokens_nostar:
   {
     \tl_map_tokens:nn
-      { { start } { itemstart } { itemseparator } { itemend } { end } }
+      { { start } { itemstart } { itemsep } { itemend } { end } }
       { \@@_tmp:w { nostar } }
   }
 %    \end{macrocode}
@@ -1028,7 +1024,7 @@
 \NewDocumentCommand \SetLipsumParListStart { s +m }
   { \@@_element_set:nnn { par_list_start } {#1} {#2} }
 \NewDocumentCommand \SetLipsumSentenceListStart { s +m }
-  { \@@_element_set:nnn { sentence_list_start } {#1} {#2} }
+  { \@@_element_set:nnn { phrase_list_start } {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1039,7 +1035,7 @@
 \NewDocumentCommand \SetLipsumParListEnd { s +m }
   { \@@_element_set:nnn { par_list_end } {#1} {#2} }
 \NewDocumentCommand \SetLipsumSentenceListEnd { s +m }
-  { \@@_element_set:nnn { sentence_list_end } {#1} {#2} }
+  { \@@_element_set:nnn { phrase_list_end } {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1054,8 +1050,8 @@
   }
 \NewDocumentCommand \SetLipsumSentenceListSurrounders { s +m +m }
   {
-    \@@_element_set:nnn { sentence_list_start } {#1} {#2}
-    \@@_element_set:nnn { sentence_list_end } {#1} {#3}
+    \@@_element_set:nnn { phrase_list_start } {#1} {#2}
+    \@@_element_set:nnn { phrase_list_end } {#1} {#3}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1067,7 +1063,7 @@
 \NewDocumentCommand \SetLipsumParListItemStart { s +m }
   { \@@_element_set:nnn { par_list_itemstart } {#1} {#2} }
 \NewDocumentCommand \SetLipsumSentenceListItemStart { s +m }
-  { \@@_element_set:nnn { sentence_list_itemstart } {#1} {#2} }
+  { \@@_element_set:nnn { phrase_list_itemstart } {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1078,7 +1074,7 @@
 \NewDocumentCommand \SetLipsumParListItemEnd { s +m }
   { \@@_element_set:nnn { par_list_itemend } {#1} {#2} }
 \NewDocumentCommand \SetLipsumSentenceListItemEnd { s +m }
-  { \@@_element_set:nnn { sentence_list_itemend } {#1} {#2} }
+  { \@@_element_set:nnn { phrase_list_itemend } {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1093,8 +1089,8 @@
   }
 \NewDocumentCommand \SetLipsumSentenceListItemSurrounders { s +m +m }
   {
-    \@@_element_set:nnn { sentence_list_itemstart } {#1} {#2}
-    \@@_element_set:nnn { sentence_list_itemend } {#1} {#3}
+    \@@_element_set:nnn { phrase_list_itemstart } {#1} {#2}
+    \@@_element_set:nnn { phrase_list_itemend } {#1} {#3}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1104,9 +1100,9 @@
 %   paragraph or sentence list.
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListItemSeparator { s +m }
-  { \@@_element_set:nnn { par_list_itemseparator } {#1} {#2} }
+  { \@@_element_set:nnn { par_list_itemsep } {#1} {#2} }
 \NewDocumentCommand \SetLipsumSentenceListItemSeparator { s +m }
-  { \@@_element_set:nnn { sentence_list_itemseparator } {#1} {#2} }
+  { \@@_element_set:nnn { phrase_list_itemsep } {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1119,12 +1115,12 @@
     \cs_set:Npn \@@_tmp:w ##1
       {
         \tl_clear:N \exp_not:c { l_@@_par_list_ ##1 _tl }
-        \tl_clear:N \exp_not:c { l_@@_sentence_list_ ##1 _tl }
+        \tl_clear:N \exp_not:c { l_@@_phrase_list_ ##1 _tl }
       }
     \cs_set_protected:Npx \@@_restore_surrounding_tokens:
       {
         \tl_map_function:nN
-          { { start } { itemstart } { itemseparator } { itemend } { end } }
+          { { start } { itemstart } { itemsep } { itemend } { end } }
           \@@_tmp:w
       }
   }
@@ -1217,29 +1213,27 @@
     \cs_set_protected:Npn \@@_do:N ##1 {#4}
     \@@_parse_range_arg:eNN {#2} \l_@@_tmpa_int \l_@@_tmpb_int
     \@@_store_surrounding_tokens:
-    \IfBooleanTF {#1}
-      { \@@_set_surrounding_tokens_star: }
-      { \@@_set_surrounding_tokens_nostar: }
+    \str_set_eq:NN \l_@@_tmpa_str \l_@@_sep_set_str
+    \str_set:Nx \l_@@_sep_set_str { \IfBooleanF {#1} { no } star }
     \IfNoValueTF {#3}
       {
         \tl_set:Nx \l_@@_output_tl
           { \lipsum_get_range:nn { \l_@@_tmpa_int } { \l_@@_tmpb_int } }
-        \@@_restore_surrounding_tokens:
-        \@@_do:N \l_@@_output_tl
       }
       {
-        \@@_ensure_parsable_output:
+        \str_set:Nn \l_@@_sep_set_str { parsepar }
         \tl_set:Nx \l_@@_output_tl
           { \lipsum_get_range:nn { \l_@@_tmpa_int } { \l_@@_tmpb_int } }
+        \str_set:Nx \l_@@_sep_set_str { \IfBooleanF {#1} { no } star }
         \@@_parse_range_arg:eNN {#3} \l_@@_tmpa_int \l_@@_tmpb_int
         \tl_set:Nx \l_@@_output_tl
           {
             \lipsum_get_sentences:nnV
               { \l_@@_tmpa_int } { \l_@@_tmpb_int } \l_@@_output_tl
           }
-        \@@_restore_surrounding_tokens:
-        \@@_do:N \l_@@_output_tl
       }
+    \str_set_eq:NN \l_@@_sep_set_str \l_@@_tmpa_str
+    \@@_do:N \l_@@_output_tl
   }
 \cs_new_eq:NN \@@_do:N ?
 %    \end{macrocode}
@@ -1276,7 +1270,7 @@
 % \subsection{Package options and defaults}
 %
 %    \begin{macrocode}
-\cs_new_protected:Nn \@@_restore_sentence_list:
+\cs_new_protected:Nn \@@_restore_phrase_list:
   {
     \SetLipsumSentenceListItemSeparator  { ~ }
     \SetLipsumSentenceListItemSeparator* { ~ }
@@ -1296,7 +1290,7 @@
 }
 \DeclareOption {nopar}
   {
-    \cs_gset_protected:Npn \@@_restore_sentence_list:
+    \cs_gset_protected:Npn \@@_restore_phrase_list:
       {
         \SetLipsumSentenceListItemSeparator  { ~ }
         \SetLipsumSentenceListItemSeparator* { ~ }
@@ -1319,7 +1313,7 @@
 \cs_new_protected:Npn \LipsumRestoreParList
   { \@@_restore_par_list: }
 \cs_new_protected:Npn \LipsumRestoreSentenceList
-  { \@@_restore_sentence_list: }
+  { \@@_restore_phrase_list: }
 \cs_new_protected:Npn \LipsumRestoreAll
   {
     \LipsumRestoreParList
