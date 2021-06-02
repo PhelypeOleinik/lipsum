@@ -647,6 +647,9 @@
 %
 % \end{documentation}
 %
+% \clearpage
+% \newgeometry{left=5cm}
+%
 % \begin{implementation}
 %
 % \section{\pkg{lipsum} Implementation}
@@ -721,7 +724,8 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{variable}{
+% \begin{variable}{\l_@@_<thing>_list_<place>_<version>_tl}
+%   \csname @gobble\endcsname{
 %     \l_@@_par_list_end_nostar_tl,
 %     \l_@@_par_list_end_star_tl,
 %     \l_@@_par_list_end__tl,
@@ -782,13 +786,17 @@
 \cs_new_protected:Npn \@@_parse_range_arg:nNN #1 #2 #3
   {
     \tl_if_blank:nTF {#1}
-      { \@@_parse_range_arg:eNN { \g_lipsum_default_range_tl } #2 #3 }
+      {
+        \@@_parse_range_arg:eNN
+          { \g_lipsum_default_range_tl } #2 #3
+      }
       {
         \exp_last_unbraced:No \@@_parse_range_arg:wNN
           \tl_to_str:n { #1 - - } \s_@@ #2 #3 {#1}
       }
   }
-\cs_new_protected:Npn \@@_parse_range_arg:wNN #1 - #2 - #3 \s_@@ #4 #5
+\cs_new_protected:Npn \@@_parse_range_arg:wNN
+    #1 - #2 - #3 \s_@@ #4 #5
   {
     \str_if_eq:nnTF {#3} { - }
       {
@@ -827,9 +835,6 @@
 %     \@@_get_paragraph:ww,
 %     \@@_get_paragraph_end:w,
 %   }
-%   \begin{syntax}
-%     \cs{lipsum_get_range:nn}\Arg{number_1}\Arg{number_2}
-%   \end{syntax}
 %   Expands to the paragraphs between \meta{number_1} and
 %   \meta{number_2} with the proper delimiters added.  Text is returned
 %   in \cs{exp_not:n}, so this macro can be safely used in an \cs{edef}.
@@ -841,7 +846,8 @@
       {
         \exp_not:N \@@_get_paragraph:ww
         \@@_build_list:nn {#1} {#2}
-        \exp_not:N \q_@@_mark ; \exp_not:N \q_@@_mark ; \s_@@
+        \exp_not:N \q_@@_mark ;
+        \exp_not:N \q_@@_mark ; \s_@@
       }
     \@@_sep_item:nn { par } { end }
   }
@@ -864,12 +870,10 @@
   }
 \cs_new:Npn \@@_get_paragraph_end:w #1 \s_@@ { \fi: \fi: }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
+% \end{macro}
 %
-% \begin{function}{\lipsum_get_paragraph:n}
-%   \begin{syntax}
-%     \cs{lipsum_get_paragraph:n}\Arg{number}
-%   \end{syntax}
+% \begin{macro}{\lipsum_get_paragraph:n}
 %   Expands to the paragraph \meta{number} with the proper delimiters
 %   added.  Text is returned in \cs{exp_not:n}, so this macro can be
 %   safely used in an \cs{edef}.
@@ -881,12 +885,9 @@
     \@@_sep_item:nn { par } { itemend }
   }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 %
-% \begin{function}{\lipsum_get_sentences:nnn,\lipsum_get_sentences:nnV}
-%   \begin{syntax}
-%     \cs{lipsum_get_sentences:nnn}\Arg{number_1}\Arg{number_2}\Arg{text}
-%   \end{syntax}
+% \begin{macro}{\lipsum_get_sentences:nnn,\lipsum_get_sentences:nnV}
 %   Expands to the sentences numbered between \meta{number_1} and
 %   \meta{number_2}, inclusive, contained in the \meta{text}, and adding
 %   the proper separators.
@@ -919,19 +920,16 @@
 \cs_new:Npn \@@_get_sentences_end:w #1 \s_@@ { }
 \cs_generate_variant:Nn \lipsum_get_sentences:nnn { nnV }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 %
-% \begin{function}{\@@_protect:n}
+% \begin{macro}{\@@_protect:n}
 %   Internal command for the user-level \cs{LipsumProtect}.
 %    \begin{macrocode}
 \cs_new:Npn \@@_protect:n #1 { \exp_not:n {#1} }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 %
 % \begin{macro}{\LipsumProtect}
-%   \begin{syntax}
-%     \cs{LipsumProtect}\Arg{tokens}
-%   \end{syntax}
 %   Protects \meta{tokens} from being expanded when processed by
 %   \cs{unpacklipsum}.
 %    \begin{macrocode}
@@ -939,7 +937,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{function}{
+% \begin{macro}{
 %     \@@_set_surrounding_tokens_star:,
 %     \@@_set_surrounding_tokens_nostar:,
 %   }
@@ -968,7 +966,7 @@
       { \@@_tmp:w { nostar } }
   }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 %
 % \subsection{User- and developer-level commands}\label{sec:code:commands}
 %
@@ -976,9 +974,6 @@
 %  Developer-Level macro to add a paragraph to the dummy text used by
 %  \cs{lipsum} and related commands. To specify a new dummy text, see
 %  section~\ref{sec:other-texts}.
-%  \begin{syntax}
-%    \cs{NewLipsumPar}\Arg{content}
-%  \end{syntax}
 % \begin{arguments}
 %   \item The \meta{content} of the paragraph. In contrast to
 %   previous versions, \pkg{lipsum}2.0 does not store a macro that is typeset
@@ -994,9 +989,6 @@
 % \begin{macro}{\LipsumPar}
 %   Macro to typeset a single paragraph of \lips\ Was not officially
 %   available in version prior to 2.0.
-%   \begin{syntax}
-%     \cs{LipsumPar}\Arg{number}
-%   \end{syntax}
 %   \begin{arguments}
 %     \item Number of the paragraph to typeset.
 %   \end{arguments}
@@ -1137,9 +1129,6 @@
 %
 % \begin{macro}{\SetLipsumDefault}
 %   Command to change the default range used by \cs{lipsum} and friends.
-%   \begin{syntax}
-%     \cs{SetLipsumDefault}\Arg{range}
-%   \end{syntax}
 %   \begin{arguments}
 %     \item[\meta{range}] Range to be used as default.
 %   \end{arguments}
@@ -1147,7 +1136,8 @@
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumDefault { m }
   {
-    \@@_parse_range_arg:eNN {#1} \l_@@_tmpa_int \l_@@_tmpb_int
+    \@@_parse_range_arg:eNN {#1}
+      \l_@@_tmpa_int \l_@@_tmpb_int
     \tl_gset:Nx \g_lipsum_default_range_tl
       { \int_use:N \l_@@_tmpa_int - \int_use:N \l_@@_tmpb_int }
   }
@@ -1158,11 +1148,6 @@
 % all lower-case.
 %
 % \begin{macro}{\lipsum}
-%   \begin{syntax}
-%     \cs{lipsum}\oarg{paragraph range}\oarg{sentence range}
-%     \cs{lipsum*}\oarg{paragraph range}\oarg{sentence range}
-%   \end{syntax}
-%
 %   \begin{arguments}
 %     \item Range-like string that specifies the number of the
 %       paragraphs taken from \lips\ If omitted, the value set by
@@ -1193,12 +1178,6 @@
 %   of the list, set, for example, by using the package option
 %   \opt{space} or by using the \cs{SetLipsum...List} commands, are
 %   |x|-expanded.
-%   \begin{syntax}
-%     \cs{unpacklipsum}\oarg{paragraph range}\oarg{sentence range}\\
-%     \cs{unpacklipsum*}\oarg{paragraph range}\oarg{sentence range}\\
-%     ...
-%     \cs{lipsumexp}
-%   \end{syntax}
 %    \begin{macrocode}
 \NewDocumentCommand \unpacklipsum { s O { \g_lipsum_default_range_tl } o }
   {
@@ -1217,25 +1196,36 @@
 \cs_new_protected:Npn \@@_fetch_do:nnnn #1 #2 #3 #4
   {
     \cs_set_protected:Npn \@@_do:N ##1 {#4}
-    \@@_parse_range_arg:eNN {#2} \l_@@_tmpa_int \l_@@_tmpb_int
+    \@@_parse_range_arg:eNN {#2}
+      \l_@@_tmpa_int \l_@@_tmpb_int
     \@@_store_surrounding_tokens:
     \str_set_eq:NN \l_@@_tmpa_str \l_@@_sep_set_str
-    \str_set:Nx \l_@@_sep_set_str { \IfBooleanF {#1} { no } star }
+    \str_set:Nx \l_@@_sep_set_str
+      { \IfBooleanF {#1} { no } star }
     \IfNoValueTF {#3}
       {
         \tl_set:Nx \l_@@_output_tl
-          { \lipsum_get_range:nn { \l_@@_tmpa_int } { \l_@@_tmpb_int } }
+          {
+            \lipsum_get_range:nn
+              { \l_@@_tmpa_int } { \l_@@_tmpb_int }
+          }
       }
       {
         \str_set:Nn \l_@@_sep_set_str { parsepar }
         \tl_set:Nx \l_@@_output_tl
-          { \lipsum_get_range:nn { \l_@@_tmpa_int } { \l_@@_tmpb_int } }
-        \str_set:Nx \l_@@_sep_set_str { \IfBooleanF {#1} { no } star }
-        \@@_parse_range_arg:eNN {#3} \l_@@_tmpa_int \l_@@_tmpb_int
+          {
+            \lipsum_get_range:nn
+              { \l_@@_tmpa_int } { \l_@@_tmpb_int }
+          }
+        \str_set:Nx \l_@@_sep_set_str
+          { \IfBooleanF {#1} { no } star }
+        \@@_parse_range_arg:eNN {#3}
+          \l_@@_tmpa_int \l_@@_tmpb_int
         \tl_set:Nx \l_@@_output_tl
           {
             \lipsum_get_sentences:nnV
-              { \l_@@_tmpa_int } { \l_@@_tmpb_int } \l_@@_output_tl
+              { \l_@@_tmpa_int } { \l_@@_tmpb_int }
+              \l_@@_output_tl
           }
       }
     \str_set_eq:NN \l_@@_sep_set_str \l_@@_tmpa_str
