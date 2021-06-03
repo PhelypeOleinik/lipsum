@@ -61,10 +61,11 @@ Please send error reports and suggestions for improvements to
     \def~{ }%
     \def\ReferenceLines{%
       \MetaPrefix ^^J%
-      \MetaPrefix\space The original source files were:^^J%
+      \MetaPrefix~The original source files were:^^J%
       \MetaPrefix ^^J%
-      \MetaPrefix\space\inFileName^^J}%
+      \MetaPrefix~\inFileName^^J}%
     \immediate\write\lipswrite{\defaultpreamble}%
+    \immediate\write\lipswrite{\string\SetLipsumLanguage{#3}}%
     \genlipsumaux\genlipsumaux
     \closein\lipsread
     \immediate\closeout\lipswrite

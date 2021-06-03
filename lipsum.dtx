@@ -668,6 +668,13 @@
 %    \end{macrocode}
 % \end{variable}
 %
+% \begin{variable}{\g_lipsum_language_tl}
+%   Stores the language of the dummy text for hyphenation patterns.
+%    \begin{macrocode}
+\tl_new:N \g_lipsum_language_tl
+%    \end{macrocode}
+% \end{variable}
+%
 % \begin{variable}{\g_lipsum_default_range_tl}
 %   The default range for lipsum paragraphs.
 %    \begin{macrocode}
@@ -1118,6 +1125,8 @@
         \tl_map_function:nN
           { { start } { itemstart } { itemsep } { itemend } { end } }
           \@@_tmp:w
+        \cs_set_protected:Npn \@@_restore_surrounding_tokens:
+          { \prg_do_nothing: }
       }
   }
 \cs_new_protected:Npn \@@_restore_surrounding_tokens:
@@ -1165,7 +1174,14 @@
 %   executes the code in |#4|.
 %    \begin{macrocode}
 \NewDocumentCommand \lipsum { s O { \g_lipsum_default_range_tl } o }
-  { \@@_fetch_do:nnnn {#1} {#2} {#3} { \tl_use:N ##1 } }
+  {
+    \@@_fetch_do:nnnn {#1} {#2} {#3}
+      {
+        \@@_set_hyphens:
+        \tl_use:N ##1
+        \@@_restore_hyphens:
+      }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1230,6 +1246,37 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_set_hyphens:,\@@_restore_hyphens:}
+%   Selects the hyphenation patterns for the language of the dummy text,
+%   using \pkg{babel}'s \cs{hyphenrules} if that's defined (when
+%   \pkg{babel} is loaded) or using \cs{language}\cs{l@\meta{lang}}
+%   otherwise.  The hyphenation patterns are properly restored by
+%   \cs{@@_restore_hypehens:} when the text ends.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_set_hyphens:
+  {
+    \use:x
+      {
+        \cs_if_exist:NTF \hyphenrules
+          {
+            \exp_not:N \hyphenrules { \g_lipsum_language_tl }
+            \cs_set_protected:Npn \@@_restore_hyphens:
+              { \exp_not:N \hyphenrules { \languagename } }
+          }
+          {
+            \cs_if_exist:cTF { l@ \g_lipsum_language_tl }
+              { \language \use:c { l@ \g_lipsum_language_tl } }
+              { \msg_error:nn { lipsum } { language-undefined } }
+            \cs_set_protected:Npn \@@_restore_hyphens:
+              { \language \int_eval:n { \language } \scan_stop: }
+          }
+      }
+  }
+\cs_new_protected:Npn \@@_restore_hyphens:
+  { \prg_do_nothing: }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\NewLipsumPar}
 %   Developer-Level macro to add a paragraph to the dummy text used by
 %   \cs{lipsum} and related commands. To specify a new dummy text, see
@@ -1256,6 +1303,7 @@
   {
     \str_if_eq:VnF \g_@@_text_str {#1}
       {
+        \tl_gclear:N \g_lipsum_language_tl
         \int_gzero:N \g_@@_par_count_int
         \file_input:n { #1.ltd }
         \str_gset:Nn \g_@@_text_str {#1}
@@ -1264,11 +1312,22 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\SetLipsumLanguage}
+%   This macro sets the language for hyphenation patterns of the dummy
+%   text.  When a new lipsum text is read, this is reset.
+%    \begin{macrocode}
+\NewDocumentCommand \SetLipsumLanguage { m }
+  { \tl_gset:Nn \g_lipsum_language_tl {#1} }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{Messages}
 %
 %    \begin{macrocode}
 \msg_new:nnn { lipsum } { invalid-range }
   { Invalid~number~or~range~'#1'. }
+\msg_new:nnn { lipsum } { language-undefined }
+  { Language~'\g_lipsum_language_tl'~undefined. }
 %    \end{macrocode}
 %
 % \subsection{Package options and defaults}

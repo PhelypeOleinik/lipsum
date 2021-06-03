@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+
+\input{regression-test}
+
+\RequirePackage[enable-debug, check-declarations]{expl3}
+
+\ExplSyntaxOn
+\debug_on:n { deprecation }
+\ExplSyntaxOff
+
+\usepackage{lipsum}
+
+\begin{document}
+\START
+
+\hsize=3cm
+
+\loggingoutput
+
+\SetLipsumText{lipsum}
+\lipsum[1][1-3]
+
+\SetLipsumText{lipsum-cs}
+\lipsum[1][1-3]
+
+\SetLipsumText{cicero}
+\lipsum[1][1]
+
+\clearpage
+
+\END
