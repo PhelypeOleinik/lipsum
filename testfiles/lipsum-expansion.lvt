@@ -21,9 +21,11 @@
 \SetLipsumText{lipsum-cs}
 
 \edef\x{\lipsumrange{3}{3}}\show\x
+\unpacklipsum[3]\show\lipsumexp
 
 \SetLipsumText{cicero}
 
 \edef\x{\lipsumrange{3}{3}}\show\x
+\unpacklipsum[3]\show\lipsumexp
 
 \END

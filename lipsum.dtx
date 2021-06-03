@@ -1178,10 +1178,7 @@
 %   |x|-expanded.
 %    \begin{macrocode}
 \NewDocumentCommand \unpacklipsum { s O { \g_lipsum_default_range_tl } o }
-  {
-    \@@_fetch_do:nnnn {#1} {#2} {#3}
-      { \cs_gset:Npx \lipsumexp { \tl_use:N ##1 } }
-  }
+  { \@@_fetch_do:nnnn {#1} {#2} {#3} { \tl_gset_eq:NN \lipsumexp ##1 } }
 \cs_new_eq:NN \lipsumexp \prg_do_nothing:
 %    \end{macrocode}
 % \end{macro}
