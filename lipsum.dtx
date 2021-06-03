@@ -1259,12 +1259,8 @@
   {
     \str_if_eq:VnF \g_@@_text_str {#1}
       {
-        \int_set_eq:NN \l_@@_tmpa_int \g_@@_par_count_int
         \int_gzero:N \g_@@_par_count_int
         \file_input:n { #1.ltd }
-        \int_step_inline:nnn
-          { \g_@@_par_count_int + 1 } { \l_@@_tmpa_int }
-          { \cs_undefine:c { g_@@_par_##1_tl } }
         \str_gset:Nn \g_@@_text_str {#1}
       }
   }
