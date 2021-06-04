@@ -1118,31 +1118,6 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_store_surrounding_tokens:,\@@_restore_surrounding_tokens:}
-%   Stores the accessory items added around paragraphs and sentences into
-%   a temporary location for later restoring to avoid the need for grouping.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_store_surrounding_tokens:
-  {
-    \cs_set:Npn \@@_tmp:w ##1
-      {
-        \tl_clear:N \exp_not:c { l_@@_par_list_ ##1 _tl }
-        \tl_clear:N \exp_not:c { l_@@_phrase_list_ ##1 _tl }
-      }
-    \cs_set_protected:Npx \@@_restore_surrounding_tokens:
-      {
-        \tl_map_function:nN
-          { { start } { itemstart } { itemsep } { itemend } { end } }
-          \@@_tmp:w
-        \cs_set_protected:Npn \@@_restore_surrounding_tokens:
-          { \prg_do_nothing: }
-      }
-  }
-\cs_new_protected:Npn \@@_restore_surrounding_tokens:
-  { \prg_do_nothing: }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}{\SetLipsumDefault}
 %   Command to change the default range used by \cs{lipsum} and friends.
 %   \begin{arguments}
@@ -1218,7 +1193,6 @@
     \cs_set_protected:Npn \@@_do:N ##1 {#4}
     \@@_parse_range_arg:eNN {#2}
       \l_@@_tmpa_int \l_@@_tmpb_int
-    \@@_store_surrounding_tokens:
     \str_set_eq:NN \l_@@_tmpa_str \l_@@_sep_set_str
     \str_set:Nx \l_@@_sep_set_str
       { \IfBooleanF {#1} { no } star }
