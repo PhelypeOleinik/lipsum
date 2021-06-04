@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+
+\input{regression-test}
+% don't show under/overfull boxes
+\showboxbreadth=-1
+\showboxdepth=-1
+
+\RequirePackage[enable-debug, check-declarations]{expl3}
+
+\ExplSyntaxOn
+\debug_on:n { deprecation }
+\ExplSyntaxOff
+
+\usepackage{lipsum}
+
+\begin{document}
+\START
+
+\hsize=3cm
+
+\SetLipsumText{lipsum}
+\lipsum[1][1-3]
+
+\SetLipsumText{lipsum-cs}
+\lipsum[1][1-3]
+
+\SetLipsumText{cicero}
+\lipsum[1][1]
+
+{\loggingoutput\clearpage}
+
+\setlipsum{hyphens=false}
+
+\SetLipsumText{lipsum}
+\lipsum[1][1-3]
+
+\SetLipsumText{lipsum-cs}
+\lipsum[1][1-3]
+
+\SetLipsumText{cicero}
+\lipsum[1][1]
+
+{\loggingoutput\clearpage}
+
+\END

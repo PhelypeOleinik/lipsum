@@ -13,6 +13,8 @@ this project uses date-based 'snapshot' version identifiers.
 
 ### Added
 - Czech dummy text provided by Ondřej Macek.
+- `\setlipsum` macro to change options in the document.
+- `hyphens` option to turn on/off hyphenation pattern selection.
 
 ### Removed
 - `\setlipsumdefault` (superseded by `\SetLipsumDefault`).
@@ -29,6 +31,7 @@ this project uses date-based 'snapshot' version identifiers.
   argument at all (that is, `\lipsum[]` is equivalent to `\lipsum`).
 - Use Unicode characters in `lipsum-cicero.txt` instead of text
   commands.
+- Use hyphenation patterns according to the language of the dummy text.
 
 ## [v2.3]
 

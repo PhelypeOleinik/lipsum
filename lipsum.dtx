@@ -112,6 +112,7 @@
 %</driver>
 %<*package>
 \NeedsTeXFormat{LaTeX2e}
+\RequirePackage{l3keys2e}
 \@ifundefined{NewDocumentCommand}
   {\RequirePackage{xparse}}{}
 \ProvidesExplPackage {lipsum} {\lipsumdate} {\lipsumversion}
@@ -707,6 +708,14 @@
 %    \end{macrocode}
 % \end{variable}
 %
+% \begin{variable}{\l_@@_hyphens_bool}
+%   Boolean whether to change hyphenation patterns according to the
+%   dummy text language.
+%    \begin{macrocode}
+\bool_new:N \l_@@_hyphens_bool
+%    \end{macrocode}
+% \end{variable}
+%
 % \begin{variable}{\q_@@_mark,\s_@@}
 %   Quark and scan mark used throughout the package.
 %    \begin{macrocode}
@@ -1255,7 +1264,8 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_hyphens:
   {
-    \use:x
+    \bool_if:NTF \l_@@_hyphens_bool
+      { \use:x } { \use_none:n }
       {
         \cs_if_exist:NTF \hyphenrules
           {
@@ -1351,28 +1361,36 @@
     \SetLipsumParListItemSurrounders  { } { }
     \SetLipsumParListItemSurrounders* { } { }
 }
-\DeclareOption {nopar}
+\keys_define:nn { lipsum }
   {
-    \cs_gset_protected:Npn \@@_restore_phrase_list:
+    nopar .code:n =
       {
-        \SetLipsumSentenceListItemSeparator  { ~ }
-        \SetLipsumSentenceListItemSeparator* { ~ }
-        \SetLipsumSentenceListEnd  { }
-        \SetLipsumSentenceListEnd* { }
-        \SetLipsumSentenceListItemSurrounders  { } { }
-        \SetLipsumSentenceListItemSurrounders* { } { }
-      }
-    \cs_gset_protected:Npn \@@_restore_par_list:
-      {
-        \SetLipsumParListItemSeparator  { ~ }
-        \SetLipsumParListItemSeparator* { \par }
-        \SetLipsumParListEnd  { }
-        \SetLipsumParListEnd* { }
-        \SetLipsumParListItemSurrounders  { } { }
-        \SetLipsumParListItemSurrounders* { } { }
-      }
+        \cs_gset_protected:Npn \@@_restore_phrase_list:
+          {
+            \SetLipsumSentenceListItemSeparator  { ~ }
+            \SetLipsumSentenceListItemSeparator* { ~ }
+            \SetLipsumSentenceListEnd  { }
+            \SetLipsumSentenceListEnd* { }
+            \SetLipsumSentenceListItemSurrounders  { } { }
+            \SetLipsumSentenceListItemSurrounders* { } { }
+          }
+        \cs_gset_protected:Npn \@@_restore_par_list:
+          {
+            \SetLipsumParListItemSeparator  { ~ }
+            \SetLipsumParListItemSeparator* { \par }
+            \SetLipsumParListEnd  { }
+            \SetLipsumParListEnd* { }
+            \SetLipsumParListItemSurrounders  { } { }
+            \SetLipsumParListItemSurrounders* { } { }
+          }
+      },
+    hyphens .bool_set:N = \l_@@_hyphens_bool ,
+    hyphens .initial:n = true ,
+    hyphens .default:n = true ,
   }
-\ProcessOptions
+\NewDocumentCommand \setlipsum { +m }
+  { \keys_set:nn { lipsum } {#1} }
+\ProcessKeysOptions { lipsum }
 \cs_new_protected:Npn \LipsumRestoreParList
   { \@@_restore_par_list: }
 \cs_new_protected:Npn \LipsumRestoreSentenceList
