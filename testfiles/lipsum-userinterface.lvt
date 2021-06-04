@@ -5,9 +5,10 @@
 \documentclass{article}
 \usepackage{expl3}
 \usepackage{lipsum}
-\ExplSyntaxOn
 \START
 \TYPE{If this test fails, the documented user interface is not available}
+
+\ExplSyntaxOn
 \TEST{\lipsum, check~if~exists}{
   \cs_if_exist:NTF\lipsum{\TRUE}{\FALSE}
 }
@@ -15,7 +16,7 @@
   \cs_if_exist:NTF\unpacklipsum{\TRUE}{\FALSE}
 }
 
-\TEST{\lipsumexp, check~if~exists}
+\TEST{\lipsumexp, check~if~exists}{
   \cs_if_exist:NTF\lipsumexp{\TRUE}{\FALSE}
 }
 
@@ -26,49 +27,49 @@
   \cs_if_exist:NTF\LipsumPar{\TRUE}{\FALSE}
 }
 
-\TEST{\SetLipsumParListStart, check~if~exists}
+\TEST{\SetLipsumParListStart, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
 }
-\TEST{\SetLipsumParListEnd, check~if~exists}
+\TEST{\SetLipsumParListEnd, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
 }
-\TEST{\SetLipsumParListSurrounders, check~if~exists}
-  \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
-}
-
-\TEST{\SetLipsumParListItemSeparator, check~if~exists}
-  \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
-}
-\TEST{\SetLipsumParListItemStart, check~if~exists}
-  \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
-}
-\TEST{\SetLipsumParListItemEnd, check~if~exists}
-  \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
-}
-\TEST{\SetLipsumParListItemSurrounders, check~if~exists}
+\TEST{\SetLipsumParListSurrounders, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
 }
 
-\TEST{\SetLipsumSentenceListStart, check~if~exists}
+\TEST{\SetLipsumParListItemSeparator, check~if~exists}{
+  \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
+}
+\TEST{\SetLipsumParListItemStart, check~if~exists}{
+  \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
+}
+\TEST{\SetLipsumParListItemEnd, check~if~exists}{
+  \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
+}
+\TEST{\SetLipsumParListItemSurrounders, check~if~exists}{
+  \cs_if_exist:NTF\SetLipsumParListStart{\TRUE}{\FALSE}
+}
+
+\TEST{\SetLipsumSentenceListStart, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumSentenceListStart{\TRUE}{\FALSE}
 }
-\TEST{\SetLipsumSentenceListEnd, check~if~exists}
+\TEST{\SetLipsumSentenceListEnd, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumSentenceListStart{\TRUE}{\FALSE}
 }
-\TEST{\SetLipsumSentenceListSurrounders, check~if~exists}
+\TEST{\SetLipsumSentenceListSurrounders, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumSentenceListStart{\TRUE}{\FALSE}
 }
 
-\TEST{\SetLipsumSentenceListItemSeparator, check~if~exists}
+\TEST{\SetLipsumSentenceListItemSeparator, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumSentenceListStart{\TRUE}{\FALSE}
 }
-\TEST{\SetLipsumSentenceListItemStart, check~if~exists}
+\TEST{\SetLipsumSentenceListItemStart, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumSentenceListStart{\TRUE}{\FALSE}
 }
-\TEST{\SetLipsumSentenceListItemEnd, check~if~exists}
+\TEST{\SetLipsumSentenceListItemEnd, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumSentenceListStart{\TRUE}{\FALSE}
 }
-\TEST{\SetLipsumSentenceListItemSurrounders, check~if~exists}
+\TEST{\SetLipsumSentenceListItemSurrounders, check~if~exists}{
   \cs_if_exist:NTF\SetLipsumSentenceListStart{\TRUE}{\FALSE}
 }
 

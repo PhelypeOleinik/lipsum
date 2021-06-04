@@ -1,6 +1,6 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
-Ifthistestfails,thedocumenteduserinterfaceisnotavailable
+If this test fails, the documented user interface is not available
 ============================================================
 TEST 1: \lipsum ,check if exists
 ============================================================
@@ -14,14 +14,8 @@ TRUE
 ============================================================
 TEST 3: \lipsumexp ,check if exists
 ============================================================
-FALSE
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 4: \SetLipsumDefault ,check if exists
 ============================================================
@@ -35,141 +29,70 @@ TRUE
 ============================================================
 TEST 6: \SetLipsumParListStart ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 7: \SetLipsumParListEnd ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 8: \SetLipsumParListSurrounders ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 9: \SetLipsumParListItemSeparator ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 10: \SetLipsumParListItemStart ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 11: \SetLipsumParListItemEnd ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 12: \SetLipsumParListItemSurrounders ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 13: \SetLipsumSentenceListStart ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 14: \SetLipsumSentenceListEnd ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 15: \SetLipsumSentenceListSurrounders ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 16: \SetLipsumSentenceListItemSeparator ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 17: \SetLipsumSentenceListItemStart ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 18: \SetLipsumSentenceListItemEnd ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
+TRUE
+============================================================
 ============================================================
 TEST 19: \SetLipsumSentenceListItemSurrounders ,check if exists
 ============================================================
-! Extra }, or forgotten \endgroup.
-l. ...}
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-Bad grouping: 16!
+TRUE
+============================================================
