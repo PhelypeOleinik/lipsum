@@ -1384,13 +1384,20 @@
             \SetLipsumParListItemSurrounders* { } { }
           }
       },
+    %
     hyphens .bool_set:N = \l_@@_hyphens_bool ,
     hyphens .initial:n = true ,
     hyphens .default:n = true ,
+    %
+    text .code:n = \SetLipsumText{#1} ,
+    text .value_required:n = true ,
+    %
+    default-range .code:n = \SetLipsumDefault{#1} ,
+    default-range .initial:n = 1-7 ,
+    default-range .default:n = 1-7 ,
   }
 \NewDocumentCommand \setlipsum { +m }
   { \keys_set:nn { lipsum } {#1} }
-\ProcessKeysOptions { lipsum }
 \cs_new_protected:Npn \LipsumRestoreParList
   { \@@_restore_par_list: }
 \cs_new_protected:Npn \LipsumRestoreSentenceList
@@ -1400,13 +1407,10 @@
     \LipsumRestoreParList
     \LipsumRestoreSentenceList
   }
-\LipsumRestoreAll
-%    \end{macrocode}
-%
-%    \begin{macrocode}
 \ExplSyntaxOff
-\SetLipsumDefault{1-7}
-\SetLipsumText{lipsum}
+\setlipsum{text=lipsum}
+\ProcessKeysOptions{lipsum}
+\LipsumRestoreAll
 %    \end{macrocode}
 %
 %    \begin{macrocode}
