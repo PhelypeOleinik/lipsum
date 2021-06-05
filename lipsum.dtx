@@ -952,21 +952,6 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_protect:n}
-%   Internal command for the user-level \cs{LipsumProtect}.
-%    \begin{macrocode}
-\cs_new:Npn \@@_protect:n #1 { \exp_not:n {#1} }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\LipsumProtect}
-%   Protects \meta{tokens} from being expanded when processed by
-%   \cs{unpacklipsum}.
-%    \begin{macrocode}
-\cs_new:Npn \LipsumProtect #1 { \@@_protect:n {#1} }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}{
 %     \@@_set_surrounding_tokens_star:,
 %     \@@_set_surrounding_tokens_nostar:,
