@@ -1015,7 +1015,10 @@
 %
 % \subsection{Tokens surrounding the \lips\ content}
 %
-% \begin{macro}{\@@_element_set:nnn}
+% \begin{macro}{%
+%     \@@_element_set:nnn,
+%     \@@_opt_set:nnnn,
+%   }
 %   A general macro for setting starred/non-starred versions of several
 %   elements used between chunks of dummy text. Arguments are:
 %   \begin{arguments}
@@ -1026,6 +1029,14 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_element_set:nnn #1 #2 #3
   { \tl_set:cn { l_@@_ #1 _ \IfBooleanF {#2} { no } star _tl } {#3} }
+\cs_new_protected:Npn \@@_opt_set:nnnn #1 #2 #3
+  {
+    \use:x
+      {
+        \@@_element_set:nnn { #1_list_#2 }
+          { \str_if_eq_p:nn {#3} { * } }
+      }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1317,47 +1328,29 @@
 % \subsection{Package options and defaults}
 %
 %    \begin{macrocode}
+\cs_new_protected:Npn \@@_nopar_opt_restores:nnn #1 #2 #3
+  {
+    \keys_set:nn { lipsum }
+      { @@_#1_all = , #1-sep = {#2} , @@_#1_all* = , #1-sep* = {#3} }
+  }
 \cs_new_protected:Nn \@@_restore_phrase_list:
-  {
-    \SetLipsumSentenceListItemSeparator  { ~ }
-    \SetLipsumSentenceListItemSeparator* { ~ }
-    \SetLipsumSentenceListSurrounders  { } { }
-    \SetLipsumSentenceListSurrounders* { } { }
-    \SetLipsumSentenceListItemSurrounders  { } { }
-    \SetLipsumSentenceListItemSurrounders* { } { }
-}
-\cs_new_protected:Nn \@@_restore_par_list:
-  {
-    \SetLipsumParListItemSeparator  { \par }
-    \SetLipsumParListItemSeparator* { ~ }
-    \SetLipsumParListSurrounders  { } { }
-    \SetLipsumParListSurrounders* { } { }
-    \SetLipsumParListItemSurrounders  { } { }
-    \SetLipsumParListItemSurrounders* { } { }
-}
+  { \@@_nopar_opt_restores:nnn { phrase } { ~ } { ~ } }
+\cs_new_eq:NN \@@_restore_par_list: ?
 \keys_define:nn { lipsum }
   {
-    nopar .code:n =
+    nopar .choice: ,
+    nopar / true .code:n =
       {
-        \cs_gset_protected:Npn \@@_restore_phrase_list:
-          {
-            \SetLipsumSentenceListItemSeparator  { ~ }
-            \SetLipsumSentenceListItemSeparator* { ~ }
-            \SetLipsumSentenceListEnd  { }
-            \SetLipsumSentenceListEnd* { }
-            \SetLipsumSentenceListItemSurrounders  { } { }
-            \SetLipsumSentenceListItemSurrounders* { } { }
-          }
         \cs_gset_protected:Npn \@@_restore_par_list:
-          {
-            \SetLipsumParListItemSeparator  { ~ }
-            \SetLipsumParListItemSeparator* { \par }
-            \SetLipsumParListEnd  { }
-            \SetLipsumParListEnd* { }
-            \SetLipsumParListItemSurrounders  { } { }
-            \SetLipsumParListItemSurrounders* { } { }
-          }
-      },
+          { \@@_nopar_opt_restores:nnn { par } { ~ } { \par } }
+      } ,
+    nopar / false .code:n =
+      {
+        \cs_gset_protected:Nn \@@_restore_par_list:
+          { \@@_nopar_opt_restores:nnn { par } { \par } { ~ } }
+      } ,
+    nopar .initial:n = false,
+    nopar .default:n = true,
     %
     hyphens .bool_set:N = \l_@@_hyphens_bool ,
     hyphens .initial:n = true ,
@@ -1370,6 +1363,24 @@
     default-range .initial:n = 1-7 ,
     default-range .default:n = 1-7 ,
   }
+\cs_set_protected:Npn \@@_tmp:w #1 #2 #3
+  {
+    \keys_define:nn { lipsum }
+      {
+        #1-before #2 .tl_set:c = l_@@_#1_list_start     _#3star_tl ,
+        #1-begin  #2 .tl_set:c = l_@@_#1_list_itemstart _#3star_tl ,
+        #1-sep    #2 .tl_set:c = l_@@_#1_list_itemsep   _#3star_tl ,
+        #1-end    #2 .tl_set:c = l_@@_#1_list_itemend   _#3star_tl ,
+        #1-after  #2 .tl_set:c = l_@@_#1_list_end       _#3star_tl ,
+        @@_#1_all#2 .meta:n =
+          {
+            #1-before #2 = ##1 , #1-after #2 = ##1 ,
+            #1-begin  #2 = ##1 , #1-end   #2 = ##1 , #1-sep #2 = ##1 ,
+          }
+      }
+  }
+\@@_tmp:w { par } {   } { no } \@@_tmp:w { phrase } {   } { no }
+\@@_tmp:w { par } { * } {    } \@@_tmp:w { phrase } { * } {    }
 \NewDocumentCommand \setlipsum { +m }
   { \keys_set:nn { lipsum } {#1} }
 \cs_new_protected:Npn \LipsumRestoreParList
@@ -1377,10 +1388,7 @@
 \cs_new_protected:Npn \LipsumRestoreSentenceList
   { \@@_restore_phrase_list: }
 \cs_new_protected:Npn \LipsumRestoreAll
-  {
-    \LipsumRestoreParList
-    \LipsumRestoreSentenceList
-  }
+  { \@@_restore_par_list: \@@_restore_phrase_list: }
 \ExplSyntaxOff
 \setlipsum{text=lipsum}
 \ProcessKeysOptions{lipsum}
