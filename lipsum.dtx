@@ -757,27 +757,27 @@
 %     \l_@@_par_list_start_nostar_tl,
 %     \l_@@_par_list_start_star_tl,
 %     \l_@@_par_list_start__tl,
-%     \l_@@_phrase_list_end_nostar_tl,
-%     \l_@@_phrase_list_end_star_tl,
-%     \l_@@_phrase_list_end__tl,
-%     \l_@@_phrase_list_itemend_nostar_tl,
-%     \l_@@_phrase_list_itemend_star_tl,
-%     \l_@@_phrase_list_itemend__tl,
-%     \l_@@_phrase_list_itemsep_nostar_tl,
-%     \l_@@_phrase_list_itemsep_star_tl,
-%     \l_@@_phrase_list_itemsep__tl,
-%     \l_@@_phrase_list_itemstart_nostar_tl,
-%     \l_@@_phrase_list_itemstart_star_tl,
-%     \l_@@_phrase_list_itemstart__tl,
-%     \l_@@_phrase_list_start_nostar_tl,
-%     \l_@@_phrase_list_start_star_tl,
-%     \l_@@_phrase_list_start__tl,
+%     \l_@@_sentence_list_end_nostar_tl,
+%     \l_@@_sentence_list_end_star_tl,
+%     \l_@@_sentence_list_end__tl,
+%     \l_@@_sentence_list_itemend_nostar_tl,
+%     \l_@@_sentence_list_itemend_star_tl,
+%     \l_@@_sentence_list_itemend__tl,
+%     \l_@@_sentence_list_itemsep_nostar_tl,
+%     \l_@@_sentence_list_itemsep_star_tl,
+%     \l_@@_sentence_list_itemsep__tl,
+%     \l_@@_sentence_list_itemstart_nostar_tl,
+%     \l_@@_sentence_list_itemstart_star_tl,
+%     \l_@@_sentence_list_itemstart__tl,
+%     \l_@@_sentence_list_start_nostar_tl,
+%     \l_@@_sentence_list_start_star_tl,
+%     \l_@@_sentence_list_start__tl,
 %   }
 %   These variables store the separators and delimiters added around the
 %   paragraphs and sentences, in the starred or nonstarred variants, as
 %   well as the generic version for runtime usage.
 %    \begin{macrocode}
-\clist_map_inline:nn { par, phrase }
+\clist_map_inline:nn { par, sentence }
   {
     \clist_map_inline:nn { start, itemstart, itemsep, itemend, end }
       {
@@ -924,10 +924,10 @@
 %    \begin{macrocode}
 \cs_new:Npn \lipsum_get_sentences:nnn #1 #2 #3
   {
-    \@@_sep_item:nn { phrase } { start }
+    \@@_sep_item:nn { sentence } { start }
     \@@_get_sentences:nnnw { 1 } {#1} {#2}
       #3 ~ \q_@@_mark .~ \s_@@
-    \@@_sep_item:nn { phrase } { end }
+    \@@_sep_item:nn { sentence } { end }
   }
 \cs_new:Npn \@@_get_sentences:nnnw #1 #2 #3 #4 .~
   {
@@ -938,10 +938,10 @@
       \int_compare:nNnF {#1} < {#2}
         {
           \int_compare:nNnF {#1} = {#2}
-            { \@@_sep_item:nn { phrase } { itemsep } }
-          \@@_sep_item:nn { phrase } { itemstart }
+            { \@@_sep_item:nn { sentence } { itemsep } }
+          \@@_sep_item:nn { sentence } { itemstart }
           \exp_not:n { #4 . }
-          \@@_sep_item:nn { phrase } { itemend }
+          \@@_sep_item:nn { sentence } { itemend }
         }
     \fi:
     \exp_args:Nf \@@_get_sentences:nnnw { \int_eval:n { #1 + 1 } }
@@ -965,8 +965,8 @@
       \exp_not:c { l_@@_par_list_#2_tl }
       \exp_not:c { l_@@_par_list_#2_#1_tl }
     \tl_set_eq:NN
-      \exp_not:c { l_@@_phrase_list_#2_tl }
-      \exp_not:c { l_@@_phrase_list_#2_#1_tl }
+      \exp_not:c { l_@@_sentence_list_#2_tl }
+      \exp_not:c { l_@@_sentence_list_#2_#1_tl }
   }
 \cs_new_protected:Npx \@@_set_surrounding_tokens_star:
   {
@@ -1048,7 +1048,7 @@
 \NewDocumentCommand \SetLipsumSentenceListStart { s +m }
   {
     \@@_deprecated:n { SetLipsumSentenceListStart }
-    \@@_element_set:nnn { phrase_list_start } {#1} {#2}
+    \@@_element_set:nnn { sentence_list_start } {#1} {#2}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1065,7 +1065,7 @@
 \NewDocumentCommand \SetLipsumSentenceListEnd { s +m }
   {
     \@@_deprecated:n { SetLipsumSentenceListEnd }
-    \@@_element_set:nnn { phrase_list_end } {#1} {#2}
+    \@@_element_set:nnn { sentence_list_end } {#1} {#2}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1083,8 +1083,8 @@
 \NewDocumentCommand \SetLipsumSentenceListSurrounders { s +m +m }
   {
     \@@_deprecated:n { SetLipsumSentenceListSurrounders }
-    \@@_element_set:nnn { phrase_list_start } {#1} {#2}
-    \@@_element_set:nnn { phrase_list_end } {#1} {#3}
+    \@@_element_set:nnn { sentence_list_start } {#1} {#2}
+    \@@_element_set:nnn { sentence_list_end } {#1} {#3}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1101,7 +1101,7 @@
 \NewDocumentCommand \SetLipsumSentenceListItemStart { s +m }
   {
     \@@_deprecated:n { SetLipsumSentenceListItemStart }
-    \@@_element_set:nnn { phrase_list_itemstart } {#1} {#2}
+    \@@_element_set:nnn { sentence_list_itemstart } {#1} {#2}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1118,7 +1118,7 @@
 \NewDocumentCommand \SetLipsumSentenceListItemEnd { s +m }
   {
     \@@_deprecated:n { SetLipsumSentenceListItemEnd }
-    \@@_element_set:nnn { phrase_list_itemend } {#1} {#2}
+    \@@_element_set:nnn { sentence_list_itemend } {#1} {#2}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1136,8 +1136,8 @@
 \NewDocumentCommand \SetLipsumSentenceListItemSurrounders { s +m +m }
   {
     \@@_deprecated:n { SetLipsumSentenceListItemSurrounders }
-    \@@_element_set:nnn { phrase_list_itemstart } {#1} {#2}
-    \@@_element_set:nnn { phrase_list_itemend } {#1} {#3}
+    \@@_element_set:nnn { sentence_list_itemstart } {#1} {#2}
+    \@@_element_set:nnn { sentence_list_itemend } {#1} {#3}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1154,7 +1154,7 @@
 \NewDocumentCommand \SetLipsumSentenceListItemSeparator { s +m }
   {
     \@@_deprecated:n { SetLipsumSentenceListItemSeparator }
-    \@@_element_set:nnn { phrase_list_itemsep } {#1} {#2}
+    \@@_element_set:nnn { sentence_list_itemsep } {#1} {#2}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1368,8 +1368,8 @@
     \keys_set:nn { lipsum }
       { @@_#1_all = , #1-sep = {#2} , @@_#1_all* = , #1-sep* = {#3} }
   }
-\cs_new_protected:Nn \@@_restore_phrase_list:
-  { \@@_nopar_opt_restores:nnn { phrase } { ~ } { ~ } }
+\cs_new_protected:Nn \@@_restore_sentence_list:
+  { \@@_nopar_opt_restores:nnn { sentence } { ~ } { ~ } }
 \cs_new_eq:NN \@@_restore_par_list: ?
 \keys_define:nn { lipsum }
   {
@@ -1414,8 +1414,8 @@
           }
       }
   }
-\@@_tmp:w { par } {   } { no } \@@_tmp:w { phrase } {   } { no }
-\@@_tmp:w { par } { * } {    } \@@_tmp:w { phrase } { * } {    }
+\@@_tmp:w { par } {   } { no } \@@_tmp:w { sentence } {   } { no }
+\@@_tmp:w { par } { * } {    } \@@_tmp:w { sentence } { * } {    }
 \NewDocumentCommand \setlipsum { +m }
   { \keys_set:nn { lipsum } {#1} }
 \cs_new_protected:Npn \LipsumRestoreParList
@@ -1426,19 +1426,19 @@
 \cs_new_protected:Npn \LipsumRestoreSentenceList
   {
     \@@_deprecated:n { LipsumRestoreSentenceList }
-    \@@_restore_phrase_list:
+    \@@_restore_sentence_list:
   }
 \cs_new_protected:Npn \LipsumRestoreAll
   {
     \@@_deprecated:n { LipsumRestoreAll }
-    \@@_restore_par_list: \@@_restore_phrase_list:
+    \@@_restore_par_list: \@@_restore_sentence_list:
   }
 \ExplSyntaxOff
 \setlipsum{text=lipsum}
 \ProcessKeysOptions{lipsum}
 \ExplSyntaxOn
 \@@_restore_par_list:
-\@@_restore_phrase_list:
+\@@_restore_sentence_list:
 %    \end{macrocode}
 %
 %    \begin{macrocode}
