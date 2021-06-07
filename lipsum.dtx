@@ -1025,14 +1025,31 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_deprecated:n}
+%   Warns about deprecated commands and destroys itself.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_deprecated:n #1
+  {
+    \msg_warning:nnn { lipsum } { cmd-deprecated } {#1}
+    \cs_gset_eq:NN \@@_deprecated:n \use_none:n
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\SetLipsumParListStart,\SetLipsumSentenceListStart}
 %   Sets the \meta{tokens} to be inserted at the beginning of the
 %   paragraph or sentence list.
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListStart { s +m }
-  { \@@_element_set:nnn { par_list_start } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumParListStart }
+    \@@_element_set:nnn { par_list_start } {#1} {#2}
+  }
 \NewDocumentCommand \SetLipsumSentenceListStart { s +m }
-  { \@@_element_set:nnn { phrase_list_start } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumSentenceListStart }
+    \@@_element_set:nnn { phrase_list_start } {#1} {#2}
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1041,9 +1058,15 @@
 %   sentence list.
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListEnd { s +m }
-  { \@@_element_set:nnn { par_list_end } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumParListEnd }
+    \@@_element_set:nnn { par_list_end } {#1} {#2}
+  }
 \NewDocumentCommand \SetLipsumSentenceListEnd { s +m }
-  { \@@_element_set:nnn { phrase_list_end } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumSentenceListEnd }
+    \@@_element_set:nnn { phrase_list_end } {#1} {#2}
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1053,11 +1076,13 @@
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListSurrounders { s +m +m }
   {
+    \@@_deprecated:n { SetLipsumParListSurrounders }
     \@@_element_set:nnn { par_list_start } {#1} {#2}
     \@@_element_set:nnn { par_list_end } {#1} {#3}
   }
 \NewDocumentCommand \SetLipsumSentenceListSurrounders { s +m +m }
   {
+    \@@_deprecated:n { SetLipsumSentenceListSurrounders }
     \@@_element_set:nnn { phrase_list_start } {#1} {#2}
     \@@_element_set:nnn { phrase_list_end } {#1} {#3}
   }
@@ -1069,9 +1094,15 @@
 %   paragraph or sentence list.
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListItemStart { s +m }
-  { \@@_element_set:nnn { par_list_itemstart } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumParListItemStart }
+    \@@_element_set:nnn { par_list_itemstart } {#1} {#2}
+  }
 \NewDocumentCommand \SetLipsumSentenceListItemStart { s +m }
-  { \@@_element_set:nnn { phrase_list_itemstart } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumSentenceListItemStart }
+    \@@_element_set:nnn { phrase_list_itemstart } {#1} {#2}
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1080,9 +1111,15 @@
 %   paragraph or sentence list.
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListItemEnd { s +m }
-  { \@@_element_set:nnn { par_list_itemend } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumParListItemEnd }
+    \@@_element_set:nnn { par_list_itemend } {#1} {#2}
+  }
 \NewDocumentCommand \SetLipsumSentenceListItemEnd { s +m }
-  { \@@_element_set:nnn { phrase_list_itemend } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumSentenceListItemEnd }
+    \@@_element_set:nnn { phrase_list_itemend } {#1} {#2}
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1092,11 +1129,13 @@
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListItemSurrounders { s +m +m }
   {
+    \@@_deprecated:n { SetLipsumParListItemSurrounders }
     \@@_element_set:nnn { par_list_itemstart } {#1} {#2}
     \@@_element_set:nnn { par_list_itemend } {#1} {#3}
   }
 \NewDocumentCommand \SetLipsumSentenceListItemSurrounders { s +m +m }
   {
+    \@@_deprecated:n { SetLipsumSentenceListItemSurrounders }
     \@@_element_set:nnn { phrase_list_itemstart } {#1} {#2}
     \@@_element_set:nnn { phrase_list_itemend } {#1} {#3}
   }
@@ -1108,9 +1147,15 @@
 %   paragraph or sentence list.
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumParListItemSeparator { s +m }
-  { \@@_element_set:nnn { par_list_itemsep } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumParListItemSeparator }
+    \@@_element_set:nnn { par_list_itemsep } {#1} {#2}
+  }
 \NewDocumentCommand \SetLipsumSentenceListItemSeparator { s +m }
-  { \@@_element_set:nnn { phrase_list_itemsep } {#1} {#2} }
+  {
+    \@@_deprecated:n { SetLipsumSentenceListItemSeparator }
+    \@@_element_set:nnn { phrase_list_itemsep } {#1} {#2}
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1308,6 +1353,11 @@
   { Invalid~number~or~range~'#1'. }
 \msg_new:nnn { lipsum } { language-undefined }
   { Language~'\g_lipsum_language_tl'~undefined. }
+\msg_new:nnn { lipsum } { cmd-deprecated }
+  {
+    Command~'\iow_char:N\\#1'~deprecated. \\
+    See~the~lipsum~documentation~for~help.
+  }
 %    \end{macrocode}
 %
 % \subsection{Package options and defaults}
@@ -1369,15 +1419,26 @@
 \NewDocumentCommand \setlipsum { +m }
   { \keys_set:nn { lipsum } {#1} }
 \cs_new_protected:Npn \LipsumRestoreParList
-  { \@@_restore_par_list: }
+  {
+    \@@_deprecated:n { LipsumRestoreParList }
+    \@@_restore_par_list:
+  }
 \cs_new_protected:Npn \LipsumRestoreSentenceList
-  { \@@_restore_phrase_list: }
+  {
+    \@@_deprecated:n { LipsumRestoreSentenceList }
+    \@@_restore_phrase_list:
+  }
 \cs_new_protected:Npn \LipsumRestoreAll
-  { \@@_restore_par_list: \@@_restore_phrase_list: }
+  {
+    \@@_deprecated:n { LipsumRestoreAll }
+    \@@_restore_par_list: \@@_restore_phrase_list:
+  }
 \ExplSyntaxOff
 \setlipsum{text=lipsum}
 \ProcessKeysOptions{lipsum}
-\LipsumRestoreAll
+\ExplSyntaxOn
+\@@_restore_par_list:
+\@@_restore_phrase_list:
 %    \end{macrocode}
 %
 %    \begin{macrocode}
