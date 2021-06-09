@@ -1000,10 +1000,7 @@
 %
 % \subsection{Tokens surrounding the \lips\ content}
 %
-% \begin{macro}{%
-%     \@@_element_set:nnn,
-%     \@@_opt_set:nnnn,
-%   }
+% \begin{macro}{\@@_element_set:nnn}
 %   A general macro for setting starred/non-starred versions of several
 %   elements used between chunks of dummy text. Arguments are:
 %   \begin{arguments}
@@ -1014,11 +1011,6 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_element_set:nnn #1 #2 #3
   { \tl_set:cn { l_@@_ #1 _ \IfBooleanF {#2} { no } star _tl } {#3} }
-\cs_new_protected:Npn \@@_opt_set:nnnn #1 #2 #3
-  {
-    \use:x
-      { \@@_element_set:nnn { #1 _ #2 } { \str_if_eq_p:nn {#3} { * } } }
-  }
 %    \end{macrocode}
 % \end{macro}
 %
