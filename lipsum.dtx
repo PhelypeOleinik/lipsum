@@ -777,16 +777,15 @@
 %   paragraphs and sentences, in the starred or nonstarred variants, as
 %   well as the generic version for runtime usage.
 %    \begin{macrocode}
-\clist_map_inline:nn { par, sentence }
+\clist_map_inline:nn { start, itemstart, itemseparator, itemend, end }
   {
-    \clist_map_inline:nn { start, itemstart, itemseparator, itemend, end }
+    \clist_map_inline:nn { par, sentence }
       {
         \clist_map_inline:nn { { }, star, nostar }
-          { \tl_new:c { l_@@_#1_##1_####1_tl } }
+          { \tl_new:c { l_@@_##1_#1_####1_tl } }
       }
+    \tl_new:c { l_@@_par_#1_parsepar_tl }
   }
-\clist_map_inline:nn { start, itemstart, itemseparator, itemend, end }
-  { \tl_new:c { l_@@_par_#1_parsepar_tl } }
 \tl_set:Nn \l_@@_par_itemseparator_parsepar_tl { ~ }
 %    \end{macrocode}
 % \end{variable}
@@ -949,37 +948,6 @@
   }
 \cs_new:Npn \@@_get_sentences_end:w #1 \s_@@ { }
 \cs_generate_variant:Nn \lipsum_get_sentences:nnn { nnV }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{
-%     \@@_set_surrounding_tokens_star:,
-%     \@@_set_surrounding_tokens_nostar:,
-%   }
-%   These commands copy the user-defined tokens to the token lists used
-%   by the commands that compose the list of paragraphs or sentences.
-%    \begin{macrocode}
-\cs_set:Npn \@@_tmp:w #1 #2
-  {
-    \tl_set_eq:NN
-      \exp_not:c { l_@@_par_#2_tl }
-      \exp_not:c { l_@@_par_#2_#1_tl }
-    \tl_set_eq:NN
-      \exp_not:c { l_@@_sentence_#2_tl }
-      \exp_not:c { l_@@_sentence_#2_#1_tl }
-  }
-\cs_new_protected:Npx \@@_set_surrounding_tokens_star:
-  {
-    \tl_map_tokens:nn
-      { { start } { itemstart } { itemseparator } { itemend } { end } }
-      { \@@_tmp:w { star } }
-  }
-\cs_new_protected:Npx \@@_set_surrounding_tokens_nostar:
-  {
-    \tl_map_tokens:nn
-      { { start } { itemstart } { itemseparator } { itemend } { end } }
-      { \@@_tmp:w { nostar } }
-  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1297,8 +1265,8 @@
         \cs_gset_protected:Nn \@@_restore_par_list:
           { \@@_nopar_opt_restores:nnn { par } { \par } { ~ } }
       } ,
-    nopar .initial:n = false,
-    nopar .default:n = true,
+    nopar .initial:n = false ,
+    nopar .default:n = true  ,
     %
     hyphens .bool_set:N = \l_@@_hyphens_bool ,
     hyphens .initial:n = true ,
