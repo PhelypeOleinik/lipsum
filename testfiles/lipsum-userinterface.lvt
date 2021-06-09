@@ -34,7 +34,7 @@
   }
   {
     \exp_args:Nx \TEST { \string#1,~check~if~exists }
-      { \cs_if_exist:NTF #1 { \TRUE } { \FALSE } }
+      { \cs_if_exist:NTF #1 { \TRUE } { \FALSE } \TYPE { \token_to_meaning:c { \cs_to_str:N #1 ~ code } } }
   }
 
 \END

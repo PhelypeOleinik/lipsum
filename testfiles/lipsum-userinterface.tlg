@@ -5,94 +5,113 @@ If this test fails, the documented user interface is not available
 TEST 1: \lipsum, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2#3->\__lipsum_fetch_do:nnnn {#1}{#2}{#3}{\__lipsum_set_hyphens: \tl_use:N ##1\__lipsum_restore_hyphens: }
 ============================================================
 ============================================================
 TEST 2: \unpacklipsum, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2#3->\__lipsum_fetch_do:nnnn {#1}{#2}{#3}{\tl_gset_eq:NN \lipsumexp ##1}
 ============================================================
 ============================================================
 TEST 3: \lipsumexp, check if exists
 ============================================================
 TRUE
+undefined
 ============================================================
 ============================================================
 TEST 4: \SetLipsumDefault, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1->\__lipsum_parse_range_arg:eNN {#1}\l__lipsum_tmpa_int \l__lipsum_tmpb_int \tl_gset:Nx \g_lipsum_default_range_tl {\int_use:N \l__lipsum_tmpa_int -\int_use:N \l__lipsum_tmpb_int }
 ============================================================
 ============================================================
 TEST 5: \LipsumPar, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1->\__lipsum_unexpanded_par:n {#1}\par 
 ============================================================
 ============================================================
 TEST 6: \SetLipsumParListStart, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumParListStart}\__lipsum_element_set:nnn {par_start}{#1}{#2}
 ============================================================
 ============================================================
 TEST 7: \SetLipsumParListEnd, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumParListEnd}\__lipsum_element_set:nnn {par_end}{#1}{#2}
 ============================================================
 ============================================================
 TEST 8: \SetLipsumParListSurrounders, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2#3->\__lipsum_deprecated:n {SetLipsumParListSurrounders}\__lipsum_element_set:nnn {par_start}{#1}{#2}\__lipsum_element_set:nnn {par_end}{#1}{#3}
 ============================================================
 ============================================================
 TEST 9: \SetLipsumParListItemSeparator, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumParListItemSeparator}\__lipsum_element_set:nnn {par_itemseparator}{#1}{#2}
 ============================================================
 ============================================================
 TEST 10: \SetLipsumParListItemStart, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumParListItemStart}\__lipsum_element_set:nnn {par_itemstart}{#1}{#2}
 ============================================================
 ============================================================
 TEST 11: \SetLipsumParListItemEnd, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumParListItemEnd}\__lipsum_element_set:nnn {par_itemend}{#1}{#2}
 ============================================================
 ============================================================
 TEST 12: \SetLipsumParListItemSurrounders, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2#3->\__lipsum_deprecated:n {SetLipsumParListItemSurrounders}\__lipsum_element_set:nnn {par_itemstart}{#1}{#2}\__lipsum_element_set:nnn {par_itemend}{#1}{#3}
 ============================================================
 ============================================================
 TEST 13: \SetLipsumSentenceListStart, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumSentenceListStart}\__lipsum_element_set:nnn {sentence_start}{#1}{#2}
 ============================================================
 ============================================================
 TEST 14: \SetLipsumSentenceListEnd, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumSentenceListEnd}\__lipsum_element_set:nnn {sentence_end}{#1}{#2}
 ============================================================
 ============================================================
 TEST 15: \SetLipsumSentenceListSurrounders, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2#3->\__lipsum_deprecated:n {SetLipsumSentenceListSurrounders}\__lipsum_element_set:nnn {sentence_start}{#1}{#2}\__lipsum_element_set:nnn {sentence_end}{#1}{#3}
 ============================================================
 ============================================================
 TEST 16: \SetLipsumSentenceListItemSeparator, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumSentenceListItemSeparator}\__lipsum_element_set:nnn {sentence_itemseparator}{#1}{#2}
 ============================================================
 ============================================================
 TEST 17: \SetLipsumSentenceListItemStart, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumSentenceListItemStart}\__lipsum_element_set:nnn {sentence_itemstart}{#1}{#2}
 ============================================================
 ============================================================
 TEST 18: \SetLipsumSentenceListItemEnd, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2->\__lipsum_deprecated:n {SetLipsumSentenceListItemEnd}\__lipsum_element_set:nnn {sentence_itemend}{#1}{#2}
 ============================================================
 ============================================================
 TEST 19: \SetLipsumSentenceListItemSurrounders, check if exists
 ============================================================
 TRUE
+\protected\long macro:#1#2#3->\__lipsum_deprecated:n {SetLipsumSentenceListItemSurrounders}\__lipsum_element_set:nnn {sentence_itemstart}{#1}{#2}\__lipsum_element_set:nnn {sentence_itemend}{#1}{#3}
 ============================================================
