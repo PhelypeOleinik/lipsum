@@ -11,9 +11,9 @@
     \TYPE
       {
         Testing~'#1'~
-        (\int_use:N \g__lipsum_par_count_int \c_space_tl paragraphs):
+        (\int_use:N \g__lipsum_par_int \c_space_tl paragraphs):
       }
-    \int_step_inline:nn { \g__lipsum_par_count_int }
+    \int_step_inline:nn { \g__lipsum_par_int }
       {
         \TEST { \LipsumPar{##1},~content }
           {

@@ -5,13 +5,13 @@ If this test fails, the documented user interface is not available
 TEST 1: \lipsum, check if exists
 ============================================================
 TRUE
-\protected\long macro:#1#2#3->\__lipsum_fetch_do:nnnn {#1}{#2}{#3}{\__lipsum_set_hyphens: \tl_use:N ##1\__lipsum_restore_hyphens: }
+\protected\long macro:#1#2#3->\__lipsum_do:nnnn {#1}{#2}{#3}{\__lipsum_set_hyphens: \tl_use:N ##1\__lipsum_restore_hyphens: }
 ============================================================
 ============================================================
 TEST 2: \unpacklipsum, check if exists
 ============================================================
 TRUE
-\protected\long macro:#1#2#3->\__lipsum_fetch_do:nnnn {#1}{#2}{#3}{\tl_gset_eq:NN \lipsumexp ##1}
+\protected\long macro:#1#2#3->\__lipsum_do:nnnn {#1}{#2}{#3}{\tl_gset_eq:NN \lipsumexp ##1}
 ============================================================
 ============================================================
 TEST 3: \lipsumexp, check if exists
