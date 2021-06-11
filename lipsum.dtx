@@ -1227,81 +1227,30 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Messages}
-%
-%    \begin{macrocode}
-\msg_new:nnn { lipsum } { invalid-range }
-  { Invalid~number~or~range~'#1'. }
-\msg_new:nnn { lipsum } { language-undefined }
-  { Language~'\g_lipsum_language_tl'~undefined. }
-\msg_new:nnn { lipsum } { cmd-deprecated }
-  {
-    Command~'\iow_char:N\\#1'~deprecated. \\
-    See~the~lipsum~documentation~for~help.
-  }
-%    \end{macrocode}
-%
 % \subsection{Package options and defaults}
 %
+% \begin{macro}{\@@_nopar_opt_restores:nnn}
+% \begin{macro}{\@@_restore_par_list:,\@@_restore_sentence_list:}
+% \begin{macro}{
+%     \LipsumRestoreParList,
+%     \LipsumRestoreSentenceList,
+%     \LipsumRestoreAll,
+%   }
+%   These are some auxiliaries for the package options and for setting
+%   up the default behaviour.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_nopar_opt_restores:nnn #1 #2 #3
   {
     \keys_set:nn { lipsum }
       {
-        @@_#1_all  = , #1-sep  = {#2} ,
-        @@_#1_all* = , #1-sep* = {#3}
+        #1-before  = , #1-begin  = , #1-end  = , #1-after  = ,
+        #1-before* = , #1-begin* = , #1-end* = , #1-after* = ,
+        #1-sep = {#2}, #1-sep* = {#3}
       }
   }
 \cs_new_protected:Nn \@@_restore_sentence_list:
   { \@@_nopar_opt_restores:nnn { sentence } { ~ } { ~ } }
 \cs_new_eq:NN \@@_restore_par_list: ?
-\keys_define:nn { lipsum }
-  {
-    nopar .choice: ,
-    nopar / true .code:n =
-      {
-        \cs_gset_protected:Npn \@@_restore_par_list:
-          { \@@_nopar_opt_restores:nnn { par } { ~ } { \par } }
-      } ,
-    nopar / false .code:n =
-      {
-        \cs_gset_protected:Nn \@@_restore_par_list:
-          { \@@_nopar_opt_restores:nnn { par } { \par } { ~ } }
-      } ,
-    nopar .initial:n = false ,
-    nopar .default:n = true  ,
-    %
-    hyphens .bool_set:N = \l_@@_hyphens_bool ,
-    hyphens .initial:n = true ,
-    hyphens .default:n = true ,
-    %
-    text .code:n = \SetLipsumText{#1} ,
-    text .value_required:n = true ,
-    %
-    default-range .code:n = \SetLipsumDefault{#1} ,
-    default-range .initial:n = 1-7 ,
-    default-range .default:n = 1-7 ,
-  }
-\cs_set_protected:Npn \@@_tmp:w #1 #2 #3
-  {
-    \keys_define:nn { lipsum }
-      {
-        #1-before #2 .tl_set:c = l_@@_#1_start         _#3star_tl ,
-        #1-begin  #2 .tl_set:c = l_@@_#1_itemstart     _#3star_tl ,
-        #1-sep    #2 .tl_set:c = l_@@_#1_itemseparator _#3star_tl ,
-        #1-end    #2 .tl_set:c = l_@@_#1_itemend       _#3star_tl ,
-        #1-after  #2 .tl_set:c = l_@@_#1_end           _#3star_tl ,
-        @@_#1_all #2 .meta:n =
-          {
-            #1-before #2 = ##1 , #1-after #2 = ##1 ,
-            #1-begin  #2 = ##1 , #1-end   #2 = ##1 , #1-sep #2 = ##1 ,
-          }
-      }
-  }
-\@@_tmp:w { par } { } { no } \@@_tmp:w { sentence } { } { no }
-\@@_tmp:w { par }  *  {    } \@@_tmp:w { sentence }  *  {    }
-\NewDocumentCommand \setlipsum { +m }
-  { \keys_set:nn { lipsum } {#1} }
 \cs_new_protected:Npn \LipsumRestoreParList
   {
     \@@_deprecated:n { LipsumRestoreParList }
@@ -1317,12 +1266,113 @@
     \@@_deprecated:n { LipsumRestoreAll }
     \@@_restore_par_list: \@@_restore_sentence_list:
   }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\setlipsum}
+%   Here are the options available at load-time and to \cs{setlipsum}.
+%    \begin{macrocode}
+\NewDocumentCommand \setlipsum { +m }
+  { \keys_set:nn { lipsum } {#1} }
+\keys_define:nn { lipsum }
+  {
+%    \end{macrocode}
+%   \opt{nopar} is implemented as a choice key instead of a boolean so
+%   we can update the separators using \cs{@@_nopar_opt_restores:nnn}.
+%   It's initially false, and the default is |true| so that
+%   |\usepackage[nopar]{lipsum}| works as it always did.
+%    \begin{macrocode}
+    nopar .choice: ,
+    nopar / true .code:n =
+      {
+        \cs_gset_protected:Npn \@@_restore_par_list:
+          { \@@_nopar_opt_restores:nnn { par } { ~ } { \par } }
+      } ,
+    nopar / false .code:n =
+      {
+        \cs_gset_protected:Nn \@@_restore_par_list:
+          { \@@_nopar_opt_restores:nnn { par } { \par } { ~ } }
+      } ,
+    nopar .initial:n = false ,
+    nopar .default:n = true  ,
+%    \end{macrocode}
+%   \opt{hyphens} sets \cs{l_@@_hyphens_bool}.  It is initially |true|,
+%   changing the default behaviour from previous versions.
+%    \begin{macrocode}
+    hyphens .bool_set:N = \l_@@_hyphens_bool ,
+    hyphens .initial:n = true ,
+    hyphens .default:n = true ,
+%    \end{macrocode}
+%   \opt{text} just does \cs{SetLipsumText}.  The |initial| value is not
+%   set here because this chunk of code is executed in \pkg{expl3}
+%   syntax, then thetextloadswithoutspaces, so |\setlipsum{text=lipsum}|
+%   is used later.
+%    \begin{macrocode}
+    text .code:n = \SetLipsumText{#1} ,
+    text .value_required:n = true ,
+%    \end{macrocode}
+%   \opt{default-range} does \cs{SetLipsumDefault}, initially |1-7|, as
+%   documented.  It's default is also |1-7| so that the key has two
+%   meanings: \cs{setlipsum}|{default-range=|\meta{range}|}| sets the
+%   range to the given value, while \cs{setlipsum}|{default-range}| sets
+%   the range to the ``default default range''.  Pretty neat :)
+%    \begin{macrocode}
+    default-range .code:n = \SetLipsumDefault{#1} ,
+    default-range .initial:n = 1-7 ,
+    default-range .default:n = 1-7 ,
+  }
+%    \end{macrocode}
+%   This chunk defines the keys \meta{thing}-\meta{place}[*], where
+%   \meta{thing} is |par| or |sentence|, \meta{place} is |before|,
+%   |begin|, |sep|, |end|, and |after|, which totals~10 keys, and
+%   another~10 with the |*| in the name.  Each sets a token list called
+%   \cs[no-index]{l_@@_\meta{thing}_\meta{place}_[no]star_tl}.
+%    \begin{macrocode}
+\cs_set_protected:Npn \@@_tmp:w #1 #2 #3
+  {
+    \keys_define:nn { lipsum }
+      {
+        #1-before #2 .tl_set:c = l_@@_#1_start         _#3star_tl ,
+        #1-begin  #2 .tl_set:c = l_@@_#1_itemstart     _#3star_tl ,
+        #1-sep    #2 .tl_set:c = l_@@_#1_itemseparator _#3star_tl ,
+        #1-end    #2 .tl_set:c = l_@@_#1_itemend       _#3star_tl ,
+        #1-after  #2 .tl_set:c = l_@@_#1_end           _#3star_tl ,
+      }
+  }
+\@@_tmp:w { par } { } { no } \@@_tmp:w { sentence } { } { no }
+\@@_tmp:w { par }  *  {    } \@@_tmp:w { sentence }  *  {    }
+%    \end{macrocode}
+% \end{macro}
+%
+% Now turn \cs{ExplSyntaxOff} for a while, and load the default \lips{}
+% text, then process the package options, and finally turn
+% \cs{ExplSyntaxOn} again.  Finally, call \cs{@@_restore_par_list:} and
+% \cs{@@_restore_sentence_list:} to set the defaults
+% (\cs{@@_restore_par_list:} may have been redefined by \opt{nopar}).
+%    \begin{macrocode}
 \ExplSyntaxOff
 \setlipsum{text=lipsum}
 \ProcessKeysOptions{lipsum}
 \ExplSyntaxOn
 \@@_restore_par_list:
 \@@_restore_sentence_list:
+%    \end{macrocode}
+%
+% \subsection{Messages}
+%
+% Now define the messages used throughout the package.
+%    \begin{macrocode}
+\msg_new:nnn { lipsum } { invalid-range }
+  { Invalid~number~or~range~'#1'. }
+\msg_new:nnn { lipsum } { language-undefined }
+  { Language~'\g_lipsum_language_tl'~undefined. }
+\msg_new:nnn { lipsum } { cmd-deprecated }
+  {
+    Command~'\iow_char:N\\#1'~deprecated. \\
+    See~the~lipsum~documentation~for~help.
+  }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
