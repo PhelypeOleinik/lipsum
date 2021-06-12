@@ -802,8 +802,8 @@
   {
     \tl_if_blank:nTF {#1}
       {
-        \@@_parse_range_arg:eNN
-          { \g_lipsum_default_range_tl } #2 #3
+        \exp_args:NV \@@_parse_range_arg:nNN
+          \g_lipsum_default_range_tl #2 #3
       }
       {
         \exp_last_unbraced:No \@@_parse_range_arg:wNN
@@ -815,22 +815,26 @@
   {
     \str_if_eq:nnTF {#3} { - }
       {
-        \@@_int_set:Nn #4 {#1}
-        \@@_int_set:Nn #5 {#2}
+        \@@_int_set:Nnn #4 {#1} { 1 }
+        \@@_int_set:Nnn #5 {#2} { \g_@@_par_int }
         \use_none:n
       }
       {
         \tl_if_empty:nTF {#3}
           {
-            \@@_int_set:Nn #4 {#1}
+            \@@_int_set:Nnn #4 {#1} { \ERROR }
             \int_set_eq:NN #5 #4
             \use_none:n
           }
-          { \msg_error:nnn { lipsum } { invalid-range } }
+          {
+            \exp_args:NV \@@_parse_range_arg:nNN
+              \g_lipsum_default_range_tl #4 #5
+            \msg_error:nnn { lipsum } { invalid-range }
+          }
       }
   }
-\cs_new_protected:Npn \@@_int_set:Nn #1 #2
-  { \int_set:Nn #1 { \tl_if_blank:nT {#2} { 0 } #2 } }
+\cs_new_protected:Npn \@@_int_set:Nnn #1 #2 #3
+  { \int_set:Nn #1 { \tl_if_blank:nT {#2} {#3} #2 } }
 \cs_generate_variant:Nn \@@_parse_range_arg:nNN { e }
 %    \end{macrocode}
 % \end{macro}
