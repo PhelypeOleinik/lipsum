@@ -792,51 +792,60 @@
 %
 % \subsection{Developer interface}
 %
-% \begin{macro}{\@@_parse_range_arg:nNN}
+% \begin{macro}{\@@_parse_par_range:nNN,\@@_parse_par_range:eNN}
+% \begin{macro}{\@@_parse_sentence_range:nNN,\@@_parse_sentence_range:eNN}
+% \begin{macro}{\@@_parse_range_arg:nNNn,\@@_parse_range_arg:wnNNn}
+% \begin{macro}{\@@_int_set:Nnn}
 %   Parses an argument that may be a single integer or an integer range
 %   separated by a |-|, and stores them into the integer registers |#2|
 %   and |#3|.  If a number is blank, zero is used.  If only a single
 %   number is given, |#3| is set equal to |#2|.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_parse_range_arg:nNN #1 #2 #3
+\cs_new_protected:Npn \@@_parse_par_range:nNN #1 #2 #3
   {
     \tl_if_blank:nTF {#1}
       {
-        \exp_args:NV \@@_parse_range_arg:nNN
-          \g_lipsum_default_range_tl #2 #3
+        \exp_args:NV \@@_parse_range_arg:nNNn
+          \g_lipsum_default_range_tl
       }
-      {
-        \exp_last_unbraced:No \@@_parse_range_arg:wNN
-          \tl_to_str:n { #1 - - } \s_@@ #2 #3 {#1}
-      }
+      { \@@_parse_range_arg:nNNn {#1} }
+          #2 #3 { \g_@@_par_int }
   }
-\cs_new_protected:Npn \@@_parse_range_arg:wNN
-    #1 - #2 - #3 \s_@@ #4 #5
+\cs_new_protected:Npn \@@_parse_sentence_range:nNN #1 #2 #3
+  { \@@_parse_range_arg:nNNn {#1} #2 #3 { \c_max_int } }
+\cs_new_protected:Npn \@@_parse_range_arg:nNNn #1
+  {
+    \exp_last_unbraced:No \@@_parse_range_arg:wnNNn
+      \tl_to_str:n { #1 - - } \s_@@ {#1}
+  }
+\cs_new_protected:Npn \@@_parse_range_arg:wnNNn
+    #1 - #2 - #3 \s_@@ #4 #5#6 #7
   {
     \str_if_eq:nnTF {#3} { - }
       {
-        \@@_int_set:Nnn #4 {#1} { 1 }
-        \@@_int_set:Nnn #5 {#2} { \g_@@_par_int }
-        \use_none:n
+        \@@_int_set:Nnn #5 {#1} { 1 }
+        \@@_int_set:Nnn #6 {#2} {#7}
       }
       {
         \tl_if_empty:nTF {#3}
           {
-            \@@_int_set:Nnn #4 {#1} { \ERROR }
-            \int_set_eq:NN #5 #4
-            \use_none:n
+            \@@_int_set:Nnn #5 {#1} { \ERROR }
+            \int_set_eq:NN #6 #5
           }
           {
-            \exp_args:NV \@@_parse_range_arg:nNN
-              \g_lipsum_default_range_tl #4 #5
-            \msg_error:nnn { lipsum } { invalid-range }
+            \msg_error:nnn { lipsum } { invalid-range } {#4}
+            \@@_parse_range_arg:nNNn { 2 - 1 } #5 #6 {#7}
           }
       }
   }
 \cs_new_protected:Npn \@@_int_set:Nnn #1 #2 #3
   { \int_set:Nn #1 { \tl_if_blank:nT {#2} {#3} #2 } }
-\cs_generate_variant:Nn \@@_parse_range_arg:nNN { e }
+\cs_generate_variant:Nn \@@_parse_par_range:nNN { e }
+\cs_generate_variant:Nn \@@_parse_sentence_range:nNN { e }
 %    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
 % \end{macro}
 %
 % \begin{macro}{\@@_sep_item:nn}
@@ -1053,7 +1062,7 @@
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumDefault { m }
   {
-    \@@_parse_range_arg:eNN {#1}
+    \@@_parse_par_range:eNN {#1}
       \l_@@_tmpa_int \l_@@_tmpb_int
     \tl_gset:Nx \g_lipsum_default_range_tl
       { \int_use:N \l_@@_tmpa_int - \int_use:N \l_@@_tmpb_int }
@@ -1117,12 +1126,14 @@
 \cs_new_protected:Npn \@@_do:nnnn #1 #2 #3 #4
   {
     \cs_set_protected:Npn \@@_do:N ##1 {#4}
-    \@@_parse_range_arg:eNN {#2}
+    \@@_parse_par_range:eNN {#2}
       \l_@@_tmpa_int \l_@@_tmpb_int
     \str_set_eq:NN \l_@@_tmpa_str \l_@@_sep_set_str
     \str_set:Nx \l_@@_sep_set_str
       { \IfBooleanF {#1} { no } star }
-    \IfNoValueTF {#3}
+    \bool_lazy_or:nnTF
+        { \tl_if_novalue_p:n {#3} }
+        { \tl_if_blank_p:n {#3} }
       {
         \tl_set:Nx \l_@@_output_tl
           {
@@ -1139,7 +1150,7 @@
           }
         \str_set:Nx \l_@@_sep_set_str
           { \IfBooleanF {#1} { no } star }
-        \@@_parse_range_arg:eNN {#3}
+        \@@_parse_sentence_range:eNN {#3}
           \l_@@_tmpa_int \l_@@_tmpb_int
         \tl_set:Nx \l_@@_output_tl
           {

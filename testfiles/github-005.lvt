@@ -7,11 +7,11 @@
 \debug_on:n { deprecation }
 \ExplSyntaxOff
 
-\def\testrange[#1][#2]{%
-  \TEST {[#1]}
+\def\testrange#1#2{%
+  \TEST {#1}
     {%
-      \unpacklipsum[#1]\let\savedlips\lipsumexp
-      \unpacklipsum[#2]%
+      \unpacklipsum#1\let\savedlips\lipsumexp
+      \unpacklipsum#2%
       \ifx\savedlips\lipsumexp\else
         \show\savedlips
         \show\lipsumexp
@@ -25,13 +25,22 @@
 
 \START
 
-\testrange[    ][1-7]
-\testrange[1   ][1  ]
-\testrange[ -  ][1-150]
-\testrange[1-  ][1-150]
-\testrange[1-2 ][1-2]
-\testrange[1-2-][1-7]
-\testrange[ -2-][1-7]
-\testrange[ -2 ][1-2]
+\testrange{[    ]}{[1-7]}
+\testrange{[1   ]}{[1  ]}
+\testrange{[ -  ]}{[1-150]}
+\testrange{[1-  ]}{[1-150]}
+\testrange{[1-2 ]}{[1-2]}
+\testrange{[1-2-]}{[2-1]}
+\testrange{[ -2-]}{[2-1]}
+\testrange{[ -2 ]}{[1-2]}
+
+\testrange{[][    ]}{[1-7]}
+\testrange{[][1   ]}{[1-7][1  ]}
+\testrange{[][ -  ]}{[1-7][1-150]}
+\testrange{[][1-  ]}{[1-7][1-150]}
+\testrange{[][1-2 ]}{[1-7][1-2]}
+\testrange{[][1-2-]}{[1-7][2-1]}
+\testrange{[][ -2-]}{[1-7][2-1]}
+\testrange{[][ -2 ]}{[1-7][1-2]}
 
 \END
