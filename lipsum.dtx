@@ -669,10 +669,10 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\g_lipsum_language_tl}
+% \begin{variable}{\g_@@_language_tl}
 %   Stores the language of the dummy text for hyphenation patterns.
 %    \begin{macrocode}
-\tl_new:N \g_lipsum_language_tl
+\tl_new:N \g_@@_language_tl
 %    \end{macrocode}
 % \end{variable}
 %
@@ -708,11 +708,11 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\l_@@_hyphens_bool}
+% \begin{variable}{\l_@@_autolang_bool}
 %   Boolean whether to change hyphenation patterns according to the
 %   dummy text language.
 %    \begin{macrocode}
-\bool_new:N \l_@@_hyphens_bool
+\bool_new:N \l_@@_autolang_bool
 %    \end{macrocode}
 % \end{variable}
 %
@@ -1175,18 +1175,18 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_hyphens:
   {
-    \bool_if:NTF \l_@@_hyphens_bool
+    \bool_if:NTF \l_@@_autolang_bool
       { \use:x } { \use_none:n }
       {
         \cs_if_exist:NTF \hyphenrules
           {
-            \exp_not:N \hyphenrules { \g_lipsum_language_tl }
+            \exp_not:N \hyphenrules { \g_@@_language_tl }
             \cs_set_protected:Npn \@@_restore_hyphens:
               { \exp_not:N \hyphenrules { \languagename } }
           }
           {
-            \cs_if_exist:cTF { l@ \g_lipsum_language_tl }
-              { \language \use:c { l@ \g_lipsum_language_tl } }
+            \cs_if_exist:cTF { l@ \g_@@_language_tl }
+              { \language \use:c { l@ \g_@@_language_tl } }
               { \msg_error:nn { lipsum } { language-undefined } }
             \cs_set_protected:Npn \@@_restore_hyphens:
               { \language \int_eval:n { \language } \scan_stop: }
@@ -1224,7 +1224,7 @@
   {
     \str_if_eq:VnF \g_@@_text_str {#1}
       {
-        \tl_gclear:N \g_lipsum_language_tl
+        \tl_gset:Nn \g_@@_language_tl { english }
         \int_gzero:N \g_@@_par_int
         \file_input:n { #1.ltd }
         \str_gset:Nn \g_@@_text_str {#1}
@@ -1238,7 +1238,7 @@
 %   text.  When a new lipsum text is read, this is reset.
 %    \begin{macrocode}
 \NewDocumentCommand \SetLipsumLanguage { m }
-  { \tl_gset:Nn \g_lipsum_language_tl {#1} }
+  { \tl_gset:Nn \g_@@_language_tl {#1} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1313,12 +1313,12 @@
     nopar .initial:n = false ,
     nopar .default:n = true  ,
 %    \end{macrocode}
-%   \opt{hyphens} sets \cs{l_@@_hyphens_bool}.  It is initially |true|,
-%   changing the default behaviour from previous versions.
+%   \opt{auto-lang} sets \cs{l_@@_autolang_bool}.  It is initially
+%   |true|, changing the default behaviour from previous versions.
 %    \begin{macrocode}
-    hyphens .bool_set:N = \l_@@_hyphens_bool ,
-    hyphens .initial:n = true ,
-    hyphens .default:n = true ,
+    auto-lang .bool_set:N = \l_@@_autolang_bool ,
+    auto-lang .initial:n = true ,
+    auto-lang .default:n = true ,
 %    \end{macrocode}
 %   \opt{text} just does \cs{SetLipsumText}.  The |initial| value is not
 %   set here because this chunk of code is executed in \pkg{expl3}
@@ -1327,6 +1327,11 @@
 %    \begin{macrocode}
     text .code:n = \SetLipsumText{#1} ,
     text .value_required:n = true ,
+%    \end{macrocode}
+%   \opt{language} sets the language to be used when typesetting.
+%    \begin{macrocode}
+    language .tl_gset:N = \g_@@_language_tl ,
+    language .value_required:n = true ,
 %    \end{macrocode}
 %   \opt{default-range} does \cs{SetLipsumDefault}, initially |1-7|, as
 %   documented.  It's default is also |1-7| so that the key has two
@@ -1382,7 +1387,7 @@
 \msg_new:nnn { lipsum } { invalid-range }
   { Invalid~number~or~range~'#1'. }
 \msg_new:nnn { lipsum } { language-undefined }
-  { Language~'\g_lipsum_language_tl'~undefined. }
+  { Language~'\g_@@_language_tl'~undefined. }
 \msg_new:nnn { lipsum } { cmd-deprecated }
   {
     Command~'\iow_char:N\\#1'~deprecated. \\

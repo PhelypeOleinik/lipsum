@@ -30,7 +30,7 @@
 
 {\loggingoutput\clearpage}
 
-\setlipsum{hyphens=false}
+\setlipsum{auto-lang=false}
 
 \SetLipsumText{lipsum}
 \lipsum[1][1-3]
