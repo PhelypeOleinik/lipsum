@@ -34,6 +34,20 @@
 \testrange{[ -2-]}{[2-1]}
 \testrange{[ -2 ]}{[1-2]}
 
+% \setlipsum{par-after=<after>}
+% Ensure 2-1 is empty (because par-after is empty)
+\TEST {[2-1]}
+  {%
+    \unpacklipsum[2-1]
+    \ifx\lipsumexp\empty\else
+      \show\lipsumexp
+    \fi
+  }
+\testrange{[1-2][1-2]}{[1-2][1-2]}
+\testrange{[1-2][2-1]}{[2-1]}
+\testrange{[2-1][1-2]}{[2-1]}
+\testrange{[2-1][2-1]}{[2-1]}
+
 \testrange{[][    ]}{[1-7]}
 \testrange{[][1   ]}{[1-7][1  ]}
 \testrange{[][ -  ]}{[1-7][1-150]}
