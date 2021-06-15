@@ -1244,7 +1244,7 @@
 %
 % \subsection{Package options and defaults}
 %
-% \begin{macro}{\@@_nopar_opt_restores:nnn}
+% \begin{macro}{\@@_delim_restore:nnnnn}
 % \begin{macro}{\@@_restore_par_list:,\@@_restore_sentence_list:}
 % \begin{macro}{
 %     \LipsumRestoreParList,
@@ -1254,17 +1254,17 @@
 %   These are some auxiliaries for the package options and for setting
 %   up the default behaviour.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_nopar_opt_restores:nnn #1 #2 #3
+\cs_new_protected:Npn \@@_delim_restore:nnnnn #1 #2 #3 #4 #5
   {
     \keys_set:nn { lipsum }
       {
-        #1-before  = , #1-begin  = , #1-end  = , #1-after  = ,
-        #1-before* = , #1-begin* = , #1-end* = , #1-after* = ,
-        #1-sep = {#2}, #1-sep* = {#3}
+        #1-before  = , #1-begin  = , #1-end  = {#2}, #1-after  = ,
+        #1-before* = , #1-begin* = , #1-end* = {#3}, #1-after* = ,
+        #1-sep = {#4}, #1-sep* = {#5}
       }
   }
 \cs_new_protected:Nn \@@_restore_sentence_list:
-  { \@@_nopar_opt_restores:nnn { sentence } { ~ } { ~ } }
+  { \@@_delim_restore:nnnnn { sentence } { } { } { ~ } { ~ } }
 \cs_new_eq:NN \@@_restore_par_list: ?
 \cs_new_protected:Npn \LipsumRestoreParList
   {
@@ -1295,7 +1295,7 @@
   {
 %    \end{macrocode}
 %   \opt{nopar} is implemented as a choice key instead of a boolean so
-%   we can update the separators using \cs{@@_nopar_opt_restores:nnn}.
+%   we can update the separators using \cs{@@_delim_restore:nnnnn}.
 %   It's initially false, and the default is |true| so that
 %   |\usepackage[nopar]{lipsum}| works as it always did.
 %    \begin{macrocode}
@@ -1303,12 +1303,12 @@
     nopar / true .code:n =
       {
         \cs_gset_protected:Npn \@@_restore_par_list:
-          { \@@_nopar_opt_restores:nnn { par } { ~ } { \par } }
+          { \@@_delim_restore:nnnnn { par } { } { \par } { ~ } { } }
       } ,
     nopar / false .code:n =
       {
         \cs_gset_protected:Nn \@@_restore_par_list:
-          { \@@_nopar_opt_restores:nnn { par } { \par } { ~ } }
+          { \@@_delim_restore:nnnnn { par } { \par } { } { } { ~ } }
       } ,
     nopar .initial:n = false ,
     nopar .default:n = true  ,
