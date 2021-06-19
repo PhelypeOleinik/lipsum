@@ -880,7 +880,12 @@
     \@@_sep_item:nn { par } { end }
   }
 \cs_new:Npn \@@_build_list:nn #1 #2
-  { \int_step_function:nnN {#1} {#2} \@@_build_list_aux:n }
+  {
+    \int_step_function:nnN
+      { \int_max:nn {#1} { 1 } }
+      { \int_min:nn {#2} { \g_@@_par_int } }
+      \@@_build_list_aux:n
+  }
 \cs_new:Npn \@@_build_list_aux:n #1 { #1 ; }
 \cs_new:Npn \@@_get_paragraph:ww #1 ; #2 ;
   {
@@ -930,6 +935,7 @@
 % \end{macro}
 %
 % \begin{macro}{\lipsum_get_sentences:nnn,\lipsum_get_sentences:nnV}
+% \begin{macro}{\@@_get_sentences:nnnw,\@@_get_sentences_end:w}
 %   Expands to the sentences numbered between \meta{number_1} and
 %   \meta{number_2}, inclusive, contained in the \meta{text}, and adding
 %   the proper separators.
@@ -937,7 +943,8 @@
 \cs_new:Npn \lipsum_get_sentences:nnn #1 #2 #3
   {
     \@@_sep_item:nn { sentence } { start }
-    \@@_get_sentences:nnnw { 1 } {#1} {#2}
+    \exp_args:Ne \use_ii_i:nn { { \int_max:nn {#1} { 1 } } }
+      { \@@_get_sentences:nnnw { 1 } } {#2}
       #3 ~ \q_@@_mark .~ \s_@@
     \@@_sep_item:nn { sentence } { end }
   }
@@ -962,6 +969,7 @@
 \cs_new:Npn \@@_get_sentences_end:w #1 \s_@@ { }
 \cs_generate_variant:Nn \lipsum_get_sentences:nnn { nnV }
 %    \end{macrocode}
+% \end{macro}
 % \end{macro}
 %
 % \subsection{User- and developer-level commands}\label{sec:code:commands}
@@ -1119,6 +1127,7 @@
 % \end{macro}
 %
 % \begin{macro}{\@@_do:nnnn}
+% \begin{macro}{\@@_do:N}
 %   This is the main macro for \cs{lipsum} and \cs{unpacklipsum}.
 %   It parses the paragraph range, sets the sentence/paragraph
 %   separators, then acts accordingly if a sentence range was provided.
@@ -1164,6 +1173,7 @@
   }
 \cs_new_eq:NN \@@_do:N ?
 %    \end{macrocode}
+% \end{macro}
 % \end{macro}
 %
 % \begin{macro}{\@@_set_hyphens:,\@@_restore_hyphens:}

@@ -2,10 +2,10 @@
 
 \input{regression-test}
 
-\RequirePackage[enable-debug ,check-declarations]{expl3}
-\ExplSyntaxOn
-\debug_on:n { deprecation }
-\ExplSyntaxOff
+% \RequirePackage[enable-debug ,check-declarations]{expl3}
+% \ExplSyntaxOn
+% \debug_on:n { deprecation }
+% \ExplSyntaxOff
 
 \def\testrange#1#2{%
   \TEST {#1}
@@ -56,5 +56,10 @@
 \testrange{[][1-2-]}{[1-7][2-1]}
 \testrange{[][ -2-]}{[1-7][2-1]}
 \testrange{[][ -2 ]}{[1-7][1-2]}
+
+\testrange{[151-155]}{[2-1]}
+\testrange{[0-1]}{[1]}
+\testrange{[1][151-155]}{[1][2-1]}
+\testrange{[1][0-1]}{[1][1]}
 
 \END
