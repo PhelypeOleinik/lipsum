@@ -983,7 +983,10 @@
 % Implemented as follows:
 %    \begin{macrocode}
 \NewDocumentCommand \LipsumPar { m }
-  { \@@_unexpanded_par:n {#1} \par }
+  {
+    \@@_deprecated:n { LipsumPar }
+    \@@_unexpanded_par:n {#1} \par
+  }
 %    \end{macrocode}
 % \end{macro}
 %

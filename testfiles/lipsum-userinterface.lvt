@@ -16,6 +16,7 @@
     \unpacklipsum
     \lipsumexp
     \SetLipsumDefault
+    % Deprecated:
     \LipsumPar
     \SetLipsumParListStart
     \SetLipsumParListEnd
