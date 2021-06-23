@@ -23,13 +23,13 @@ undefined
 TEST 4: \SetLipsumDefault, check if exists
 ============================================================
 TRUE
-\protected\long macro:#1->\__lipsum_parse_par_range:eNN {#1}\l__lipsum_tmpa_int \l__lipsum_tmpb_int \tl_gset:Nx \g_lipsum_default_range_tl {\int_use:N \l__lipsum_tmpa_int -\int_use:N \l__lipsum_tmpb_int }
+\protected\long macro:#1->\__lipsum_parse_par_range:eNN {#1}\l__lipsum_a_int \l__lipsum_b_int \tl_gset:Nx \g_lipsum_default_range_tl {\int_use:N \l__lipsum_a_int -\int_use:N \l__lipsum_b_int }
 ============================================================
 ============================================================
 TEST 5: \LipsumPar, check if exists
 ============================================================
 TRUE
-\protected\long macro:#1->\__lipsum_unexpanded_par:n {#1}\par 
+\protected\long macro:#1->\__lipsum_deprecated:n {LipsumPar}\__lipsum_unexpanded_par:n {#1}\par 
 ============================================================
 ============================================================
 TEST 6: \SetLipsumParListStart, check if exists
