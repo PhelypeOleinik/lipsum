@@ -9,6 +9,8 @@ module = "lipsum"
 
 checkengines  = { "pdftex" }
 
+textfiles     = { "*.txt", "CHANGELOG.md" }
+
 installfiles  = { "*.sty", "*.ltd.tex" }
 
 sourcefiles   = { "*.dtx", "*.ins", "*.txt" }
