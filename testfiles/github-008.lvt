@@ -1,0 +1,21 @@
+\documentclass{article}
+\usepackage[base]{babel}
+\input{regression-test}
+\usepackage{lipsum}
+% \def\hyphenrules#1{}
+\begin{document}
+\START
+
+\lipsum[1][1-3]
+
+\setlipsum{language=laatin}
+
+\lipsum[1][1-3]
+
+\lipsum[1][1-3]
+
+\setlipsum{text=cicero,language=laatin}
+
+\lipsum[1][1-3]
+
+\END

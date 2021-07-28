@@ -12,6 +12,7 @@ and this project uses major+minor version identifiers.
 
 ### Changed
 - Require `babel` for language-specific hyphenation patterns (gh/6).
+- In case a language is unknown, just warn instead of an error (gh/8).
 
 ## [v2.4]
 

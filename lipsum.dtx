@@ -1272,9 +1272,13 @@
       {
         \cs_if_exist:NTF \hyphenrules
           {
-            \exp_args:NV \hyphenrules \g_@@_language_tl
-            \cs_set_protected:Npx \@@_restore_hyphens:
-              { \exp_not:N \hyphenrules { \languagename } }
+            \cs_if_exist:cTF { l@ \g_@@_language_tl }
+              {
+                \exp_args:NV \hyphenrules \g_@@_language_tl
+                \cs_set_protected:Npx \@@_restore_hyphens:
+                  { \exp_not:N \hyphenrules { \languagename } }
+              }
+              { \@@_missing_language_warning: }
           }
           { \@@_set_hyphens_babel_missing: }
       }
@@ -1308,6 +1312,21 @@
   }
 \cs_if_exist:NT \DeclareHookRule
   { \DeclareHookRule { begindocument } { lipsum } { after } { babel } }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_missing_language_warning:}
+%   Warn the user about an unknown/missing language.  Most of the time
+%   the issue is a minimal installation that doesn't have Latin, but
+%   sometimes it may be a typo.  Regardless of the case, warn the user
+%   then change the lanugage to \cs{languagename} so the warning appears
+%   only once, at least until it is changed again.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_missing_language_warning:
+  {
+    \msg_warning:nn { lipsum } { missing-language }
+    \tl_gset_eq:NN \g_@@_language_tl \languagename
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1525,6 +1544,11 @@
           }
       }
     \\ \\ This~message~won't~be~shown~again.
+  }
+\msg_new:nnn { lipsum } { missing-language }
+  {
+    Unknown~language~'\g_@@_language_tl'.~
+    Hyphenation~patterns~for~'\languagename'~will~be~used~instead.
   }
 %    \end{macrocode}
 %
