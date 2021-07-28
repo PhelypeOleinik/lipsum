@@ -15,12 +15,12 @@
 
 \START
 
-\SetLipsumParListEnd{\par} % adds a second \par
+\SetLipsumParListEnd{\par}
 
 \unpacklipsum[104]
 \TESTEXP{\unpacklipsum[104], lipsumexp, content}{
 %<test>\lipsumexp
-%<expect>\lipsonehundertandfour\par\par
+%<expect>\lipsonehundertandfour\par
 }
 \unpacklipsum*[104]
 \TESTEXP{\unpacklipsum*[104], lipsumexp, content}{%
