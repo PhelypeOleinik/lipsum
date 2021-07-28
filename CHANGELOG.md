@@ -5,7 +5,7 @@ documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses major+minor version identifiers.
 
-## [Unreleased]
+## [v2.5]
 
 ### Fixed
 - Language 'latin' undefined error with LuaTeX (gh/6).
