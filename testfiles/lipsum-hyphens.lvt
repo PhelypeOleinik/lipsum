@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage[T1]{fontenc}
+\usepackage[base]{babel}
 
 \input{regression-test}
 % don't show under/overfull boxes

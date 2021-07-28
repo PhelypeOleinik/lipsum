@@ -5,6 +5,14 @@ documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses major+minor version identifiers.
 
+## [Unreleased]
+
+### Fixed
+- Language 'latin' undefined error with LuaTeX (gh/6).
+
+### Changed
+- Require `babel` for language-specific hyphenation patterns (gh/6).
+
 ## [v2.4]
 
 ### Fixed

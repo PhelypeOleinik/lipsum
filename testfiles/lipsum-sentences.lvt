@@ -1,5 +1,6 @@
 \input{regression-test.tex}
 \documentclass{article}
+\usepackage[base]{babel}
 \usepackage{lipsum}
 
 \begin{document}

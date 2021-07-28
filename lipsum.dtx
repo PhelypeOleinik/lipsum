@@ -467,6 +467,12 @@
 % disable automatic language switching with
 % |\setlipsum{auto-lang=false}|.
 %
+% \pkg{lipsum} relies on \pkg{babel}'s \cs{hyphenrules} command to
+% change the hyphenation patterns, thus it requires \pkg{babel} to be
+% loaded in the document if |auto-lang=true|.  If \pkg{babel} is not
+% loaded, a warning is printed and the default language is used for
+% hyphenation instead.
+%
 % The language is defined individually for each dummy text
 % \secref{sec:other-texts}, but you may change it for the current dummy
 % text by using |\setlipsum{language=|\meta{lang}|}|.  If you load
@@ -1252,33 +1258,56 @@
 %
 % \begin{macro}{\@@_set_hyphens:,\@@_restore_hyphens:}
 %   Selects the hyphenation patterns for the language of the dummy text,
-%   using \pkg{babel}'s \cs{hyphenrules} if that's defined (when
-%   \pkg{babel} is loaded) or using \cs{language}\cs{l@\meta{lang}}
-%   otherwise.  The hyphenation patterns are properly restored by
+%   using \pkg{babel}'s \cs{hyphenrules} if that's defined.
+%   If \cs{hyphenrules} doesn't exist (thus \pkg{babel} not loaded),
+%   call \cs{@@_set_hyphens_babel_missing:} which will behave in a
+%   slightly different way if encountered in the preamble or in the
+%   document body.  The hyphenation patterns are properly restored by
 %   \cs{@@_restore_hypehens:} when the text ends.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_hyphens:
   {
     \bool_if:NTF \l_@@_autolang_bool
-      { \use:x } { \use_none:n }
+      { \use:n } { \use_none:n }
       {
         \cs_if_exist:NTF \hyphenrules
           {
-            \exp_not:N \hyphenrules { \g_@@_language_tl }
-            \cs_set_protected:Npn \@@_restore_hyphens:
+            \exp_args:NV \hyphenrules \g_@@_language_tl
+            \cs_set_protected:Npx \@@_restore_hyphens:
               { \exp_not:N \hyphenrules { \languagename } }
           }
-          {
-            \cs_if_exist:cTF { l@ \g_@@_language_tl }
-              { \language \use:c { l@ \g_@@_language_tl } }
-              { \msg_error:nn { lipsum } { language-undefined } }
-            \cs_set_protected:Npn \@@_restore_hyphens:
-              { \language \int_eval:n { \language } \scan_stop: }
-          }
+          { \@@_set_hyphens_babel_missing: }
       }
   }
 \cs_new_protected:Npn \@@_restore_hyphens:
   { \prg_do_nothing: }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_set_hyphens_babel_missing:}
+%   In the document preamble this emits a warning telling the user that
+%   the proper hyphenations can't be used because \pkg{babel} isn't
+%   loaded, then shut up for the rest of the preamble.  In the document
+%   body however, this is more serious, so we give a final warning and
+%   deactivate automatic hyphenation setting.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_set_hyphens_babel_missing:
+  {
+    \msg_warning:nnn { lipsum } { missing-babel } { preamble }
+    \cs_gset_eq:NN \@@_set_hyphens_babel_missing: \prg_do_nothing:
+  }
+\AtBeginDocument
+  {
+    \cs_gset_protected:Npx \@@_set_hyphens_babel_missing:
+      {
+        \@ifpackageloaded { babel }
+          { \msg_error:nnn { lipsum } { missing-babel } { impossible } }
+          { \msg_warning:nnn { lipsum } { missing-babel } { document } }
+        \setlipsum { auto-lang = false }
+      }
+  }
+\cs_if_exist:NT \DeclareHookRule
+  { \DeclareHookRule { begindocument } { lipsum } { after } { babel } }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1470,12 +1499,32 @@
 %    \begin{macrocode}
 \msg_new:nnn { lipsum } { invalid-range }
   { Invalid~number~or~range~'#1'. }
-\msg_new:nnn { lipsum } { language-undefined }
-  { Language~'\g_@@_language_tl'~undefined. }
 \msg_new:nnn { lipsum } { cmd-deprecated }
   {
     Command~'\iow_char:N\\#1'~deprecated. \\
     See~the~lipsum~documentation~for~help.
+  }
+\msg_new:nnn { lipsum } { missing-babel }
+  {
+    Hyphenation~patterns~for~'\g_@@_language_tl'~
+    cannot~be~used~because~babel~is~not~loaded.~
+    \str_case:nn {#1}
+      {
+        { preamble }
+          { Loading~lipsum~after~babel~should~fix~the~issue. }
+        { document }
+          {
+            The~default~document~language~will~be~used~
+            for~hyphenation~instead.
+          }
+        { impossible }
+          {
+            Something~wrong~happened~and~the~command~
+            \iow_char:N\\hyphenrules~is~not~available. \\ \\
+            Please~report!
+          }
+      }
+    \\ \\ This~message~won't~be~shown~again.
   }
 %    \end{macrocode}
 %

@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{wrapfig}
+\usepackage[base]{babel}
 \usepackage{lipsum}
 \textwidth=5cm
 \input{regression-test}

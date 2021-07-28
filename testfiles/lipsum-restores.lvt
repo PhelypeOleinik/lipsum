@@ -8,6 +8,7 @@
 \debug_on:n { deprecation }
 \ExplSyntaxOff
 
+\usepackage[base]{babel}
 \usepackage{lipsum}
 
 \ExplSyntaxOn
