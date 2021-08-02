@@ -5,6 +5,11 @@ documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses major+minor version identifiers.
 
+## [v2.6]
+
+### Changed
+- Minor changes to `lipsum.ins` ([related issue][1]).
+
 ## [v2.5]
 
 ### Fixed
@@ -47,3 +52,5 @@ and this project uses major+minor version identifiers.
 
 ### Fixed
 - Internal change to avoid error with newer `xparse`.
+
+ [1]: https://github.com/latex3/latex2e/issues/636
