@@ -12,7 +12,7 @@
 %% and version 1.3 or later is part of all distributions of
 %% LaTeX version 2005/12/01 or later.
 %%
-\input l3docstrip.tex
+\input docstrip.tex
 \askforoverwritefalse
 \keepsilent
 \preamble
@@ -58,12 +58,12 @@ Please send error reports and suggestions for improvements to
     \inparfalse
     \parno=0
     \endlinechar=-1
-    \def~{ }%
+    \def\~{ }%
     \def\ReferenceLines{%
       \MetaPrefix ^^J%
-      \MetaPrefix~The original source files were:^^J%
+      \MetaPrefix\~The original source files were:^^J%
       \MetaPrefix ^^J%
-      \MetaPrefix~\inFileName^^J}%
+      \MetaPrefix\~\inFileName^^J}%
     \immediate\write\lipswrite{\defaultpreamble}%
     \immediate\write\lipswrite{\string\SetLipsumLanguage{#3}}%
     \genlipsumaux\genlipsumaux
@@ -96,7 +96,7 @@ Please send error reports and suggestions for improvements to
 \genlipsum{cs}{lipsum-cs}{czech}
 \genlipsum{cicero}{cicero}{latin}
 
-\obeyspaces
+\catcode`\ =13 \edef {\space}%
 \Msg{****************************************************}
 \Msg{*                                                  *}
 \Msg{* To finish the installation you have to move the  *}
