@@ -10,7 +10,7 @@ checkconfigs =
   }
 
 -- Tagging:
-tagfiles = {"lipsum.dtx", "CHANGELOG.md"}
+tagfiles = { "lipsum.dtx", "CHANGELOG.md" }
 function update_tag(file, content, tagname, tagdate)
   if tagname == nil then
     tagname = pkgversion
