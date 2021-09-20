@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 checkconfigs =
   {
-    "build-pdftex.lua"
-  , "build-tutex.lua"
+    "config-pdftex.lua"
+  , "config-tutex.lua"
   }

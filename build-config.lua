@@ -4,6 +4,8 @@ module = "lipsum"
 
 testfiledir   = "testfiles-" .. ...
 
+stdengine     = checkengines[0] or checkengines[1]
+
 textfiles     = { "*.txt", "CHANGELOG.md" }
 
 installfiles  = { "*.sty", "*.ltd.tex" }
