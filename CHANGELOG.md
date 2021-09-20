@@ -5,6 +5,14 @@ documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project uses major+minor version identifiers.
 
+## [Unreleased]
+
+### Changed
+- Rework language loading mechanism (gh/10).
+
+### Fixed
+- Hyphenation pattern setting with `polyglossia` (gh/10).
+
 ## [v2.6]
 
 ### Changed
