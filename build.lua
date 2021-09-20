@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 module     = "lipsum"
-pkgversion = "2.6"
+pkgversion = "2.7"
 pkgdate    = os.date("%Y-%m-%d")
 
 checkconfigs =
