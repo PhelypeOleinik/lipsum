@@ -84,6 +84,9 @@
 \emergencystretch 2em
 \newcommand\secref[1]{(see section~\ref{#1})}
 \usepackage{hyperref}
+\def\ghissue#1{%
+  \texttt{\##1}\footnote{%
+    \url{https://github.com/PhelypeOleinik/lipsum/issues/#1}}}
 \begin{document}
   \DocInput{lipsum.dtx}
 \end{document}
@@ -1258,12 +1261,11 @@
 %
 % \begin{macro}{\@@_set_hyphens:,\@@_restore_hyphens:}
 %   Selects the hyphenation patterns for the language of the dummy text,
-%   using \pkg{babel}'s \cs{hyphenrules} if that's defined.
-%   If \cs{hyphenrules} doesn't exist (thus \pkg{babel} not loaded),
-%   call \cs{@@_set_hyphens_babel_missing:} which will behave in a
-%   slightly different way if encountered in the preamble or in the
-%   document body.  The hyphenation patterns are properly restored by
-%   \cs{@@_restore_hypehens:} when the text ends.
+%   using \cs{hyphenrules} if that's defined.  If \cs{hyphenrules}
+%   doesn't exist try setting hyphenation with \cs{@@_set_hyphens_raw:}.
+%   Each \cs[no-index]{@@_set_hyphens_\meta{method}:} function
+%   appropriately redefines \cs{@@_restore_hypehens:} to reset the
+%   hyphenation patterns.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_hyphens:
   {
@@ -1272,15 +1274,11 @@
       {
         \cs_if_exist:NTF \hyphenrules
           {
-            \cs_if_exist:cTF { l@ \g_@@_language_tl }
-              {
-                \exp_args:NV \hyphenrules \g_@@_language_tl
-                \cs_set_protected:Npx \@@_restore_hyphens:
-                  { \exp_not:N \hyphenrules { \languagename } }
-              }
-              { \@@_missing_language_warning: }
+            \cs_if_exist:cTF { ver@polyglossia.sty }
+              { \@@_set_hyphens_polyglossia: }
+              { \@@_set_hyphens_babel: }
           }
-          { \@@_set_hyphens_babel_missing: }
+          { \@@_set_hyphens_raw: }
       }
   }
 \cs_new_protected:Npn \@@_restore_hyphens:
@@ -1288,43 +1286,86 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_set_hyphens_babel_missing:}
-%   In the document preamble this emits a warning telling the user that
-%   the proper hyphenations can't be used because \pkg{babel} isn't
-%   loaded, then shut up for the rest of the preamble.  In the document
-%   body however, this is more serious, so we give a final warning and
-%   deactivate automatic hyphenation setting.
+% \begin{macro}{\@@_set_hyphens_babel:}
+%   \pkg{babel} makes things pretty simple.  We just check if
+%   \cs[no-index]{l@\meta{lang}} is defined, and if so, use
+%   \cs{hyphenrules} to set it, and once more to reset in
+%   \cs{@@_restore_hyphens:}.  \cs{hyphenrules} is actually an
+%   environment, but in \pkg{babel} its \cs[no-index]{end} part does
+%   nothing, and its effect can be undone by just using another
+%   \cs{hyphenrules} on top of it.
+%
+%   If the language is not defined, the language either doesn't exist at
+%   all, or we are using Lua\TeX.  Both cases are handled by
+%   \cs{@@_lang_not_available:}.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_set_hyphens_babel_missing:
+\cs_new_protected:Npn \@@_set_hyphens_babel:
   {
-    \msg_warning:nnn { lipsum } { missing-babel } { preamble }
-    \cs_gset_eq:NN \@@_set_hyphens_babel_missing: \prg_do_nothing:
-  }
-\AtBeginDocument
-  {
-    \cs_gset_protected:Npx \@@_set_hyphens_babel_missing:
+    \cs_if_exist:cTF { l@ \g_@@_language_tl }
       {
-        \@ifpackageloaded { babel }
-          { \msg_error:nnn { lipsum } { missing-babel } { impossible } }
-          { \msg_warning:nnn { lipsum } { missing-babel } { document } }
-        \setlipsum { auto-lang = false }
+        \exp_args:NV \hyphenrules \g_@@_language_tl
+        \cs_set_protected:Npx \@@_restore_hyphens:
+          { \exp_not:N \hyphenrules { \languagename } }
       }
+      { \@@_lang_not_available: }
   }
-\cs_if_exist:NT \DeclareHookRule
-  { \DeclareHookRule { begindocument } { lipsum } { after } { babel } }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_missing_language_warning:}
-%   Warn the user about an unknown/missing language.  Most of the time
-%   the issue is a minimal installation that doesn't have Latin, but
-%   sometimes it may be a typo.  Regardless of the case, warn the user
-%   then change the language to \cs{languagename} so the warning appears
-%   only once, at least until it is changed again.
+% \begin{macro}{\@@_set_hyphens_polyglossia:}
+%   \pkg{polyglossia} less friendly.  We also check if the language is
+%   loaded (looking at \cs[no-hyphen]{\meta{lang}@loaded}), and if it
+%   is, load it with the \env{hyphenrules} environment.  Here we can't
+%   use the command form, as the \cs[no-index]{end} part is not a no-op.
+%   This also means that an extra group is added around the dummy text,
+%   which causes issue \ghissue{1} when used with \pkg{wrapfig}, for
+%   example.  But not too much we can do about that for now.
+%
+%   In case the language is not loaded, fall back to
+%   \cs{@@_set_hyphens_raw:} for a final attempt before giving up.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_missing_language_warning:
+\cs_new_protected:Npn \@@_set_hyphens_polyglossia:
   {
-    \msg_warning:nn { lipsum } { missing-language }
+    \cs_if_exist:cTF { \g_@@_language_tl @loaded }
+      {
+        \exp_args:NnV \begin{hyphenrules} \g_@@_language_tl
+        \cs_set_protected:Npn \@@_restore_hyphens:
+          { \end{hyphenrules} }
+      }
+      { \@@_set_hyphens_raw: }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_set_hyphens_raw:}
+%   If nothing else is available, try setting the language using the
+%   plain syntax \cs{language}\meta{number}.  This is always available,
+%   except with Lua\TeX, which loads languages on-the-fly.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_set_hyphens_raw:
+  {
+    \cs_if_exist:cTF { l@ \g_@@_language_tl }
+      {
+        \use:x
+          {
+            \language \use:c { l@ \g_@@_language_tl }
+            \cs_set_protected:Npn \@@_restore_hyphens:
+              { \language \int_eval:n { \language } \scan_stop: }
+          }
+      }
+      { \@@_lang_not_available: }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_lang_not_available:}
+%   If the requested language is for some reason unavailable, warn the
+%   user, then fall back to the current language.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_lang_not_available:
+  {
+    \msg_warning:nnx { lipsum } { missing-language }
+      { \g_@@_language_tl }
     \tl_gset_eq:NN \g_@@_language_tl \languagename
   }
 %    \end{macrocode}
@@ -1523,32 +1564,24 @@
     Command~'\iow_char:N\\#1'~deprecated. \\
     See~the~lipsum~documentation~for~help.
   }
-\msg_new:nnn { lipsum } { missing-babel }
-  {
-    Hyphenation~patterns~for~'\g_@@_language_tl'~
-    cannot~be~used~because~babel~is~not~loaded.~
-    \str_case:nn {#1}
-      {
-        { preamble }
-          { Loading~lipsum~after~babel~should~fix~the~issue. }
-        { document }
-          {
-            The~default~document~language~will~be~used~
-            for~hyphenation~instead.
-          }
-        { impossible }
-          {
-            Something~wrong~happened~and~the~command~
-            \iow_char:N\\hyphenrules~is~not~available. \\ \\
-            Please~report!
-          }
-      }
-    \\ \\ This~message~won't~be~shown~again.
-  }
 \msg_new:nnn { lipsum } { missing-language }
   {
-    Unknown~language~'\g_@@_language_tl'.~
-    Hyphenation~patterns~for~'\languagename'~will~be~used~instead.
+    Unknown~language~'#1'.~Hyphenation~patterns~for~
+    '\languagename'~will~be~used~instead.
+    \sys_if_engine_luatex:T
+      {
+        \\ \\
+        \cs_if_exist:cTF { ver@polyglossia.sty }
+          {
+            With~polyglossia,~you~have~to~explicitly~load~languages~
+            with~\iow_char:N\\setotherlanguage{#1}.
+          }
+          {
+            With~LuaTeX,~lipsum~requires~babel~to~get~proper~
+            hyphenation~(you~can~use~
+            \iow_char:N\\usepackage[base]{babel}).
+          }
+      }
   }
 %    \end{macrocode}
 %
