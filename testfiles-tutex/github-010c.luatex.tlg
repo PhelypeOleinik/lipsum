@@ -4,7 +4,7 @@ Package lipsum Warning: Unknown language 'laatin'. Hyphenation patterns for
 (lipsum)                'latex' will be used instead.
 (lipsum)                
 (lipsum)                With polyglossia, you have to explicitly load
-(lipsum)                languages with \setotherlanguage{laatin}.
+(lipsum)                languages with \setotherlanguage{laatin} or similar.
 The property list \polyglossia@langsetup contains the pairs (without outer
 braces):
 >  {latex/script}  =>  {latin}
