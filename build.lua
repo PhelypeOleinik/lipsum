@@ -3,6 +3,8 @@ module     = "lipsum"
 pkgversion = "2.7"
 pkgdate    = os.date("%Y-%m-%d")
 
+dofile("config-pdftex.lua")
+
 checkconfigs =
   {
     "config-pdftex.lua"
