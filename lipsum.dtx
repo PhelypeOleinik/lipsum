@@ -1354,13 +1354,21 @@
 %
 % \begin{macro}{\@@_lang_not_available:}
 %   If the requested language is for some reason unavailable, warn the
-%   user, then fall back to the current language.
+%   user, then fall back to the current language.  If the requested
+%   language and \cs{languagename} are the same, we are probably running
+%   into this warning again because we have no languages loaded (e.g.,
+%   testing environments).  In that case, shut up because there's not
+%   much that can be done (and a warning that says ``language "english"
+%   is not available; using "english" instead'' is of little use).
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_lang_not_available:
   {
-    \msg_warning:nnx { lipsum } { missing-language }
-      { \g_@@_language_tl }
-    \tl_gset_eq:NN \g_@@_language_tl \languagename
+    \str_if_eq:VVF \g__lipsum_language_tl \languagename
+      {
+        \msg_warning:nnx { lipsum } { missing-language }
+          { \g_@@_language_tl }
+        \tl_gset_eq:NN \g_@@_language_tl \languagename
+      }
   }
 %    \end{macrocode}
 % \end{macro}
