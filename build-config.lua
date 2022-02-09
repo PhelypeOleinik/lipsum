@@ -4,7 +4,7 @@ module = "lipsum"
 
 testfiledir   = "testfiles-" .. ...
 
-stdengine     = checkengines[0] or checkengines[1]
+stdengine     = checkengines[1] or checkengines[2]
 
 textfiles     = { "*.txt", "CHANGELOG.md" }
 
