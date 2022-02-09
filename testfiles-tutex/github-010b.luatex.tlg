@@ -674,7 +674,6 @@ Completed box being shipped out [1]
 ....\write1{\@writefile{toc}{\egroup }}
 ....\write1{\@writefile{lof}{\egroup }}
 ....\write1{\@writefile{lot}{\egroup }}
-....\kern0.0
 ....\penalty 10000
 ....\glue(\parfillskip) 0.0 plus 1.0fil
 ....\glue(\rightskip) 0.0
